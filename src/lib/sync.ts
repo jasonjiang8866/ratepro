@@ -1,9 +1,13 @@
 import { SOURCES, FeedSchema, type Cache, type Feed, type SourceStatus } from './schema';
 import { mergeFeed, MAX_BYTES, REFRESH_INTERVAL } from './data';
 import { browserPage, parsers } from './parsers';
-export async function fetchText(url: string, fetcher: typeof fetch = fetch): Promise<string> {
+export async function fetchText(
+  url: string,
+  fetcher: typeof fetch = fetch,
+  timeoutMs = 12000,
+): Promise<string> {
   const res = await fetcher(url, {
-    signal: AbortSignal.timeout(12000),
+    signal: AbortSignal.timeout(timeoutMs),
     credentials: 'omit',
     cache: 'no-cache',
     redirect: 'error',

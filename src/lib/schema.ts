@@ -121,6 +121,7 @@ export const SOURCES = [
     id: 'maybank',
     name: 'Maybank · Published home loan packages',
     url: 'https://www.maybank2u.com.sg/en/rates/rates-sora.page',
+    collectionTimeoutMs: 30000,
   },
   {
     id: 'sc-sora',
