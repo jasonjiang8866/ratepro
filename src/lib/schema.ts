@@ -98,6 +98,9 @@ export const CacheSchema = z
     sources: z.array(SourceStatusSchema).max(20),
     lastAttempt: date.optional(),
     lastFeedCheck: date.optional(),
+    snapshotGeneratedAt: date.optional(),
+    publishedSources: z.array(SourceStatusSchema).max(20).optional(),
+    browserSources: z.array(SourceStatusSchema).max(20).optional(),
   })
   .strict();
 export type Cache = z.infer<typeof CacheSchema>;
@@ -162,6 +165,21 @@ export function emptyCache(): Cache {
 export function isStale(o: Offer, now = Date.now()) {
   return (
     now - Date.parse(o.observedAt) > 7 * 86400000 ||
-    Boolean(o.effectiveUntil && new Date(now).toISOString().slice(0, 10) > o.effectiveUntil)
+    Boolean(o.effectiveUntil && singaporeDay(now) > o.effectiveUntil)
   );
+}
+export function singaporeDay(now: number) {
+  return new Date(now + 8 * 3600000).toISOString().slice(0, 10);
+}
+export function observationAge(o: Offer, now = Date.now()) {
+  const days = Math.floor(Math.max(0, now - Date.parse(o.observedAt)) / 86400000);
+  return days === 0
+    ? 'Observed less than 24 hours ago'
+    : `Observed ${days} day${days === 1 ? '' : 's'} ago`;
+}
+export function freshnessWarning(o: Offer, now = Date.now()) {
+  if (o.effectiveUntil && singaporeDay(now) > o.effectiveUntil)
+    return 'Published period ended · historical observation';
+  if (isStale(o, now)) return 'Over 7 days since observation · confirm with lender';
+  return undefined;
 }

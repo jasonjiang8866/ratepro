@@ -65,6 +65,23 @@ this updated application to read them. History records spread and term changes.
 
 Sources can change page structure, stop publishing a package, block automation, or return different content by location. Parsers fail closed when expected fields disappear. Old observations are retained with their original date; they are **not proof that a package remains on sale**. Data older than seven days or past its published effective end is marked stale. Feed download time is never treated as source observation time. Source dates are retrieval dates unless an effective period is explicitly provided. There is no claim of full market coverage.
 
+Cards show observation age and flag records older than seven days or past their
+published period (ending at Singapore midnight). This is a directory recheck
+policy, not a bank guarantee. Sources separates the published collector attempt
+and success from browser-direct attempts and successes. A browser CORS failure
+does not change the displayed collector outcome. Snapshot generation, local
+download, bank observation and terms-effective dates remain distinct. Reviewed
+and imported observations retain their provenance; no successful extraction is
+inferred from a reviewed snapshot. Existing caches migrate on their next refresh;
+unknown channel-specific timestamps display “Not recorded”.
+
+Source health CI has independent `stable` (DBS and SC) and `experimental`
+(Maybank) jobs, with separate artifacts and genuine failure results. No
+`continue-on-error` is used. `npm run verify:sources -- stable` or `-- experimental`
+runs one group; the default checks all sources including HDB. The daily collector
+still attempts all sources and retains failed-source observations. HDB remains
+a reviewed fallback, and its retrieval result remains in the daily collector log.
+
 ### Extend sources
 
 1. Add an exact official URL and source ID to `src/lib/schema.ts` and the CSP allowlist in `public/_headers`.

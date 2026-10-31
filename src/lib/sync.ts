@@ -55,7 +55,15 @@ export async function synchronize(
   const errors: string[] = [];
   try {
     const feed = FeedSchema.parse(JSON.parse(await fetchText('/data/rates.json', fetcher)));
-    next = { ...mergeFeed(next, feed, now), lastFeedCheck: now, lastAttempt: now };
+    next = {
+      ...mergeFeed(next, feed, now),
+      lastFeedCheck: now,
+      lastAttempt: now,
+      ...(!next.snapshotGeneratedAt ||
+      Date.parse(feed.generatedAt) >= Date.parse(next.snapshotGeneratedAt)
+        ? { snapshotGeneratedAt: feed.generatedAt, publishedSources: feed.sources }
+        : {}),
+    };
     feedOK = true;
     // Render and persist the same-origin snapshot before slow cross-origin requests finish.
     onSnapshot?.(next);
@@ -87,7 +95,7 @@ export async function synchronize(
           status: {
             sourceId: source.id,
             attemptedAt: now,
-            successAt: next.sources.find((s) => s.sourceId === source.id)?.successAt,
+            successAt: next.browserSources?.find((s) => s.sourceId === source.id)?.successAt,
             status: 'error',
             message:
               'Direct browser check unavailable (CORS, network or page format). Last observation retained.',
@@ -102,7 +110,7 @@ export async function synchronize(
     offers: results.flatMap((r) => r.offers),
     sources: results.map((r) => r.status),
   };
-  next = { ...mergeFeed(next, direct, now), lastAttempt: now };
+  next = { ...mergeFeed(next, direct, now), lastAttempt: now, browserSources: direct.sources };
   const count = results.filter((r) => r.status.status === 'ok').length;
   return {
     cache: next,

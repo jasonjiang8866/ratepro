@@ -2,6 +2,26 @@ import { CacheSchema, FeedSchema, emptyCache, type Cache, type Feed, type Offer 
 export const CACHE_KEY = 'ratepro.cache.v1';
 export const REFRESH_INTERVAL = 6 * 60 * 60 * 1000;
 export const MAX_BYTES = 2_000_000;
+// Keep independent check evidence when refreshes and other browser tabs overlap.
+export function mergeCheckEvidence(cache: Cache, incoming: Cache): Cache {
+  const next = { ...cache };
+  for (const field of ['lastAttempt', 'lastFeedCheck', 'snapshotGeneratedAt'] as const) {
+    const value = incoming[field];
+    if (value && (!next[field] || Date.parse(value) > Date.parse(next[field]!)))
+      next[field] = value;
+  }
+  for (const field of ['publishedSources', 'browserSources'] as const) {
+    if (!incoming[field]) continue;
+    const statuses = new Map(next[field]?.map((s) => [s.sourceId, s]));
+    for (const status of incoming[field]) {
+      const old = statuses.get(status.sourceId);
+      if (!old || Date.parse(status.attemptedAt) > Date.parse(old.attemptedAt))
+        statuses.set(status.sourceId, status);
+    }
+    next[field] = [...statuses.values()];
+  }
+  return next;
+}
 export function stageDisplay(stage: Offer['stages'][number]) {
   return stage.rate === null ? stage.formula : `${stage.rate.toFixed(2)}%`;
 }

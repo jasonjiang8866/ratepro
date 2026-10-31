@@ -13,6 +13,11 @@ permissions:
   contents: read
 jobs:
   official-sources:
+    name: Source health (${{ matrix.group }})
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [stable, experimental]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -22,11 +27,11 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: npm run verify:sources
+      - run: npm run verify:sources -- ${{ matrix.group }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: official-source-observations
+          name: official-source-observations-${{ matrix.group }}
           path: source-check.json
           if-no-files-found: warn
           retention-days: 7

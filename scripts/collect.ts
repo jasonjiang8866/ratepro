@@ -29,11 +29,12 @@ export async function collect(
   previous: Feed,
   fetcher: typeof fetch = fetch,
   at = new Date().toISOString(),
+  sourceIds: readonly string[] = SOURCES.map((source) => source.id),
 ): Promise<Feed> {
   const offers = new Map(previous.offers.map((o) => [o.id, o]));
   const statuses: SourceStatus[] = [];
   // Sequential, one GET per source; no crawling, authentication or retries.
-  for (const source of SOURCES) {
+  for (const source of SOURCES.filter((source) => sourceIds.includes(source.id))) {
     try {
       const parsed = parsers[source.id](
         nodePage(
