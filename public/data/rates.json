@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-31T08:29:30.350Z",
+  "generatedAt": "2026-10-31T08:40:35.311Z",
   "offers": [
     {
       "id": "hdb-concessionary",
@@ -8,9 +8,7 @@
       "bank": "HDB",
       "name": "HDB concessionary loan",
       "property": "HDB",
-      "purpose": [
-        "Purchase"
-      ],
+      "purpose": ["Purchase"],
       "construction": "Any",
       "kind": "Concessionary",
       "stages": [
@@ -33,10 +31,7 @@
       "bank": "DBS",
       "name": "3-Year CPF-OA HDB Loan",
       "property": "HDB",
-      "purpose": [
-        "Purchase",
-        "Refinance"
-      ],
+      "purpose": ["Purchase", "Refinance"],
       "construction": "Completed",
       "kind": "Floating",
       "stages": [
@@ -59,7 +54,7 @@
       "lockYears": 3,
       "minLoan": 100000,
       "terms": "CPF-OA-linked variable rate, not a fixed rate. 75% LTV: 25 years max loan tenor (provided borrower age + tenure ≤ 65 years old) 55% LTV: 30 years max loan tenor (provided borrower age + tenure > 65 years old). Confirm eligibility, fees and available package with DBS.",
-      "observedAt": "2026-10-31T08:29:30.350Z",
+      "observedAt": "2026-10-31T08:40:35.311Z",
       "method": "collector"
     },
     {
@@ -68,9 +63,7 @@
       "bank": "DBS",
       "name": "Green Home Loan · FHR6",
       "property": "Private",
-      "purpose": [
-        "Purchase"
-      ],
+      "purpose": ["Purchase"],
       "construction": "Under construction",
       "kind": "Floating",
       "stages": [
@@ -88,30 +81,101 @@
       "lockYears": null,
       "minLoan": 1000000,
       "terms": "For eligible green properties under construction. FHR6 is a bank reference rate and may change. Conversion features, green certification, fees and eligibility require confirmation with DBS. Lock-in not extracted.",
-      "observedAt": "2026-10-31T08:29:30.350Z",
+      "observedAt": "2026-10-31T08:40:35.311Z",
+      "method": "collector"
+    },
+    {
+      "id": "sc-sora-3m",
+      "sourceId": "sc-sora",
+      "bank": "Standard Chartered",
+      "name": "3M SORA · published package",
+      "property": "HDB / Private",
+      "purpose": ["Purchase", "Refinance"],
+      "construction": "Any",
+      "kind": "Floating",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": null,
+          "formula": "3M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 1
+          }
+        },
+        {
+          "label": "Year 2",
+          "rate": null,
+          "formula": "3M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 1
+          }
+        },
+        {
+          "label": "Year 3",
+          "rate": null,
+          "formula": "3M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 1
+          }
+        },
+        {
+          "label": "Thereafter",
+          "rate": null,
+          "formula": "3M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 1
+          }
+        }
+      ],
+      "lockYears": 2,
+      "minLoan": 100000,
+      "terms": "The source states this schedule is valid from 27 February 2021; a recent observation does not mean a new promotion. Confirm current availability with Standard Chartered. Applies to completed or under-construction HDB/private homes for purchase or refinancing. SORA plus spread is a formula, not an all-in quote. Fees and subsidies are not extracted.",
+      "observedAt": "2026-10-31T08:40:35.311Z",
+      "effectiveFrom": "2021-02-27",
       "method": "collector"
     }
   ],
   "sources": [
     {
       "sourceId": "dbs-hdb",
-      "attemptedAt": "2026-10-31T08:29:30.350Z",
-      "successAt": "2026-10-31T08:29:30.350Z",
+      "attemptedAt": "2026-10-31T08:40:35.311Z",
+      "successAt": "2026-10-31T08:40:35.311Z",
       "status": "ok",
       "message": "Collected from official public page"
     },
     {
       "sourceId": "dbs-green",
-      "attemptedAt": "2026-10-31T08:29:30.350Z",
-      "successAt": "2026-10-31T08:29:30.350Z",
+      "attemptedAt": "2026-10-31T08:40:35.311Z",
+      "successAt": "2026-10-31T08:40:35.311Z",
       "status": "ok",
       "message": "Collected from official public page"
     },
     {
       "sourceId": "hdb",
-      "attemptedAt": "2026-10-31T08:29:30.350Z",
+      "attemptedAt": "2026-10-31T08:40:35.311Z",
       "status": "error",
       "message": "Collection failed; last observation retained. HTTP 403"
+    },
+    {
+      "sourceId": "maybank",
+      "attemptedAt": "2026-10-31T08:40:35.311Z",
+      "status": "error",
+      "message": "Collection failed; last observation retained. HTTP 500"
+    },
+    {
+      "sourceId": "sc-sora",
+      "attemptedAt": "2026-10-31T08:40:35.311Z",
+      "successAt": "2026-10-31T08:40:35.311Z",
+      "status": "ok",
+      "message": "Collected from official public page"
     }
   ]
 }

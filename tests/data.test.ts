@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import seed from './fixtures/feed.json';
-import { FeedSchema, emptyCache, isStale } from '../src/lib/schema';
+import { FeedSchema, emptyCache, isStale, SOURCES } from '../src/lib/schema';
 import {
   mergeFeed,
   readCache,
@@ -169,7 +169,7 @@ describe('refresh resilience', () => {
     await synchronize(c, false, fetcher);
     expect(fetcher).not.toHaveBeenCalled();
     await synchronize(c, true, fetcher);
-    expect(fetcher).toHaveBeenCalledTimes(4);
+    expect(fetcher).toHaveBeenCalledTimes(1 + SOURCES.length);
   });
   it('keeps cached data if both feed and direct requests fail', async () => {
     const c = mergeFeed(emptyCache(), feed, now);

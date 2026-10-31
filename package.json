@@ -12,6 +12,7 @@
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",
     "collect": "node --import tsx scripts/collect.ts",
+    "verify:sources": "node --import tsx scripts/verify-sources.ts",
     "deploy": "npm run build && wrangler pages deploy dist --project-name ratepro",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

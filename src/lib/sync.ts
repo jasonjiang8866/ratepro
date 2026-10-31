@@ -103,7 +103,7 @@ export async function synchronize(
   return {
     cache: next,
     message: count
-      ? `Checked ${count} public source${count === 1 ? '' : 's'} directly. ${3 - count} unavailable.`
+      ? `Checked ${count} public source${count === 1 ? '' : 's'} directly. ${SOURCES.length - count} unavailable.`
       : feedOK
         ? 'Published snapshot checked. Direct source access unavailable; observation dates are shown below.'
         : `${errors.join('. ')}. Showing saved data; retry when online.`,

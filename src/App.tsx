@@ -33,10 +33,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { CACHE_KEY, mergeFeed, parseImport, payment, readCache, saveCache } from '@/lib/data';
+import {
+  CACHE_KEY,
+  mergeFeed,
+  parseImport,
+  payment,
+  readCache,
+  saveCache,
+  stageDisplay,
+  compareInitialRates,
+  matchesProperty,
+  offerPayment,
+} from '@/lib/data';
 import {
   CacheSchema,
   SOURCES,
+  REFERENCE_SOURCES,
+  banks,
   emptyCache,
   isStale,
   sourceFor,
@@ -206,7 +219,7 @@ export default function App() {
   const offers = cache.offers
     .filter(
       (o) =>
-        (property === 'All properties' || o.property === property) &&
+        matchesProperty(o, property) &&
         (kind === 'All rates' || o.kind === kind) &&
         (purpose === 'All purposes' || o.purpose.includes(purpose as 'Purchase' | 'Refinance')) &&
         (construction === 'All stages' ||
@@ -219,9 +232,7 @@ export default function App() {
     .sort((a, b) =>
       sort === 'Latest observation'
         ? Date.parse(b.observedAt) - Date.parse(a.observedAt)
-        : sort === 'Rate: high to low'
-          ? b.stages[0].rate - a.stages[0].rate
-          : a.stages[0].rate - b.stages[0].rate,
+        : compareInitialRates(a, b, sort === 'Rate: high to low'),
     );
   const comparison = cache.offers.filter((o) => selected.includes(o.id));
   const monthly = payment(Number(principal), Number(calcRate), Number(years));
@@ -485,7 +496,7 @@ export default function App() {
                     label="Lender"
                     value={bank}
                     onChange={setBank}
-                    options={['All lenders', 'DBS', 'HDB']}
+                    options={['All lenders', ...banks]}
                   />
                   <Select
                     label="Property stage"
@@ -522,7 +533,15 @@ export default function App() {
                     <CardContent className="p-5 sm:p-6">
                       <div className="flex items-start gap-3">
                         <div className={cn('bank-mark', o.bank === 'HDB' ? 'hdb' : 'dbs')}>
-                          {o.bank === 'HDB' ? <House size={22} /> : o.bank}
+                          {o.bank === 'HDB' ? (
+                            <House size={22} />
+                          ) : o.bank === 'Standard Chartered' ? (
+                            'SC'
+                          ) : o.bank === 'Maybank' ? (
+                            'MYB'
+                          ) : (
+                            o.bank
+                          )}
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap gap-2 items-center">
@@ -553,12 +572,23 @@ export default function App() {
                       </div>
                       <div className="offer-main">
                         <div>
-                          <div className="rate">
-                            {o.stages[0].rate.toFixed(2)}
-                            <span>%</span>
-                            <small>p.a.</small>
-                          </div>
-                          <p className="rate-caption">{o.stages[0].label} · observed rate</p>
+                          {o.stages[0].rate === null ? (
+                            <div className="text-xl font-semibold break-words">
+                              {o.stages[0].formula}
+                            </div>
+                          ) : (
+                            <div className="rate">
+                              {o.stages[0].rate.toFixed(2)}
+                              <span>%</span>
+                              <small>p.a.</small>
+                            </div>
+                          )}
+                          <p className="rate-caption">
+                            {o.stages[0].label} ·{' '}
+                            {o.stages[0].rate === null
+                              ? 'Formula only · all-in rate not calculated'
+                              : 'observed rate'}
+                          </p>
                         </div>
                         <div className="offer-facts">
                           <div>
@@ -591,6 +621,12 @@ export default function App() {
                           · {date(o.observedAt)}
                         </Badge>
                       </div>
+                      {o.effectiveFrom && (
+                        <p className="text-sm mt-3">
+                          Source terms effective from {date(o.effectiveFrom)}. Confirm current
+                          availability.
+                        </p>
+                      )}
                       <details className="offer-details">
                         <summary>
                           Rate schedule & conditions <ChevronRight size={14} />
@@ -600,7 +636,7 @@ export default function App() {
                             <div key={i}>
                               <span>{s.label}</span>
                               <strong>
-                                {s.rate.toFixed(2)}% <small>{s.formula}</small>
+                                {stageDisplay(s)} {s.rate !== null && <small>{s.formula}</small>}
                               </strong>
                             </div>
                           ))}
@@ -652,9 +688,11 @@ export default function App() {
                 </div>
               )}
               <p className="coverage-note">
-                Limited coverage: DBS public packages and the HDB concessionary rate. A missing
-                lender or package does not mean it is unavailable. Fixed-rate quotes and unlisted
-                offers must be checked with the lender.
+                Selected published packages from DBS, Maybank, Standard Chartered and HDB.
+                Formula-only packages appear after numerical rates in both rate sorts; a spread is
+                not an all-in rate. These public schedules may differ from personalised offers.
+                Missing lenders or packages do not mean they are unavailable. See Sources for
+                quote-only options.
               </p>
             </section>
             <aside className="sidebar">
@@ -758,8 +796,8 @@ export default function App() {
                 <p>
                   On page load, a six-hour refresh window checks the published static snapshot and
                   attempts direct public-page collection. Banks may block browser reads. A scheduled
-                  GitHub job can refresh the published snapshot daily once the migration is merged
-                  and deployed. No login or personal financial data is sent.
+                  GitHub job refreshes the published snapshot daily. No login or personal financial
+                  data is sent.
                 </p>
               </div>
             </div>
@@ -814,20 +852,30 @@ export default function App() {
                 These links are provided for research. Their rates are not automatically extracted
                 in this version.
               </p>
-              <div className="flex flex-wrap gap-3 mt-4">
-                {[
-                  ['OCBC home loan', 'https://www.ocbc.com/personal-banking/loans/home-loan'],
-                  [
-                    'UOB home loans',
-                    'https://www.uob.com.sg/personal/borrow/property/home-loans.page',
-                  ],
-                  ['MAS · SORA benchmark', 'https://www.mas.gov.sg/monetary-policy/sora'],
-                ].map(([name, url]) => (
-                  <a key={name} className="source-link" href={url} target="_blank" rel="noreferrer">
-                    {name}
-                    <ArrowUpRight size={14} />
-                  </a>
+              <p className="mt-2 text-sm">
+                Coverage reviewed 31 October 2026. These are research dates, not rate observations.
+              </p>
+              <div className="space-y-4 mt-4">
+                {REFERENCE_SOURCES.map((source) => (
+                  <div key={source.name}>
+                    <a className="source-link" href={source.url} target="_blank" rel="noreferrer">
+                      {source.name}
+                      <ArrowUpRight size={14} />
+                    </a>
+                    <Badge variant="outline" className="ml-2">
+                      {source.status}
+                    </Badge>
+                    <p className="text-sm mt-2">{source.detail}</p>
+                  </div>
                 ))}
+                <a
+                  className="source-link"
+                  href="https://www.mas.gov.sg/monetary-policy/sora"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  MAS · SORA benchmark <ArrowUpRight size={14} />
+                </a>
               </div>
             </div>
           </section>
@@ -853,7 +901,7 @@ export default function App() {
                         {h.offer.bank} · {h.offer.name}
                       </h3>
                       <p>
-                        Previous observation: {h.offer.stages[0].rate.toFixed(2)}% ·{' '}
+                        Previous observation: {stageDisplay(h.offer.stages[0])} ·{' '}
                         {date(h.offer.observedAt)}
                       </p>
                       <p>
@@ -936,14 +984,14 @@ export default function App() {
                       <tr key={label}>
                         <th>{label}</th>
                         {comparison.map((o) => {
-                          const p = payment(Number(principal), o.stages[0].rate, Number(years));
+                          const p = offerPayment(o, Number(principal), Number(years));
                           const below = o.minLoan !== null && Number(principal) < o.minLoan;
                           return (
                             <td key={o.id}>
                               {label === 'Property'
                                 ? `${o.property} · ${o.construction}`
                                 : label === 'Initial rate'
-                                  ? `${o.stages[0].rate.toFixed(2)}%`
+                                  ? stageDisplay(o.stages[0])
                                   : label === 'Formula'
                                     ? o.stages[0].formula
                                     : label === 'Commitment'
@@ -957,11 +1005,13 @@ export default function App() {
                                         : label === 'Monthly estimate'
                                           ? below
                                             ? 'Below minimum loan'
-                                            : o.construction === 'Under construction'
-                                              ? 'Progressive drawdown; check source'
-                                              : validCalc && p !== null
-                                                ? money(p)
-                                                : 'Check calculator inputs'
+                                            : o.stages[0].rate === null
+                                              ? 'Not calculated: benchmark fixing required'
+                                              : o.construction === 'Under construction'
+                                                ? 'Progressive drawdown; check source'
+                                                : validCalc && p !== null
+                                                  ? money(p)
+                                                  : 'Check calculator inputs'
                                           : `${date(o.observedAt)}${isStale(o) ? ' · stale' : ''}`}
                             </td>
                           );

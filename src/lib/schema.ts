@@ -7,22 +7,48 @@ const day = z
     (v) => !Number.isNaN(Date.parse(v)) && new Date(v).toISOString().startsWith(v),
     'Invalid date',
   );
-export const sourceIds = ['dbs-hdb', 'dbs-green', 'hdb'] as const;
+export const sourceIds = ['dbs-hdb', 'dbs-green', 'hdb', 'maybank', 'sc-sora'] as const;
+export const banks = ['DBS', 'HDB', 'Maybank', 'Standard Chartered'] as const;
 export const SourceId = z.enum(sourceIds);
+export function soraFormula(tenor: '1M' | '3M', spread: number) {
+  const exact = spread === Number(spread.toFixed(2)) ? spread.toFixed(2) : String(spread);
+  return `${tenor} Compounded SORA + ${exact}%`;
+}
 export const StageSchema = z
   .object({
     label: z.string().min(1).max(80),
-    rate: z.number().min(0).max(30),
+    rate: z.number().min(0).max(30).nullable(),
     formula: z.string().max(120),
+    benchmark: z
+      .object({
+        name: z.literal('SORA'),
+        tenor: z.enum(['1M', '3M']),
+        spread: z.number().min(0).max(30),
+      })
+      .strict()
+      .optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((stage, ctx) => {
+    // A spread is not an all-in rate. No benchmark fixing is collected yet.
+    if ((stage.rate === null) !== Boolean(stage.benchmark))
+      ctx.addIssue({
+        code: 'custom',
+        message: 'SORA formulas require a null all-in rate and a benchmark',
+      });
+    if (
+      stage.benchmark &&
+      stage.formula !== soraFormula(stage.benchmark.tenor, stage.benchmark.spread)
+    )
+      ctx.addIssue({ code: 'custom', message: 'Benchmark formula mismatch' });
+  });
 export const OfferSchema = z
   .object({
     id: z.string().regex(/^[a-z0-9-]{1,80}$/),
     sourceId: SourceId,
-    bank: z.enum(['DBS', 'HDB']),
+    bank: z.enum(banks),
     name: z.string().min(1).max(120),
-    property: z.enum(['HDB', 'Private']),
+    property: z.enum(['HDB', 'Private', 'HDB / Private']),
     purpose: z.array(z.enum(['Purchase', 'Refinance'])).min(1),
     construction: z.enum(['Completed', 'Under construction', 'Any']),
     kind: z.enum(['Fixed', 'Floating', 'Concessionary']),
@@ -32,6 +58,7 @@ export const OfferSchema = z
     terms: z.string().min(1).max(2000),
     observedAt: date,
     effectiveUntil: day.optional(),
+    effectiveFrom: day.optional(),
     method: z.enum(['collector', 'browser', 'reviewed', 'imported']),
   })
   .strict();
@@ -89,6 +116,40 @@ export const SOURCES = [
     id: 'hdb',
     name: 'HDB · Concessionary loan',
     url: 'https://www.hdb.gov.sg/managing-my-home/finances/loan-matters/interest-rate',
+  },
+  {
+    id: 'maybank',
+    name: 'Maybank · Published home loan packages',
+    url: 'https://www.maybank2u.com.sg/en/rates/rates-sora.page',
+  },
+  {
+    id: 'sc-sora',
+    name: 'Standard Chartered · Published SORA package',
+    url: 'https://www.sc.com/sg/borrow/mortgages/sora/',
+  },
+] as const;
+// Research links are not collected products and never enter numeric rankings.
+export const REFERENCE_SOURCES = [
+  {
+    name: 'OCBC · Home loans',
+    url: 'https://www.ocbc.com/personal-banking/ls_personal/loans/new-purchase-of-hdb-private-property',
+    status: 'Quote required',
+    detail:
+      'Fixed and SORA options are described, but the reviewed page has no complete numerical rate schedule. Ask the bank for a quote.',
+  },
+  {
+    name: 'UOB · Private home loan',
+    url: 'https://www.uob.com.sg/personal/borrow/property-loans/private-home-loan.page',
+    status: 'Quote required',
+    detail:
+      'The reviewed page directs fixed-rate and combination-package enquiries to a mortgage specialist. No numerical quote is included here.',
+  },
+  {
+    name: 'Citi · Published pricing PDF',
+    url: 'https://www.citibank.com.sg/global_docs/pdf/Pricing-Packages.pdf',
+    status: 'Document review required',
+    detail:
+      'The PDF has dated pricing, customer-tier and loan-size conditions. Not automatically extracted; check the current document with Citi.',
   },
 ] as const;
 export function sourceFor(id: Offer['sourceId']) {
