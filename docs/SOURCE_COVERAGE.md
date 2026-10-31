@@ -1,3 +1,5 @@
+> Coverage expanded after PR #2: see [retrieval investigation](RETRIEVAL.md) for UOB/Citi extraction and failure recovery. The initial research and validation record below is retained for provenance.
+
 # Official source expansion — 31 October 2026
 
 ## Investigation

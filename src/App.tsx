@@ -378,7 +378,7 @@ export default function App() {
             <span>Source coverage</span>
             <strong>
               {SOURCES.length.toString().padStart(2, '0')}
-              <small>official pages monitored</small>
+              <small>official sources monitored</small>
             </strong>
           </div>
           <div>
@@ -650,6 +650,30 @@ export default function App() {
                           Manually reviewed snapshot. Automated refresh is not guaranteed.
                         </p>
                       )}
+                      {o.customerTier && (
+                        <div className="text-sm mt-3 space-y-1">
+                          <p>
+                            Customer tier: <strong>{o.customerTier}</strong>
+                            {o.minRelationshipBalance !== undefined &&
+                              ` · relationship balance at least ${money(o.minRelationshipBalance)}`}
+                          </p>
+                          <p>
+                            Loan band: {money(o.minLoan!)}
+                            {o.maxLoanExclusive
+                              ? ` to below ${money(o.maxLoanExclusive)}`
+                              : ' and above'}
+                            .
+                          </p>
+                          <p>
+                            SORA effective-rate floor: {o.rateFloor?.toFixed(2)}%. Property type and
+                            loan purpose: confirm with lender.
+                          </p>
+                          <p>
+                            Document printed: {o.documentDate && date(o.documentDate)} · separate
+                            from observation date.
+                          </p>
+                        </div>
+                      )}
                       {o.effectiveFrom && (
                         <p className="text-sm mt-3">
                           Source terms effective from {date(o.effectiveFrom)}. Confirm current
@@ -717,9 +741,9 @@ export default function App() {
                 </div>
               )}
               <p className="coverage-note">
-                Selected published packages from DBS, Maybank, Standard Chartered and HDB.
-                Formula-only packages appear after numerical rates in both rate sorts; a spread is
-                not an all-in rate. These public schedules may differ from personalised offers.
+                Selected published packages from DBS, Maybank, Standard Chartered, UOB, Citi and
+                HDB. Formula-only packages appear after numerical rates in both rate sorts; a spread
+                is not an all-in rate. These public schedules may differ from personalised offers.
                 Missing lenders or packages do not mean they are unavailable. See Sources for
                 quote-only options.
               </p>
@@ -879,11 +903,13 @@ export default function App() {
                       <p className="text-sm mt-2">{status?.message}</p>
                       <p className="text-sm mt-3">
                         Browser direct check:{' '}
-                        {browserStatus?.status === 'ok'
-                          ? 'Successful'
-                          : browserStatus
-                            ? 'Unavailable · does not change collector status'
-                            : 'Not recorded'}
+                        {'collectorOnly' in s
+                          ? 'Snapshot only · PDF processed by collector'
+                          : browserStatus?.status === 'ok'
+                            ? 'Successful'
+                            : browserStatus
+                              ? 'Unavailable · does not change collector status'
+                              : 'Not recorded'}
                       </p>
                       <p className="text-xs mt-2">
                         Last browser attempt: {timestamp(browserStatus?.attemptedAt)}
@@ -891,6 +917,13 @@ export default function App() {
                       <p className="text-xs mt-2">
                         Last successful browser extraction: {timestamp(browserStatus?.successAt)}
                       </p>
+                      {status?.failureKind && (
+                        <p className="text-xs mt-2">
+                          Failure category: {status.failureKind}
+                          {status.httpStatus ? ` (HTTP ${status.httpStatus})` : ''} ·{' '}
+                          {status.attempts ?? 1} attempt(s). Previous observations retained.
+                        </p>
+                      )}
                       {s.id === 'maybank' && (
                         <p className="text-sm mt-3">
                           Experimental automatic collection. Reviewed snapshots remain available
@@ -1051,6 +1084,9 @@ export default function App() {
                       'Formula',
                       'Commitment',
                       'Minimum loan',
+                      'Maximum loan',
+                      'Customer conditions',
+                      'SORA rate floor',
                       'Monthly estimate',
                       'Observed',
                     ].map((label) => (
@@ -1075,17 +1111,32 @@ export default function App() {
                                         ? o.minLoan === null
                                           ? 'Check source'
                                           : money(o.minLoan)
-                                        : label === 'Monthly estimate'
-                                          ? below
-                                            ? 'Below minimum loan'
-                                            : o.stages[0].rate === null
-                                              ? 'Not calculated: benchmark fixing required'
-                                              : o.construction === 'Under construction'
-                                                ? 'Progressive drawdown; check source'
-                                                : validCalc && p !== null
-                                                  ? money(p)
-                                                  : 'Check calculator inputs'
-                                          : `${date(o.observedAt)}${isStale(o) ? ' · stale' : ''}`}
+                                        : label === 'Maximum loan'
+                                          ? o.maxLoanExclusive
+                                            ? `Below ${money(o.maxLoanExclusive)}`
+                                            : 'No upper band extracted'
+                                          : label === 'Customer conditions'
+                                            ? o.customerTier
+                                              ? `${o.customerTier}${o.minRelationshipBalance ? ` · relationship balance ≥ ${money(o.minRelationshipBalance)}` : ''}`
+                                              : 'See source terms'
+                                            : label === 'SORA rate floor'
+                                              ? o.rateFloor !== undefined
+                                                ? `${o.rateFloor.toFixed(2)}%`
+                                                : 'Not extracted'
+                                              : label === 'Monthly estimate'
+                                                ? below
+                                                  ? 'Below minimum loan'
+                                                  : o.maxLoanExclusive &&
+                                                      Number(principal) >= o.maxLoanExclusive
+                                                    ? 'Outside loan amount band'
+                                                    : o.stages[0].rate === null
+                                                      ? 'Not calculated: benchmark fixing required'
+                                                      : o.construction === 'Under construction'
+                                                        ? 'Progressive drawdown; check source'
+                                                        : validCalc && p !== null
+                                                          ? money(p)
+                                                          : 'Check calculator inputs'
+                                                : `${date(o.observedAt)}${isStale(o) ? ' · stale' : ''}`}
                             </td>
                           );
                         })}

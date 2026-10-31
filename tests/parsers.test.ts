@@ -67,7 +67,11 @@ describe('source-specific extraction', () => {
       }),
       '2026-11-01T00:00:00.000Z',
     );
-    expect(result.sources.map((s) => s.status)).toEqual(['ok', 'ok', 'error', 'error', 'error']);
+    expect(result.sources.map((s) => s.status)).toEqual([
+      'ok',
+      'ok',
+      ...SOURCES.slice(2).map(() => 'error'),
+    ]);
     expect(result.offers[0].observedAt).toBe(previous.offers[0].observedAt);
     expect(result.offers[1].observedAt).toContain('2026-11-01');
   });
@@ -155,6 +159,8 @@ describe('expanded official schedules', () => {
         return new Response('unavailable', { status: 503 });
       }),
       '2026-11-01T00:00:00.000Z',
+      SOURCES.map((s) => s.id),
+      async () => {},
     );
     expect(result.offers.filter((o) => o.sourceId === 'maybank')).toEqual(
       previous.offers.filter((o) => o.sourceId === 'maybank'),
