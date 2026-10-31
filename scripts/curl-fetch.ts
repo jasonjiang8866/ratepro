@@ -17,6 +17,7 @@ export const curlFetch: typeof fetch = async (input, init) => {
     execFile(
       'curl',
       [
+        ...(url.includes('maybank2u.com.sg') ? ['--http1.1'] : []),
         '--silent',
         '--show-error',
         '--max-time',

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-31T08:48:04.764Z",
+  "generatedAt": "2026-10-31T11:24:53.163Z",
   "offers": [
     {
       "id": "hdb-concessionary",
@@ -8,7 +8,9 @@
       "bank": "HDB",
       "name": "HDB concessionary loan",
       "property": "HDB",
-      "purpose": ["Purchase"],
+      "purpose": [
+        "Purchase"
+      ],
       "construction": "Any",
       "kind": "Concessionary",
       "stages": [
@@ -31,7 +33,10 @@
       "bank": "DBS",
       "name": "3-Year CPF-OA HDB Loan",
       "property": "HDB",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Completed",
       "kind": "Floating",
       "stages": [
@@ -54,7 +59,7 @@
       "lockYears": 3,
       "minLoan": 100000,
       "terms": "CPF-OA-linked variable rate, not a fixed rate. 75% LTV: 25 years max loan tenor (provided borrower age + tenure ≤ 65 years old) 55% LTV: 30 years max loan tenor (provided borrower age + tenure > 65 years old). Confirm eligibility, fees and available package with DBS.",
-      "observedAt": "2026-10-31T08:48:04.764Z",
+      "observedAt": "2026-10-31T11:21:14.275Z",
       "method": "collector"
     },
     {
@@ -63,7 +68,9 @@
       "bank": "DBS",
       "name": "Green Home Loan · FHR6",
       "property": "Private",
-      "purpose": ["Purchase"],
+      "purpose": [
+        "Purchase"
+      ],
       "construction": "Under construction",
       "kind": "Floating",
       "stages": [
@@ -81,7 +88,7 @@
       "lockYears": null,
       "minLoan": 1000000,
       "terms": "For eligible green properties under construction. FHR6 is a bank reference rate and may change. Conversion features, green certification, fees and eligibility require confirmation with DBS. Lock-in not extracted.",
-      "observedAt": "2026-10-31T08:48:04.764Z",
+      "observedAt": "2026-10-31T11:21:14.275Z",
       "method": "collector"
     },
     {
@@ -90,7 +97,10 @@
       "bank": "Standard Chartered",
       "name": "3M SORA · published package",
       "property": "HDB / Private",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Any",
       "kind": "Floating",
       "stages": [
@@ -138,7 +148,7 @@
       "lockYears": 2,
       "minLoan": 100000,
       "terms": "The source states this schedule is valid from 27 February 2021; a recent observation does not mean a new promotion. Confirm current availability with Standard Chartered. Applies to completed or under-construction HDB/private homes for purchase or refinancing. SORA plus spread is a formula, not an all-in quote. Fees and subsidies are not extracted.",
-      "observedAt": "2026-10-31T08:48:04.764Z",
+      "observedAt": "2026-10-31T11:21:14.275Z",
       "effectiveFrom": "2021-02-27",
       "method": "collector"
     },
@@ -148,7 +158,10 @@
       "bank": "Maybank",
       "name": "2-year fixed · completed property",
       "property": "HDB / Private",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Completed",
       "kind": "Fixed",
       "stages": [
@@ -185,7 +198,10 @@
       "bank": "Maybank",
       "name": "3-year fixed · completed property",
       "property": "HDB / Private",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Completed",
       "kind": "Fixed",
       "stages": [
@@ -227,7 +243,10 @@
       "bank": "Maybank",
       "name": "1M SORA · completed property",
       "property": "HDB / Private",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Completed",
       "kind": "Floating",
       "stages": [
@@ -274,7 +293,10 @@
       "bank": "Maybank",
       "name": "3M SORA · completed property",
       "property": "HDB / Private",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Completed",
       "kind": "Floating",
       "stages": [
@@ -304,41 +326,374 @@
       "terms": "Published indicative package for completed Singapore residential property; confirm property eligibility with Maybank. Minimum tenure 5 years. SORA stages show the bank spread, not an all-in rate; the applicable fixing depends on drawdown or reset date. Fees, subsidies and approval require confirmation.",
       "observedAt": "2026-10-31T08:35:44.853Z",
       "method": "reviewed"
+    },
+    {
+      "id": "uob-sora-3m",
+      "sourceId": "uob-sora",
+      "bank": "UOB",
+      "name": "3M SORA · new direct-to-bank customers",
+      "property": "HDB / Private",
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
+      "construction": "Completed",
+      "kind": "Floating",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": null,
+          "formula": "3M Compounded SORA + 0.70%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 0.7
+          }
+        },
+        {
+          "label": "Year 2",
+          "rate": null,
+          "formula": "3M Compounded SORA + 0.70%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 0.7
+          }
+        },
+        {
+          "label": "Year 3",
+          "rate": null,
+          "formula": "3M Compounded SORA + 0.80%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 0.8
+          }
+        },
+        {
+          "label": "Year 4 and thereafter",
+          "rate": null,
+          "formula": "3M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 1
+          }
+        }
+      ],
+      "lockYears": 2,
+      "minLoan": 250000,
+      "terms": "Limited promotional tranche for new direct-to-bank customers, completed residential property, purchase or refinancing from another bank/HDB. Fixed-rate packages require a separate quote. Confirm availability and eligibility in the Letter of Offer; prepayment, sale and conversion concessions have conditions. SORA fixing is not collected.",
+      "observedAt": "2026-10-31T11:24:09.325Z",
+      "method": "collector"
+    },
+    {
+      "id": "citi-citigold-sora-large",
+      "sourceId": "citi",
+      "bank": "Citi",
+      "name": "Citigold · 1M SORA · upper loan band",
+      "property": "Confirm with lender",
+      "purpose": [
+        "Confirm with lender"
+      ],
+      "construction": "Completed",
+      "kind": "Floating",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.45%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.45
+          }
+        },
+        {
+          "label": "Year 2",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.45%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.45
+          }
+        },
+        {
+          "label": "Year 3",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.60%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.6
+          }
+        },
+        {
+          "label": "Year 4 onwards",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.85%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.85
+          }
+        }
+      ],
+      "lockYears": 2,
+      "minLoan": 1000000,
+      "customerTier": "Citigold",
+      "minRelationshipBalance": 250000,
+      "rateFloor": 0.85,
+      "documentDate": "2026-09-30",
+      "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
+      "observedAt": "2026-10-31T11:24:09.325Z",
+      "method": "collector"
+    },
+    {
+      "id": "citi-citigold-sora-small",
+      "sourceId": "citi",
+      "bank": "Citi",
+      "name": "Citigold · 1M SORA · lower loan band",
+      "property": "Confirm with lender",
+      "purpose": [
+        "Confirm with lender"
+      ],
+      "construction": "Completed",
+      "kind": "Floating",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.55%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.55
+          }
+        },
+        {
+          "label": "Year 2",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.55%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.55
+          }
+        },
+        {
+          "label": "Year 3",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.70%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.7
+          }
+        },
+        {
+          "label": "Year 4 onwards",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.85%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.85
+          }
+        }
+      ],
+      "lockYears": 2,
+      "minLoan": 100000,
+      "maxLoanExclusive": 1000000,
+      "customerTier": "Citigold",
+      "minRelationshipBalance": 250000,
+      "rateFloor": 0.85,
+      "documentDate": "2026-09-30",
+      "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
+      "observedAt": "2026-10-31T11:24:09.325Z",
+      "method": "collector"
+    },
+    {
+      "id": "citi-citibanking-sora-large",
+      "sourceId": "citi",
+      "bank": "Citi",
+      "name": "Citibanking · 1M SORA · upper loan band",
+      "property": "Confirm with lender",
+      "purpose": [
+        "Confirm with lender"
+      ],
+      "construction": "Completed",
+      "kind": "Floating",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.95%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.95
+          }
+        },
+        {
+          "label": "Year 2",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.95%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.95
+          }
+        },
+        {
+          "label": "Year 3",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        },
+        {
+          "label": "Year 4 onwards",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        }
+      ],
+      "lockYears": 2,
+      "minLoan": 1000000,
+      "customerTier": "Citibanking",
+      "rateFloor": 0.85,
+      "documentDate": "2026-09-30",
+      "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
+      "observedAt": "2026-10-31T11:24:09.325Z",
+      "method": "collector"
+    },
+    {
+      "id": "citi-citibanking-sora-small",
+      "sourceId": "citi",
+      "bank": "Citi",
+      "name": "Citibanking · 1M SORA · lower loan band",
+      "property": "Confirm with lender",
+      "purpose": [
+        "Confirm with lender"
+      ],
+      "construction": "Completed",
+      "kind": "Floating",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        },
+        {
+          "label": "Year 2",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        },
+        {
+          "label": "Year 3",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        },
+        {
+          "label": "Year 4 onwards",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        }
+      ],
+      "lockYears": 2,
+      "minLoan": 100000,
+      "maxLoanExclusive": 1000000,
+      "customerTier": "Citibanking",
+      "rateFloor": 0.85,
+      "documentDate": "2026-09-30",
+      "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
+      "observedAt": "2026-10-31T11:24:09.325Z",
+      "method": "collector"
     }
   ],
   "sources": [
     {
       "sourceId": "dbs-hdb",
-      "attemptedAt": "2026-10-31T08:48:04.764Z",
-      "successAt": "2026-10-31T08:48:04.764Z",
+      "attemptedAt": "2026-10-31T11:21:14.275Z",
+      "successAt": "2026-10-31T11:21:14.275Z",
       "status": "ok",
-      "message": "Collected from official public page"
+      "message": "Collected from official public page",
+      "attempts": 1
     },
     {
       "sourceId": "dbs-green",
-      "attemptedAt": "2026-10-31T08:48:04.764Z",
-      "successAt": "2026-10-31T08:48:04.764Z",
+      "attemptedAt": "2026-10-31T11:21:14.275Z",
+      "successAt": "2026-10-31T11:21:14.275Z",
       "status": "ok",
-      "message": "Collected from official public page"
+      "message": "Collected from official public page",
+      "attempts": 1
+    },
+    {
+      "sourceId": "sc-sora",
+      "attemptedAt": "2026-10-31T11:21:14.275Z",
+      "successAt": "2026-10-31T11:21:14.275Z",
+      "status": "ok",
+      "message": "Collected from official public page",
+      "attempts": 1
+    },
+    {
+      "sourceId": "uob-sora",
+      "attemptedAt": "2026-10-31T11:24:09.325Z",
+      "successAt": "2026-10-31T11:24:09.325Z",
+      "status": "ok",
+      "message": "Collected from official public page",
+      "attempts": 1
+    },
+    {
+      "sourceId": "citi",
+      "attemptedAt": "2026-10-31T11:24:09.325Z",
+      "successAt": "2026-10-31T11:24:09.325Z",
+      "status": "ok",
+      "message": "Collected from official public page",
+      "attempts": 1
+    },
+    {
+      "sourceId": "maybank",
+      "attemptedAt": "2026-10-31T11:24:01.900Z",
+      "status": "error",
+      "message": "Collection failed; last observation retained. curl transport failed (exit 92)",
+      "failureKind": "response",
+      "attempts": 1
     },
     {
       "sourceId": "hdb",
       "attemptedAt": "2026-10-31T08:48:04.764Z",
       "status": "error",
       "message": "Collection failed; last observation retained. HTTP 403"
-    },
-    {
-      "sourceId": "maybank",
-      "attemptedAt": "2026-10-31T08:48:04.764Z",
-      "status": "error",
-      "message": "Collection failed; last observation retained. The operation was aborted due to timeout"
-    },
-    {
-      "sourceId": "sc-sora",
-      "attemptedAt": "2026-10-31T08:48:04.764Z",
-      "successAt": "2026-10-31T08:48:04.764Z",
-      "status": "ok",
-      "message": "Collected from official public page"
     }
   ]
 }
