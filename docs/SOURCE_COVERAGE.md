@@ -34,8 +34,9 @@ with the lender. Public indicative schedules can differ from personalised quotes
   malformed rates and HTTP failures preserve the source's entire prior data.
 - OCBC/UOB quote links and the Citi document are not rate records, are not in
   rankings, and do not count as automatically monitored sources.
-- All reads are bounded unauthenticated GETs to explicit official URLs. Existing
-  timeouts, response-size caps and redirect rejection remain in place. No access
+- All reads are bounded unauthenticated GETs to explicit official URLs. The default 12-second timeout, response-size cap and redirect rejection remain.
+  Maybank alone has a bounded 30-second collector timeout; browser requests
+  retain the 12-second limit. No access
   controls, CORS restrictions or blocked-source responses are bypassed.
 
 ## Fixtures and verification
@@ -64,4 +65,31 @@ workflow has read-only repository permission, saves an observation artifact and
 requires both newly integrated sources to succeed. Its network-dependent result
 is separate from deterministic frontend tests.
 
-Live GitHub Actions and preview validation results will be recorded with the PR.
+### Live results and unresolved source availability
+
+- [First integration run](https://github.com/jasonjiang8866/ratepro/actions/runs/41185914243):
+  SC and DBS succeeded; HDB returned 403; Maybank timed out at 12 seconds.
+- [Follow-up integration run](https://github.com/jasonjiang8866/ratepro/actions/runs/41186050280):
+  Maybank still timed out with the bounded 30-second collector limit. SC and DBS
+  succeeded again. The live-source check is intentionally still failing; this
+  source is not claimed to be operationally reliable.
+- The checked-in SC/DBS observations come from that second run. HDB retains its
+  original reviewed observation. Four Maybank offers are explicitly marked
+  `method: reviewed`, based on the earlier successful direct HTML download at
+  `2026-10-31T08:35:44.853Z`, not the failed job's timestamp. The latest Maybank
+  source status remains an error, with no invented successful extraction time.
+  SHA-256 of the original downloaded HTML:
+  `1e00d0348d02c8c7829435b3676dbf13fe52e856f00af3f994469b092eae5ec3`.
+- The resulting snapshot contains eight observations from four lenders. Formula
+  and fixed-period values match the reviewed official table excerpts. Further
+  source failures retain this snapshot with its real observation dates.
+- [Frontend CI](https://github.com/jasonjiang8866/ratepro/actions/runs/41186050356)
+  passed 40 tests and the production build. Cloudflare also deployed the initial
+  feature preview; this is not a production deployment.
+- Browser interaction on the feature preview confirmed the SC formula and source
+  effective date, and a DBS/SC comparison showed a numerical DBS estimate while
+  SC displayed “Not calculated: benchmark fixing required”.
+
+PR #1 remains a draft because Maybank automatic retrieval is unresolved. The
+source-specific integration failure must remain visible; it is not converted
+into a passing check merely because a reviewed snapshot can be displayed.

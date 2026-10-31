@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-31T08:40:35.311Z",
+  "generatedAt": "2026-10-31T08:48:04.764Z",
   "offers": [
     {
       "id": "hdb-concessionary",
@@ -54,7 +54,7 @@
       "lockYears": 3,
       "minLoan": 100000,
       "terms": "CPF-OA-linked variable rate, not a fixed rate. 75% LTV: 25 years max loan tenor (provided borrower age + tenure ≤ 65 years old) 55% LTV: 30 years max loan tenor (provided borrower age + tenure > 65 years old). Confirm eligibility, fees and available package with DBS.",
-      "observedAt": "2026-10-31T08:40:35.311Z",
+      "observedAt": "2026-10-31T08:48:04.764Z",
       "method": "collector"
     },
     {
@@ -81,7 +81,7 @@
       "lockYears": null,
       "minLoan": 1000000,
       "terms": "For eligible green properties under construction. FHR6 is a bank reference rate and may change. Conversion features, green certification, fees and eligibility require confirmation with DBS. Lock-in not extracted.",
-      "observedAt": "2026-10-31T08:40:35.311Z",
+      "observedAt": "2026-10-31T08:48:04.764Z",
       "method": "collector"
     },
     {
@@ -138,42 +138,205 @@
       "lockYears": 2,
       "minLoan": 100000,
       "terms": "The source states this schedule is valid from 27 February 2021; a recent observation does not mean a new promotion. Confirm current availability with Standard Chartered. Applies to completed or under-construction HDB/private homes for purchase or refinancing. SORA plus spread is a formula, not an all-in quote. Fees and subsidies are not extracted.",
-      "observedAt": "2026-10-31T08:40:35.311Z",
+      "observedAt": "2026-10-31T08:48:04.764Z",
       "effectiveFrom": "2021-02-27",
       "method": "collector"
+    },
+    {
+      "id": "maybank-fixed-2y",
+      "sourceId": "maybank",
+      "bank": "Maybank",
+      "name": "2-year fixed · completed property",
+      "property": "HDB / Private",
+      "purpose": ["Purchase", "Refinance"],
+      "construction": "Completed",
+      "kind": "Fixed",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": 3.3,
+          "formula": "Fixed"
+        },
+        {
+          "label": "Year 2",
+          "rate": 3.3,
+          "formula": "Fixed"
+        },
+        {
+          "label": "Thereafter",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        }
+      ],
+      "lockYears": 2,
+      "minLoan": 100000,
+      "terms": "Published indicative package for completed Singapore residential property; confirm property eligibility with Maybank. Minimum tenure 5 years. SORA stages show the bank spread, not an all-in rate; the applicable fixing depends on drawdown or reset date. Fees, subsidies and approval require confirmation.",
+      "observedAt": "2026-10-31T08:35:44.853Z",
+      "method": "reviewed"
+    },
+    {
+      "id": "maybank-fixed-3y",
+      "sourceId": "maybank",
+      "bank": "Maybank",
+      "name": "3-year fixed · completed property",
+      "property": "HDB / Private",
+      "purpose": ["Purchase", "Refinance"],
+      "construction": "Completed",
+      "kind": "Fixed",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": 3.75,
+          "formula": "Fixed"
+        },
+        {
+          "label": "Year 2",
+          "rate": 3.75,
+          "formula": "Fixed"
+        },
+        {
+          "label": "Year 3",
+          "rate": 3.75,
+          "formula": "Fixed"
+        },
+        {
+          "label": "Thereafter",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        }
+      ],
+      "lockYears": 3,
+      "minLoan": 100000,
+      "terms": "Published indicative package for completed Singapore residential property; confirm property eligibility with Maybank. Minimum tenure 5 years. SORA stages show the bank spread, not an all-in rate; the applicable fixing depends on drawdown or reset date. Fees, subsidies and approval require confirmation.",
+      "observedAt": "2026-10-31T08:35:44.853Z",
+      "method": "reviewed"
+    },
+    {
+      "id": "maybank-sora-1m",
+      "sourceId": "maybank",
+      "bank": "Maybank",
+      "name": "1M SORA · completed property",
+      "property": "HDB / Private",
+      "purpose": ["Purchase", "Refinance"],
+      "construction": "Completed",
+      "kind": "Floating",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.80%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.8
+          }
+        },
+        {
+          "label": "Year 2",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.80%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.8
+          }
+        },
+        {
+          "label": "Thereafter",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        }
+      ],
+      "lockYears": 2,
+      "minLoan": 100000,
+      "terms": "Published indicative package for completed Singapore residential property; confirm property eligibility with Maybank. Minimum tenure 5 years. SORA stages show the bank spread, not an all-in rate; the applicable fixing depends on drawdown or reset date. Fees, subsidies and approval require confirmation.",
+      "observedAt": "2026-10-31T08:35:44.853Z",
+      "method": "reviewed"
+    },
+    {
+      "id": "maybank-sora-3m",
+      "sourceId": "maybank",
+      "bank": "Maybank",
+      "name": "3M SORA · completed property",
+      "property": "HDB / Private",
+      "purpose": ["Purchase", "Refinance"],
+      "construction": "Completed",
+      "kind": "Floating",
+      "stages": [
+        {
+          "label": "Year 1 to Year 3",
+          "rate": null,
+          "formula": "3M Compounded SORA + 0.70%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 0.7
+          }
+        },
+        {
+          "label": "Thereafter",
+          "rate": null,
+          "formula": "3M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 1
+          }
+        }
+      ],
+      "lockYears": 2,
+      "minLoan": 100000,
+      "terms": "Published indicative package for completed Singapore residential property; confirm property eligibility with Maybank. Minimum tenure 5 years. SORA stages show the bank spread, not an all-in rate; the applicable fixing depends on drawdown or reset date. Fees, subsidies and approval require confirmation.",
+      "observedAt": "2026-10-31T08:35:44.853Z",
+      "method": "reviewed"
     }
   ],
   "sources": [
     {
       "sourceId": "dbs-hdb",
-      "attemptedAt": "2026-10-31T08:40:35.311Z",
-      "successAt": "2026-10-31T08:40:35.311Z",
+      "attemptedAt": "2026-10-31T08:48:04.764Z",
+      "successAt": "2026-10-31T08:48:04.764Z",
       "status": "ok",
       "message": "Collected from official public page"
     },
     {
       "sourceId": "dbs-green",
-      "attemptedAt": "2026-10-31T08:40:35.311Z",
-      "successAt": "2026-10-31T08:40:35.311Z",
+      "attemptedAt": "2026-10-31T08:48:04.764Z",
+      "successAt": "2026-10-31T08:48:04.764Z",
       "status": "ok",
       "message": "Collected from official public page"
     },
     {
       "sourceId": "hdb",
-      "attemptedAt": "2026-10-31T08:40:35.311Z",
+      "attemptedAt": "2026-10-31T08:48:04.764Z",
       "status": "error",
       "message": "Collection failed; last observation retained. HTTP 403"
     },
     {
       "sourceId": "maybank",
-      "attemptedAt": "2026-10-31T08:40:35.311Z",
+      "attemptedAt": "2026-10-31T08:48:04.764Z",
       "status": "error",
-      "message": "Collection failed; last observation retained. HTTP 500"
+      "message": "Collection failed; last observation retained. The operation was aborted due to timeout"
     },
     {
       "sourceId": "sc-sora",
-      "attemptedAt": "2026-10-31T08:40:35.311Z",
-      "successAt": "2026-10-31T08:40:35.311Z",
+      "attemptedAt": "2026-10-31T08:48:04.764Z",
+      "successAt": "2026-10-31T08:48:04.764Z",
       "status": "ok",
       "message": "Collected from official public page"
     }

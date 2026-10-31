@@ -38,14 +38,14 @@ The scheduled collector requires GitHub Actions to be enabled and repository rul
 
 ### Current source coverage
 
-| Source             | Supported observations              | Coverage                                                                             |
-| ------------------ | ----------------------------------- | ------------------------------------------------------------------------------------ |
-| DBS HDB / Green    | CPF-OA and FHR6 stage schedules     | Two public products                                                                  |
-| HDB                | Concessionary quarter               | Reviewed snapshot retained when the live page returns 403                            |
-| Maybank            | 2-year / 3-year fixed, 1M / 3M SORA | Four completed-property packages; BUC packages deliberately excluded in this version |
-| Standard Chartered | Published 3M SORA schedule          | Formula only; source effective date is displayed separately                          |
-| OCBC / UOB         | Official research links             | Quote required; no guessed rate records                                              |
-| Citi               | Official pricing PDF link           | Needs document-version and customer-tier review before automated extraction          |
+| Source             | Supported observations              | Coverage                                                                                          |
+| ------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------- |
+| DBS HDB / Green    | CPF-OA and FHR6 stage schedules     | Two public products                                                                               |
+| HDB                | Concessionary quarter               | Reviewed snapshot retained when the live page returns 403                                         |
+| Maybank            | 2-year / 3-year fixed, 1M / 3M SORA | Four reviewed completed-property snapshots; automatic retrieval currently times out; BUC excluded |
+| Standard Chartered | Published 3M SORA schedule          | Formula only; source effective date is displayed separately                                       |
+| OCBC / UOB         | Official research links             | Quote required; no guessed rate records                                                           |
+| Citi               | Official pricing PDF link           | Needs document-version and customer-tier review before automated extraction                       |
 
 See [source investigation and validation](docs/SOURCE_COVERAGE.md) for URLs,
 fixture provenance, known limitations and live retrieval results.
@@ -72,7 +72,7 @@ Sources can change page structure, stop publishing a package, block automation, 
 3. Add small representative fixtures plus malformed-page and rate-change tests. Check usage terms and extraction feasibility for the source before enabling it.
 4. Run `npm run verify:sources` for a read-only live check, then `npm run collect` to update a local snapshot. Review JSON against the original page before publishing. The separate official-source CI job records live observations without pushing or deploying.
 
-The collector issues one request per source sequentially, with a 12-second timeout and a 2 MB response cap. Partial failures retain previous observations; total failure exits nonzero so CI does not publish it. DOM parsing does not execute fetched scripts or render external HTML. Requests omit credentials and reject redirects. No third-party proxy or API key is present.
+The collector issues one request per source sequentially, with a 12-second default timeout (30 seconds for Maybank in the scheduled collector) and a 2 MB response cap. Partial failures retain previous observations; total failure exits nonzero so CI does not publish it. DOM parsing does not execute fetched scripts or render external HTML. Requests omit credentials and reject redirects. No third-party proxy or API key is present.
 
 ## Deploy directly to Cloudflare Pages
 
