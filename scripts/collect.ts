@@ -44,7 +44,7 @@ export async function collect(
     try {
       const bytes = await retrieve(
         source.url,
-        source.id === 'maybank' && fetcher === fetch ? curlFetch : fetcher,
+        ['maybank', 'uob-sora'].includes(source.id) && fetcher === fetch ? curlFetch : fetcher,
         'collectionTimeoutMs' in source ? source.collectionTimeoutMs : 12000,
         (n) => {
           attempts = n;

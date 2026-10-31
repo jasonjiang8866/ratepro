@@ -6,7 +6,12 @@ import { RetrievalError } from '../src/lib/sync';
 // returned its generic CMS 500 page. No proxy, cookie, custom UA or TLS override.
 export const curlFetch: typeof fetch = async (input, init) => {
   const url = String(input);
-  if (url !== 'https://www.maybank2u.com.sg/en/rates/rates-sora.page')
+  if (
+    ![
+      'https://www.maybank2u.com.sg/en/rates/rates-sora.page',
+      'https://www.uob.com.sg/personal/borrow/property-loans/about-sora.page',
+    ].includes(url)
+  )
     throw new RetrievalError('Unexpected curl URL', 'response');
   const output = await new Promise<Buffer>((resolve, reject) => {
     execFile(
@@ -40,7 +45,7 @@ export const curlFetch: typeof fetch = async (input, init) => {
           new RetrievalError(
             code === '28' || error.name === 'AbortError'
               ? 'Request timed out'
-              : 'curl transport failed',
+              : `curl transport failed (exit ${code})`,
             code === '28' || error.name === 'AbortError'
               ? 'timeout'
               : ['5', '6', '7', '18', '52', '56'].includes(code)

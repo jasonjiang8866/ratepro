@@ -1084,6 +1084,9 @@ export default function App() {
                       'Formula',
                       'Commitment',
                       'Minimum loan',
+                      'Maximum loan',
+                      'Customer conditions',
+                      'SORA rate floor',
                       'Monthly estimate',
                       'Observed',
                     ].map((label) => (
@@ -1108,17 +1111,32 @@ export default function App() {
                                         ? o.minLoan === null
                                           ? 'Check source'
                                           : money(o.minLoan)
-                                        : label === 'Monthly estimate'
-                                          ? below
-                                            ? 'Below minimum loan'
-                                            : o.stages[0].rate === null
-                                              ? 'Not calculated: benchmark fixing required'
-                                              : o.construction === 'Under construction'
-                                                ? 'Progressive drawdown; check source'
-                                                : validCalc && p !== null
-                                                  ? money(p)
-                                                  : 'Check calculator inputs'
-                                          : `${date(o.observedAt)}${isStale(o) ? ' · stale' : ''}`}
+                                        : label === 'Maximum loan'
+                                          ? o.maxLoanExclusive
+                                            ? `Below ${money(o.maxLoanExclusive)}`
+                                            : 'No upper band extracted'
+                                          : label === 'Customer conditions'
+                                            ? o.customerTier
+                                              ? `${o.customerTier}${o.minRelationshipBalance ? ` · relationship balance ≥ ${money(o.minRelationshipBalance)}` : ''}`
+                                              : 'See source terms'
+                                            : label === 'SORA rate floor'
+                                              ? o.rateFloor !== undefined
+                                                ? `${o.rateFloor.toFixed(2)}%`
+                                                : 'Not extracted'
+                                              : label === 'Monthly estimate'
+                                                ? below
+                                                  ? 'Below minimum loan'
+                                                  : o.maxLoanExclusive &&
+                                                      Number(principal) >= o.maxLoanExclusive
+                                                    ? 'Outside loan amount band'
+                                                    : o.stages[0].rate === null
+                                                      ? 'Not calculated: benchmark fixing required'
+                                                      : o.construction === 'Under construction'
+                                                        ? 'Progressive drawdown; check source'
+                                                        : validCalc && p !== null
+                                                          ? money(p)
+                                                          : 'Check calculator inputs'
+                                                : `${date(o.observedAt)}${isStale(o) ? ' · stale' : ''}`}
                             </td>
                           );
                         })}

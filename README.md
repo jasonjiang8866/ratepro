@@ -44,9 +44,9 @@ The scheduled collector requires GitHub Actions to be enabled and repository rul
 | HDB                | Concessionary quarter               | Reviewed snapshot retained when the live page returns 403                                         |
 | Maybank            | 2-year / 3-year fixed, 1M / 3M SORA | Four reviewed completed-property snapshots; automatic retrieval currently times out; BUC excluded |
 | Standard Chartered | Published 3M SORA schedule          | Formula only; source effective date is displayed separately                                       |
-| UOB | Published completed-property SORA | New direct-to-bank customers; fixed-rate enquiries remain quote-only |
-| Citi | Four completed-variable schedules | Separate Citigold/Citibanking and loan bands; property/purpose eligibility needs confirmation |
-| OCBC / HSBC | Official research links | Quote required; no headline-only rate records |
+| UOB                | Published completed-property SORA   | New direct-to-bank customers; fixed-rate enquiries remain quote-only                              |
+| Citi               | Four completed-variable schedules   | Separate Citigold/Citibanking and loan bands; property/purpose eligibility needs confirmation     |
+| OCBC / HSBC        | Official research links             | Quote required; no headline-only rate records                                                     |
 
 See [source investigation and validation](docs/SOURCE_COVERAGE.md) for URLs,
 fixture provenance, known limitations and live retrieval results.
