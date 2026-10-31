@@ -62,8 +62,9 @@ search-index rate.
 `npm run verify:sources` and the separate **Official source integration check**
 workflow run the real collector without changing the published snapshot. The
 workflow has read-only repository permission, saves an observation artifact and
-requires both newly integrated sources to succeed. Its network-dependent result
-is separate from deterministic frontend tests.
+reports stable (DBS/SC) and experimental (Maybank) groups independently. Each
+group requires all of its sources to succeed; experimental failures are still
+failures. Its network-dependent result is separate from deterministic frontend tests.
 
 ### Live results and unresolved source availability
 
@@ -90,6 +91,15 @@ is separate from deterministic frontend tests.
   effective date, and a DBS/SC comparison showed a numerical DBS estimate while
   SC displayed “Not calculated: benchmark fixing required”.
 
-PR #1 remains a draft because Maybank automatic retrieval is unresolved. The
-source-specific integration failure must remain visible; it is not converted
-into a passing check merely because a reviewed snapshot can be displayed.
+PR #1 was merged on 31 October 2026 at 17:01 SGT (commit `8d54591`).
+Cloudflare reported success for that commit, and the production domain's
+`/data/rates.json` was checked against the merged snapshot: all eight observations
+matched. Maybank automatic retrieval remains unresolved. Its independent
+experimental check preserves the failure rather than treating a reviewed snapshot
+as successful extraction.
+
+Freshness follow-up: cards show age, manual-review provenance and explicit
+recheck reasons. Sources displays published collector evidence independently
+from browser-direct checks, including full Singapore timestamps. A fresh feed
+download or failed attempt never advances an offer's observation date. Old cache
+exports remain readable; missing channel evidence is not reconstructed or guessed.

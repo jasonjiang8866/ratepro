@@ -36,6 +36,7 @@ import {
 import {
   CACHE_KEY,
   mergeFeed,
+  mergeCheckEvidence,
   parseImport,
   payment,
   readCache,
@@ -52,6 +53,8 @@ import {
   banks,
   emptyCache,
   isStale,
+  observationAge,
+  freshnessWarning,
   sourceFor,
   type Cache,
   type Offer,
@@ -71,6 +74,10 @@ const date = (s: string) =>
     year: 'numeric',
     timeZone: 'Asia/Singapore',
   }).format(new Date(s));
+const timestamp = (s?: string) =>
+  s
+    ? `${new Intl.DateTimeFormat('en-SG', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Singapore' }).format(new Date(s))} SGT`
+    : 'Not recorded';
 function initial() {
   try {
     return readCache(window.localStorage);
@@ -119,6 +126,7 @@ export default function App() {
   const [warning, setWarning] = useState(loaded.warning ?? '');
   const [message, setMessage] = useState('Checking for published updates…');
   const [busy, setBusy] = useState(false);
+  const [clock, setClock] = useState(Date.now);
   const [tab, setTab] = useState('Rates');
   const [query, setQuery] = useState('');
   const [property, setProperty] = useState('All properties');
@@ -163,11 +171,7 @@ export default function App() {
           offers: updated.offers,
           sources: updated.sources,
         });
-        persist({
-          ...merged,
-          lastAttempt: updated.lastAttempt,
-          lastFeedCheck: updated.lastFeedCheck,
-        });
+        persist(mergeCheckEvidence(merged, updated));
       };
       const result = await synchronize(current.current, force, fetch, commitRefresh);
       commitRefresh(result.cache);
@@ -179,6 +183,10 @@ export default function App() {
       setBusy(false);
     }
   }
+  useEffect(() => {
+    const tick = window.setInterval(() => setClock(Date.now()), 60000);
+    return () => window.clearInterval(tick);
+  }, []);
   useEffect(() => {
     void refresh();
     const online = () => void refresh(true);
@@ -207,8 +215,9 @@ export default function App() {
           offers: incoming.offers,
           sources: incoming.sources,
         });
-        current.current = next;
-        setCache(next);
+        const withEvidence = mergeCheckEvidence(next, incoming);
+        current.current = withEvidence;
+        setCache(withEvidence);
       } catch {
         /* Ignore invalid data written by another tab. */
       }
@@ -394,6 +403,15 @@ export default function App() {
             Source details
           </button>
         </div>
+        {cache.offers.length > 0 && (
+          <p className="my-4 text-sm text-muted-foreground">
+            {cache.offers.filter((o) => o.method === 'reviewed').length} manually reviewed snapshots
+            {' · '}
+            {cache.offers.filter((o) => isStale(o, clock)).length} observations need rechecking.{' '}
+            Observations older than 7 days or past their published period are flagged. Downloading a
+            snapshot does not renew its observation dates.
+          </p>
+        )}
         {warning && (
           <div className="notice" role="alert">
             <WifiOff size={16} />
@@ -611,8 +629,8 @@ export default function App() {
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge variant="secondary">{o.stages[0].formula}</Badge>
-                        <Badge variant="outline" className={isStale(o) ? 'stale' : ''}>
-                          {isStale(o) ? 'Stale · ' : ''}
+                        <Badge variant="outline" className={isStale(o, clock) ? 'stale' : ''}>
+                          {isStale(o, clock) ? 'Needs recheck · ' : ''}
                           {o.method === 'reviewed'
                             ? 'Reviewed snapshot'
                             : o.method === 'imported'
@@ -621,6 +639,17 @@ export default function App() {
                           · {date(o.observedAt)}
                         </Badge>
                       </div>
+                      <p className="text-sm mt-3 text-muted-foreground">
+                        {observationAge(o, clock)} · {timestamp(o.observedAt)}
+                      </p>
+                      {freshnessWarning(o, clock) && (
+                        <p className="text-sm mt-2 font-medium">{freshnessWarning(o, clock)}</p>
+                      )}
+                      {o.method === 'reviewed' && (
+                        <p className="text-sm mt-2 text-muted-foreground">
+                          Manually reviewed snapshot. Automated refresh is not guaranteed.
+                        </p>
+                      )}
                       {o.effectiveFrom && (
                         <p className="text-sm mt-3">
                           Source terms effective from {date(o.effectiveFrom)}. Confirm current
@@ -777,7 +806,14 @@ export default function App() {
             <div className="section-heading">
               <div>
                 <h2>Follow the information back.</h2>
-                <p>Source observations and download checks are different timestamps.</p>
+                <p>
+                  Snapshot generation, bank observations and browser checks have separate
+                  timestamps.
+                </p>
+                <p>
+                  Snapshot generated: {timestamp(cache.snapshotGeneratedAt)}. Generation does not
+                  renew bank observations.
+                </p>
                 {cache.lastFeedCheck && (
                   <p>
                     Published feed last downloaded:{' '}
@@ -802,8 +838,12 @@ export default function App() {
               </div>
             </div>
             {SOURCES.map((s) => {
-              const status = cache.sources.find((v) => v.sourceId === s.id);
+              const status = cache.publishedSources?.find((v) => v.sourceId === s.id);
+              const browserStatus = cache.browserSources?.find((v) => v.sourceId === s.id);
               const observations = cache.offers.filter((o) => o.sourceId === s.id);
+              const dates = observations
+                .map((o) => o.observedAt)
+                .sort((a, b) => Date.parse(a) - Date.parse(b));
               return (
                 <Card key={s.id} className="mb-4">
                   <CardContent className="source-row">
@@ -811,27 +851,60 @@ export default function App() {
                       <h3>{s.name}</h3>
                       <p>
                         {observations.length} observation{observations.length !== 1 ? 's' : ''} ·{' '}
-                        {observations[0]
-                          ? `observed ${date(observations[0].observedAt)}`
-                          : 'not collected yet'}
+                        {observations.filter((o) => o.method === 'reviewed').length} manually
+                        reviewed
                       </p>
-                      <p className="text-sm mt-2">{status?.message ?? 'Waiting for first check'}</p>
-                      {status && (
-                        <p className="text-xs mt-2">
-                          Last attempt:{' '}
-                          {new Date(status.attemptedAt).toLocaleString('en-SG', {
-                            timeZone: 'Asia/Singapore',
-                          })}{' '}
-                          SGT
-                          {status.successAt && (
-                            <> · Last successful extraction: {date(status.successAt)}</>
-                          )}
+                      <p className="text-sm mt-2">
+                        Latest retained observation: {timestamp(dates.at(-1))}
+                      </p>
+                      {dates[0] !== dates.at(-1) && (
+                        <p className="text-sm">
+                          Oldest retained observation: {timestamp(dates[0])}
+                        </p>
+                      )}
+                      <p className="text-sm mt-2">
+                        Published collector:{' '}
+                        {status?.status === 'ok'
+                          ? 'Successful'
+                          : status
+                            ? 'Unavailable · previous observations retained'
+                            : 'Not recorded'}
+                      </p>
+                      <p className="text-xs mt-2">
+                        Last collector attempt: {timestamp(status?.attemptedAt)}
+                      </p>
+                      <p className="text-xs mt-2">
+                        Last successful collector extraction: {timestamp(status?.successAt)}
+                      </p>
+                      <p className="text-sm mt-2">{status?.message}</p>
+                      <p className="text-sm mt-3">
+                        Browser direct check:{' '}
+                        {browserStatus?.status === 'ok'
+                          ? 'Successful'
+                          : browserStatus
+                            ? 'Unavailable · does not change collector status'
+                            : 'Not recorded'}
+                      </p>
+                      <p className="text-xs mt-2">
+                        Last browser attempt: {timestamp(browserStatus?.attemptedAt)}
+                      </p>
+                      <p className="text-xs mt-2">
+                        Last successful browser extraction: {timestamp(browserStatus?.successAt)}
+                      </p>
+                      {s.id === 'maybank' && (
+                        <p className="text-sm mt-3">
+                          Experimental automatic collection. Reviewed snapshots remain available
+                          when retrieval fails.
                         </p>
                       )}
                     </div>
                     <div className="flex items-center gap-4">
                       <Badge variant="outline">
-                        {status?.status === 'ok' ? 'Collected' : 'Retained / unavailable'}
+                        {observations.some((o) => isStale(o, clock))
+                          ? 'Needs recheck'
+                          : status?.status === 'ok'
+                            ? 'Collector verified'
+                            : 'Retained / unverified'}
                       </Badge>
                       <a
                         aria-label={`Open ${s.name}`}
