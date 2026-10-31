@@ -59,6 +59,10 @@ The collector issues one request per source sequentially, with a 12-second timeo
 
 ## Deploy directly to Cloudflare Pages
 
+Production is available at **https://isuperloan.com**, with the Git-connected
+Pages endpoint **https://ratepro.pages.dev**. See [the deployment record](docs/DEPLOYMENT.md)
+for verified checks, automatic-update verification status, and rollback steps.
+
 ### Git integration (recommended)
 
 1. In Cloudflare **Workers & Pages → Create → Pages → Connect to Git**, connect `jasonjiang8866/ratepro` and grant Cloudflare access to it.
