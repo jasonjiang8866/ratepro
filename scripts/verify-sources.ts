@@ -8,7 +8,8 @@ const group = process.argv[2] ?? 'all';
 const groups: Record<string, string[]> = {
   stable: ['dbs-hdb', 'dbs-green', 'sc-sora'],
   experimental: ['maybank'],
-  all: ['dbs-hdb', 'dbs-green', 'sc-sora', 'maybank', 'hdb'],
+  expanded: ['uob-sora', 'citi'],
+  all: ['dbs-hdb', 'dbs-green', 'sc-sora', 'maybank', 'hdb', 'uob-sora', 'citi'],
 };
 if (!groups[group]) throw Error(`Unknown source group: ${group}`);
 const required = groups[group];

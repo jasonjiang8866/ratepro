@@ -44,8 +44,9 @@ The scheduled collector requires GitHub Actions to be enabled and repository rul
 | HDB                | Concessionary quarter               | Reviewed snapshot retained when the live page returns 403                                         |
 | Maybank            | 2-year / 3-year fixed, 1M / 3M SORA | Four reviewed completed-property snapshots; automatic retrieval currently times out; BUC excluded |
 | Standard Chartered | Published 3M SORA schedule          | Formula only; source effective date is displayed separately                                       |
-| OCBC / UOB         | Official research links             | Quote required; no guessed rate records                                                           |
-| Citi               | Official pricing PDF link           | Needs document-version and customer-tier review before automated extraction                       |
+| UOB | Published completed-property SORA | New direct-to-bank customers; fixed-rate enquiries remain quote-only |
+| Citi | Four completed-variable schedules | Separate Citigold/Citibanking and loan bands; property/purpose eligibility needs confirmation |
+| OCBC / HSBC | Official research links | Quote required; no headline-only rate records |
 
 See [source investigation and validation](docs/SOURCE_COVERAGE.md) for URLs,
 fixture provenance, known limitations and live retrieval results.
@@ -75,12 +76,17 @@ and imported observations retain their provenance; no successful extraction is
 inferred from a reviewed snapshot. Existing caches migrate on their next refresh;
 unknown channel-specific timestamps display “Not recorded”.
 
-Source health CI has independent `stable` (DBS and SC) and `experimental`
-(Maybank) jobs, with separate artifacts and genuine failure results. No
+Source health CI has independent `stable` (DBS/SC), `experimental`
+(Maybank) and `expanded` (UOB/Citi) jobs, with separate artifacts and genuine failure results. No
 `continue-on-error` is used. `npm run verify:sources -- stable` or `-- experimental`
 runs one group; the default checks all sources including HDB. The daily collector
 still attempts all sources and retains failed-source observations. HDB remains
 a reviewed fallback, and its retrieval result remains in the daily collector log.
+
+The Citi collector needs `pdftotext` (`sudo apt-get install poppler-utils` on Ubuntu/Debian,
+`brew install poppler` on macOS). GitHub collection jobs install it; Cloudflare
+only builds the static app and does not need it. Citi PDF data uses the published
+snapshot in browsers. Maybank uses standard `curl`, available on GitHub Ubuntu.
 
 ### Extend sources
 
@@ -89,7 +95,7 @@ a reviewed fallback, and its retrieval result remains in the daily collector log
 3. Add small representative fixtures plus malformed-page and rate-change tests. Check usage terms and extraction feasibility for the source before enabling it.
 4. Run `npm run verify:sources` for a read-only live check, then `npm run collect` to update a local snapshot. Review JSON against the original page before publishing. The separate official-source CI job records live observations without pushing or deploying.
 
-The collector issues one request per source sequentially, with a 12-second default timeout (30 seconds for Maybank in the scheduled collector) and a 2 MB response cap. Partial failures retain previous observations; total failure exits nonzero so CI does not publish it. DOM parsing does not execute fetched scripts or render external HTML. Requests omit credentials and reject redirects. No third-party proxy or API key is present.
+The collector reads sequentially with a 12-second default timeout (30 seconds for Maybank) and a 2 MB cap. Transient network/timeouts and HTTP 408/500/502/503/504 permit at most one retry after two seconds. HTTP 401/403/404/429, redirects, oversized responses and parser failures do not retry. Failure categories and attempt counts are recorded. Partial failure retains prior observations; total failure exits nonzero. No third-party proxy, authentication, spoofed browser identity or TLS override is used. See [retrieval investigation](docs/RETRIEVAL.md).
 
 ## Deploy directly to Cloudflare Pages
 

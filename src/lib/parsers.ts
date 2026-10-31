@@ -293,4 +293,49 @@ export const parsers = {
   hdb: parseHdb,
   maybank: parseMaybank,
   'sc-sora': parseScSora,
+  'uob-sora': parseUobSora,
 };
+
+export function parseUobSora(page: Page, at: string, method: Offer['method']): Offer[] {
+  const tables = page.tables.filter(
+    (t) =>
+      t[0]?.length === 2 &&
+      t[0][0] === '' &&
+      /^SORA PROMOTIONAL Limited tranche for New Direct-to-Bank\* customers only$/.test(t[0][1]),
+  );
+  if (tables.length !== 1) throw Error('UOB promotional table missing or ambiguous');
+  const table = tables[0];
+  const text = table.flat().join(' ');
+  if (
+    !/valid for completed residential properties in Singapore, for new purchase or refinancing from another bank\/HDB\./.test(
+      text,
+    )
+  )
+    throw Error('UOB eligibility changed');
+  const labels = ['Year 1', 'Year 2', 'Year 3', 'Year 4 and thereafter'];
+  checkStageLabels(table, labels);
+  const stages = labels.map((label) => soraStage(label, row(table, new RegExp(`^${label}$`))));
+  if (stages.some((s) => s.benchmark?.tenor !== '3M')) throw Error('UOB tenor changed');
+  const lock = row(table, /^Lock in Period$/).match(/^(\d+) years$/);
+  const min = row(table, /^Min Loan Size$/);
+  if (!lock || !/^S\$[\d,]+$/.test(min)) throw Error('UOB loan conditions changed');
+  return [
+    OfferSchema.parse({
+      id: 'uob-sora-3m',
+      sourceId: 'uob-sora',
+      bank: 'UOB',
+      name: '3M SORA · new direct-to-bank customers',
+      property: 'HDB / Private',
+      purpose: ['Purchase', 'Refinance'],
+      construction: 'Completed',
+      kind: 'Floating',
+      stages,
+      lockYears: Number(lock[1]),
+      minLoan: amount(min),
+      terms:
+        'Limited promotional tranche for new direct-to-bank customers, completed residential property, purchase or refinancing from another bank/HDB. Fixed-rate packages require a separate quote. Confirm availability and eligibility in the Letter of Offer; prepayment, sale and conversion concessions have conditions. SORA fixing is not collected.',
+      observedAt: at,
+      method,
+    }),
+  ];
+}

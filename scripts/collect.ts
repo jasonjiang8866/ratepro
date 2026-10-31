@@ -4,7 +4,10 @@ import { readFile, writeFile, rename } from 'node:fs/promises';
 import { load } from 'cheerio';
 import { FeedSchema, SOURCES, type Feed, type SourceStatus } from '../src/lib/schema';
 import { parsers, type Page } from '../src/lib/parsers';
-import { fetchText } from '../src/lib/sync';
+import { RetrievalError } from '../src/lib/sync';
+import { retrieve } from './retrieval';
+import { parseCiti, pdfText } from './citi';
+import { curlFetch } from './curl-fetch';
 export function nodePage(html: string): Page {
   const $ = load(html);
   $('script,style,noscript').remove();
@@ -30,23 +33,32 @@ export async function collect(
   fetcher: typeof fetch = fetch,
   at = new Date().toISOString(),
   sourceIds: readonly string[] = SOURCES.map((source) => source.id),
+  pause?: (ms: number) => Promise<void>,
 ): Promise<Feed> {
   const offers = new Map(previous.offers.map((o) => [o.id, o]));
   const statuses: SourceStatus[] = [];
-  // Sequential, one GET per source; no crawling, authentication or retries.
+  // Sequential with one bounded transient retry; no crawling or authentication.
   for (const source of SOURCES.filter((source) => sourceIds.includes(source.id))) {
+    let attempts = 1;
+    let phase: 'parse' | 'document' = 'parse';
     try {
-      const parsed = parsers[source.id](
-        nodePage(
-          await fetchText(
-            source.url,
-            fetcher,
-            'collectionTimeoutMs' in source ? source.collectionTimeoutMs : 12000,
-          ),
-        ),
-        at,
-        'collector',
+      const bytes = await retrieve(
+        source.url,
+        source.id === 'maybank' && fetcher === fetch ? curlFetch : fetcher,
+        'collectionTimeoutMs' in source ? source.collectionTimeoutMs : 12000,
+        (n) => {
+          attempts = n;
+        },
+        pause,
       );
+      let parsed;
+      if (source.id === 'citi') {
+        phase = 'document';
+        const text = await pdfText(bytes);
+        phase = 'parse';
+        parsed = parseCiti(text, at, 'collector');
+      } else
+        parsed = parsers[source.id](nodePage(new TextDecoder().decode(bytes)), at, 'collector');
       for (const offer of parsed) offers.set(offer.id, offer);
       statuses.push({
         sourceId: source.id,
@@ -54,6 +66,7 @@ export async function collect(
         successAt: at,
         status: 'ok',
         message: 'Collected from official public page',
+        attempts,
       });
     } catch (e) {
       statuses.push({
@@ -61,6 +74,9 @@ export async function collect(
         attemptedAt: at,
         successAt: previous.sources.find((s) => s.sourceId === source.id)?.successAt,
         status: 'error',
+        attempts,
+        failureKind: e instanceof RetrievalError ? e.kind : phase,
+        httpStatus: e instanceof RetrievalError ? e.httpStatus : undefined,
         message:
           `Collection failed; last observation retained. ${e instanceof Error ? e.message : 'Unknown error'}`.slice(
             0,

@@ -7,8 +7,16 @@ const day = z
     (v) => !Number.isNaN(Date.parse(v)) && new Date(v).toISOString().startsWith(v),
     'Invalid date',
   );
-export const sourceIds = ['dbs-hdb', 'dbs-green', 'hdb', 'maybank', 'sc-sora'] as const;
-export const banks = ['DBS', 'HDB', 'Maybank', 'Standard Chartered'] as const;
+export const sourceIds = [
+  'dbs-hdb',
+  'dbs-green',
+  'hdb',
+  'maybank',
+  'sc-sora',
+  'uob-sora',
+  'citi',
+] as const;
+export const banks = ['DBS', 'HDB', 'Maybank', 'Standard Chartered', 'UOB', 'Citi'] as const;
 export const SourceId = z.enum(sourceIds);
 export function soraFormula(tenor: '1M' | '3M', spread: number) {
   const exact = spread === Number(spread.toFixed(2)) ? spread.toFixed(2) : String(spread);
@@ -48,13 +56,18 @@ export const OfferSchema = z
     sourceId: SourceId,
     bank: z.enum(banks),
     name: z.string().min(1).max(120),
-    property: z.enum(['HDB', 'Private', 'HDB / Private']),
-    purpose: z.array(z.enum(['Purchase', 'Refinance'])).min(1),
+    property: z.enum(['HDB', 'Private', 'HDB / Private', 'Confirm with lender']),
+    purpose: z.array(z.enum(['Purchase', 'Refinance', 'Confirm with lender'])).min(1),
     construction: z.enum(['Completed', 'Under construction', 'Any']),
     kind: z.enum(['Fixed', 'Floating', 'Concessionary']),
     stages: z.array(StageSchema).min(1).max(10),
     lockYears: z.number().int().min(0).max(30).nullable(),
     minLoan: z.number().min(0).max(100000000).nullable(),
+    maxLoanExclusive: z.number().positive().max(100000000).optional(),
+    customerTier: z.enum(['Citigold', 'Citibanking']).optional(),
+    minRelationshipBalance: z.number().min(0).max(100000000).optional(),
+    rateFloor: z.number().min(0).max(30).optional(),
+    documentDate: day.optional(),
     terms: z.string().min(1).max(2000),
     observedAt: date,
     effectiveUntil: day.optional(),
@@ -70,6 +83,9 @@ export const SourceStatusSchema = z
     successAt: date.optional(),
     status: z.enum(['ok', 'error']),
     message: z.string().max(300),
+    failureKind: z.enum(['http', 'timeout', 'network', 'response', 'parse', 'document']).optional(),
+    httpStatus: z.number().int().min(100).max(599).optional(),
+    attempts: z.number().int().min(1).max(2).optional(),
   })
   .strict();
 export type SourceStatus = z.infer<typeof SourceStatusSchema>;
@@ -131,6 +147,17 @@ export const SOURCES = [
     name: 'Standard Chartered · Published SORA package',
     url: 'https://www.sc.com/sg/borrow/mortgages/sora/',
   },
+  {
+    id: 'uob-sora',
+    name: 'UOB · Published SORA package',
+    url: 'https://www.uob.com.sg/personal/borrow/property-loans/about-sora.page',
+  },
+  {
+    id: 'citi',
+    name: 'Citi · Published pricing PDF',
+    url: 'https://www.citibank.com.sg/global_docs/pdf/Pricing-Packages.pdf',
+    collectorOnly: true,
+  },
 ] as const;
 // Research links are not collected products and never enter numeric rankings.
 export const REFERENCE_SOURCES = [
@@ -142,18 +169,18 @@ export const REFERENCE_SOURCES = [
       'Fixed and SORA options are described, but the reviewed page has no complete numerical rate schedule. Ask the bank for a quote.',
   },
   {
-    name: 'UOB · Private home loan',
+    name: 'UOB · Fixed-rate enquiries',
     url: 'https://www.uob.com.sg/personal/borrow/property-loans/private-home-loan.page',
     status: 'Quote required',
     detail:
-      'The reviewed page directs fixed-rate and combination-package enquiries to a mortgage specialist. No numerical quote is included here.',
+      'Fixed-rate and combination packages require a quote. The separately published SORA schedule is included in this directory.',
   },
   {
-    name: 'Citi · Published pricing PDF',
-    url: 'https://www.citibank.com.sg/global_docs/pdf/Pricing-Packages.pdf',
-    status: 'Document review required',
+    name: 'HSBC · Home loans',
+    url: 'https://www.hsbc.com.sg/loans/products/home/',
+    status: 'Quote required',
     detail:
-      'The PDF has dated pricing, customer-tier and loan-size conditions. Not automatically extracted; check the current document with Citi.',
+      'Headline pricing depends on Premier relationship and loan-size conditions. No complete stage schedule is extracted; request a personalised quote.',
   },
 ] as const;
 export function sourceFor(id: Offer['sourceId']) {

@@ -6,37 +6,70 @@ export async function fetchText(
   fetcher: typeof fetch = fetch,
   timeoutMs = 12000,
 ): Promise<string> {
-  const res = await fetcher(url, {
-    signal: AbortSignal.timeout(timeoutMs),
-    credentials: 'omit',
-    cache: 'no-cache',
-    redirect: 'error',
-  });
-  if (!res.ok) throw Error(`HTTP ${res.status}`);
-  if (Number(res.headers.get('content-length') ?? 0) > MAX_BYTES) throw Error('Response too large');
-  // Bound streamed responses too, including those without Content-Length.
-  if (!res.body) throw Error('Empty response');
-  const reader = res.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let size = 0;
+  return new TextDecoder().decode(await fetchBytes(url, fetcher, timeoutMs));
+}
+export class RetrievalError extends Error {
+  constructor(
+    message: string,
+    public kind: 'http' | 'timeout' | 'network' | 'response',
+    public httpStatus?: number,
+  ) {
+    super(message);
+  }
+}
+export async function fetchBytes(
+  url: string,
+  fetcher: typeof fetch = fetch,
+  timeoutMs = 12000,
+): Promise<Uint8Array> {
   try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      size += value.length;
-      if (size > MAX_BYTES) throw Error('Response too large');
-      chunks.push(value);
+    const res = await fetcher(url, {
+      signal: AbortSignal.timeout(timeoutMs),
+      credentials: 'omit',
+      cache: 'no-cache',
+      redirect: 'error',
+    });
+    if (!res.ok) {
+      await res.body?.cancel();
+      throw new RetrievalError(`HTTP ${res.status}`, 'http', res.status);
     }
-  } finally {
-    await reader.cancel();
+    if (Number(res.headers.get('content-length') ?? 0) > MAX_BYTES) {
+      await res.body?.cancel();
+      throw new RetrievalError('Response too large', 'response');
+    }
+    // Bound streamed responses too, including those without Content-Length.
+    if (!res.body) throw new RetrievalError('Empty response', 'response');
+    const reader = res.body.getReader();
+    const chunks: Uint8Array[] = [];
+    let size = 0;
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        size += value.length;
+        if (size > MAX_BYTES) throw new RetrievalError('Response too large', 'response');
+        chunks.push(value);
+      }
+    } finally {
+      await reader.cancel();
+    }
+    const bytes = new Uint8Array(size);
+    let offset = 0;
+    for (const c of chunks) {
+      bytes.set(c, offset);
+      offset += c.length;
+    }
+    return bytes;
+  } catch (error) {
+    if (error instanceof RetrievalError) throw error;
+    if (error instanceof Error && /TimeoutError|AbortError/.test(error.name))
+      throw new RetrievalError('Request timed out', 'timeout');
+    const cause =
+      error instanceof Error ? String((error.cause as Error | undefined)?.message ?? '') : '';
+    if (/redirect|certificate|TLS/i.test(cause))
+      throw new RetrievalError('Redirect or TLS response rejected', 'response');
+    throw new RetrievalError('Network request failed', 'network');
   }
-  const bytes = new Uint8Array(size);
-  let offset = 0;
-  for (const c of chunks) {
-    bytes.set(c, offset);
-    offset += c.length;
-  }
-  return new TextDecoder().decode(bytes);
 }
 export async function synchronize(
   cache: Cache,
@@ -72,37 +105,39 @@ export async function synchronize(
   }
   // All sources are allowlisted public pages; no credentials or proxy are used.
   const results = await Promise.all(
-    SOURCES.map(async (source) => {
-      try {
-        const offers = parsers[source.id](
-          browserPage(await fetchText(source.url, fetcher)),
-          now,
-          'browser',
-        );
-        return {
-          offers,
-          status: {
-            sourceId: source.id,
-            attemptedAt: now,
-            successAt: now,
-            status: 'ok',
-            message: 'Read directly from the public source',
-          } as SourceStatus,
-        };
-      } catch {
-        return {
-          offers: [],
-          status: {
-            sourceId: source.id,
-            attemptedAt: now,
-            successAt: next.browserSources?.find((s) => s.sourceId === source.id)?.successAt,
-            status: 'error',
-            message:
-              'Direct browser check unavailable (CORS, network or page format). Last observation retained.',
-          } as SourceStatus,
-        };
-      }
-    }),
+    SOURCES.filter((source) => !('collectorOnly' in source && source.collectorOnly)).map(
+      async (source) => {
+        try {
+          const offers = parsers[source.id as keyof typeof parsers](
+            browserPage(await fetchText(source.url, fetcher)),
+            now,
+            'browser',
+          );
+          return {
+            offers,
+            status: {
+              sourceId: source.id,
+              attemptedAt: now,
+              successAt: now,
+              status: 'ok',
+              message: 'Read directly from the public source',
+            } as SourceStatus,
+          };
+        } catch {
+          return {
+            offers: [],
+            status: {
+              sourceId: source.id,
+              attemptedAt: now,
+              successAt: next.browserSources?.find((s) => s.sourceId === source.id)?.successAt,
+              status: 'error',
+              message:
+                'Direct browser check unavailable (CORS, network or page format). Last observation retained.',
+            } as SourceStatus,
+          };
+        }
+      },
+    ),
   );
   const direct: Feed = {
     version: 1,
@@ -115,7 +150,7 @@ export async function synchronize(
   return {
     cache: next,
     message: count
-      ? `Checked ${count} public source${count === 1 ? '' : 's'} directly. ${SOURCES.length - count} unavailable.`
+      ? `Checked ${count} public source${count === 1 ? '' : 's'} directly. ${SOURCES.filter((s) => !('collectorOnly' in s)).length - count} unavailable. PDF observations use the published snapshot.`
       : feedOK
         ? 'Published snapshot checked. Direct source access unavailable; observation dates are shown below.'
         : `${errors.join('. ')}. Showing saved data; retry when online.`,

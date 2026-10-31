@@ -169,7 +169,9 @@ describe('refresh resilience', () => {
     await synchronize(c, false, fetcher);
     expect(fetcher).not.toHaveBeenCalled();
     await synchronize(c, true, fetcher);
-    expect(fetcher).toHaveBeenCalledTimes(1 + SOURCES.length);
+    expect(fetcher).toHaveBeenCalledTimes(
+      1 + SOURCES.filter((s) => !('collectorOnly' in s)).length,
+    );
   });
   it('keeps cached data if both feed and direct requests fail', async () => {
     const c = mergeFeed(emptyCache(), feed, now);
