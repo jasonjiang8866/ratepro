@@ -36,7 +36,13 @@ export async function collect(
   for (const source of SOURCES) {
     try {
       const parsed = parsers[source.id](
-        nodePage(await fetchText(source.url, fetcher)),
+        nodePage(
+          await fetchText(
+            source.url,
+            fetcher,
+            'collectionTimeoutMs' in source ? source.collectionTimeoutMs : 12000,
+          ),
+        ),
         at,
         'collector',
       );

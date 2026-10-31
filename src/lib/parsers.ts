@@ -1,4 +1,4 @@
-import { OfferSchema, type Offer } from './schema';
+import { OfferSchema, soraFormula, type Offer } from './schema';
 export interface Page {
   text: string;
   tables: string[][][];
@@ -18,8 +18,9 @@ export function browserPage(html: string): Page {
   };
 }
 function row(table: string[][], label: RegExp) {
-  const found = table.find((r) => label.test(r[0] ?? ''));
-  if (!found || found.length !== 2)
+  const matches = table.filter((r) => label.test(r[0] ?? ''));
+  const found = matches[0];
+  if (matches.length !== 1 || found.length !== 2)
     throw Error('Expected rate table changed; retained previous data');
   return found[1];
 }
@@ -142,4 +143,154 @@ export function parseHdb(page: Page, at: string, method: Offer['method']): Offer
     }),
   ];
 }
-export const parsers = { 'dbs-hdb': parseDbsHdb, 'dbs-green': parseDbsGreen, hdb: parseHdb };
+function uniqueTable(page: Page, heading: RegExp) {
+  const matches = page.tables.filter((t) => t[0]?.length === 1 && heading.test(t[0][0]));
+  if (matches.length !== 1) throw Error('Expected one unambiguous package table');
+  return matches[0];
+}
+function soraStage(label: string, value: string): Offer['stages'][number] {
+  const m = value.match(/^([13])M Compounded SORA\s*\+\s*(\d+(?:\.\d+)?)%\s*p\.a\.$/i);
+  if (!m) throw Error('Unrecognised SORA formula; retained previous data');
+  const spread = Number(m[2]);
+  const tenor = `${m[1]}M` as '1M' | '3M';
+  return {
+    label,
+    rate: null,
+    formula: soraFormula(tenor, spread),
+    benchmark: { name: 'SORA', tenor, spread },
+  };
+}
+function lockYears(table: string[][]) {
+  const m = row(table, /^Lock-in period$/i).match(/^(\d+) years?$/i);
+  if (!m) throw Error('Lock-in period changed');
+  return Number(m[1]);
+}
+function checkStageLabels(table: string[][], labels: string[]) {
+  const found = table.filter((r) => /^(Year|Thereafter)/i.test(r[0] ?? '')).map((r) => r[0]);
+  if (JSON.stringify(found) !== JSON.stringify(labels)) throw Error('Rate schedule changed');
+}
+
+export function parseMaybank(page: Page, at: string, method: Offer['method']): Offer[] {
+  const text = page.text.replace(/\s+/g, ' ');
+  if (
+    !/valid for completed residential properties in Singapore, for new purchase or refinancing from another financial institution/i.test(
+      text,
+    )
+  )
+    throw Error('Maybank eligibility text changed');
+  const limits = [
+    ...text.matchAll(/minimum loan size of S\$([\d,]+) and minimum loan tenure of (\d+) years/gi),
+  ];
+  if (!limits.length || limits.some((m) => m[1] !== limits[0][1] || m[2] !== limits[0][2]))
+    throw Error('Maybank minimum loan conditions missing or ambiguous');
+  const minLoan = Number(limits[0][1].replaceAll(',', ''));
+  const base = {
+    sourceId: 'maybank',
+    bank: 'Maybank',
+    property: 'HDB / Private',
+    purpose: ['Purchase', 'Refinance'],
+    construction: 'Completed',
+    minLoan,
+    terms: `Published indicative package for completed Singapore residential property; confirm property eligibility with Maybank. Minimum tenure ${limits[0][2]} years. SORA stages show the bank spread, not an all-in rate; the applicable fixing depends on drawdown or reset date. Fees, subsidies and approval require confirmation.`,
+    observedAt: at,
+    method,
+  };
+  const fixed = [2, 3].map((years) => {
+    const table = uniqueTable(page, new RegExp(`^${years}-year Fixed Rate$`, 'i'));
+    const labels = Array.from({ length: years }, (_, i) => `Year ${i + 1}`);
+    checkStageLabels(table, [...labels, 'Thereafter']);
+    const stages = labels.map((label) => {
+      const value = row(table, new RegExp(`^${label}$`));
+      const m = value.match(/^(\d+(?:\.\d+)?)%\s*p\.a\.$/i);
+      if (!m) throw Error('Fixed rate missing or replaced by a formula');
+      return { label, rate: Number(m[1]), formula: 'Fixed' };
+    });
+    return OfferSchema.parse({
+      ...base,
+      id: `maybank-fixed-${years}y`,
+      name: `${years}-year fixed · completed property`,
+      kind: 'Fixed',
+      lockYears: lockYears(table),
+      stages: [...stages, soraStage('Thereafter', row(table, /^Thereafter$/))],
+    });
+  });
+  const floating = [1, 3].map((months) => {
+    const heading =
+      months === 1
+        ? /^1-Month Compounded SORA \(For Completed properties\)$/i
+        : /^3M Compounded SORA \(For completed properties\)$/i;
+    const table = uniqueTable(page, heading);
+    const labels =
+      months === 1 ? ['Year 1', 'Year 2', 'Thereafter'] : ['Year 1 to Year 3', 'Thereafter'];
+    checkStageLabels(table, labels);
+    const stages = labels.map((label) => soraStage(label, row(table, new RegExp(`^${label}$`))));
+    if (
+      stages.some((s) => s.benchmark?.tenor !== `${months}M`) ||
+      row(table, /^Rate refresh$/i) !== `Every ${months} month${months === 1 ? '' : 's'}`
+    )
+      throw Error('SORA tenor or refresh period changed');
+    return OfferSchema.parse({
+      ...base,
+      id: `maybank-sora-${months}m`,
+      name: `${months}M SORA · completed property`,
+      kind: 'Floating',
+      lockYears: lockYears(table),
+      stages,
+    });
+  });
+  // Parse the complete supported group before returning any observations.
+  return [...fixed, ...floating];
+}
+
+export function parseScSora(page: Page, at: string, method: Offer['method']): Offer[] {
+  const text = page.text.replace(/\s+/g, ' ');
+  if (
+    !/Only Private Residential and HDB flats \(completed or BUC\) are eligible for SORA package used for new purchase or refinancing\./i.test(
+      text,
+    )
+  )
+    throw Error('Standard Chartered eligibility changed');
+  const dateMatch = text.match(
+    /interest rate package stated in the table above is valid from (\d{1,2} [A-Za-z]+ \d{4})/i,
+  );
+  if (!dateMatch) throw Error('Published package effective date missing');
+  const effective = new Date(`${dateMatch[1]} 00:00:00 UTC`);
+  if (
+    !Number.isFinite(effective.getTime()) ||
+    effective.toISOString().slice(0, 10) > at.slice(0, 10)
+  )
+    throw Error('Invalid or future package effective date');
+  const table = uniqueTable(page, /^3M Compounded SORA\*$/i);
+  const labels = ['Year 1', 'Year 2', 'Year 3', 'Thereafter'];
+  checkStageLabels(table, labels);
+  const stages = labels.map((label) => soraStage(label, row(table, new RegExp(`^${label}$`))));
+  if (stages.some((s) => s.benchmark?.tenor !== '3M')) throw Error('SC benchmark tenor changed');
+  const minimum = row(table, /^Minimum Loan Amount$/i);
+  if (!/^S\$[\d,]+$/.test(minimum)) throw Error('Minimum loan format changed');
+  return [
+    OfferSchema.parse({
+      id: 'sc-sora-3m',
+      sourceId: 'sc-sora',
+      bank: 'Standard Chartered',
+      name: '3M SORA · published package',
+      property: 'HDB / Private',
+      purpose: ['Purchase', 'Refinance'],
+      construction: 'Any',
+      kind: 'Floating',
+      stages,
+      lockYears: lockYears(table),
+      minLoan: amount(minimum),
+      effectiveFrom: effective.toISOString().slice(0, 10),
+      terms: `The source states this schedule is valid from ${dateMatch[1]}; a recent observation does not mean a new promotion. Confirm current availability with Standard Chartered. Applies to completed or under-construction HDB/private homes for purchase or refinancing. SORA plus spread is a formula, not an all-in quote. Fees and subsidies are not extracted.`,
+      observedAt: at,
+      method,
+    }),
+  ];
+}
+export const parsers = {
+  'dbs-hdb': parseDbsHdb,
+  'dbs-green': parseDbsGreen,
+  hdb: parseHdb,
+  maybank: parseMaybank,
+  'sc-sora': parseScSora,
+};

@@ -30,7 +30,7 @@ A browser cannot read arbitrary bank pages unless those servers allow cross-orig
 There are two supported paths:
 
 1. **On load:** show locally cached observations; if the six-hour window has elapsed, fetch same-origin `/data/rates.json`, then attempt a single bounded GET to each allowlisted official source. Merge by stable package ID and observation time. Render failures without changing the original observation timestamps.
-2. **Publication:** `.github/workflows/refresh-rates.yml` runs once daily at 09:23 Singapore time (01:23 UTC) after it is merged into `main`, or manually via Actions. A Node build-time collector extracts known public tables and commits the validated static JSON snapshot. Cloudflare Pages Git integration can build/deploy the updated snapshot. No collector code runs on Cloudflare or in response to a visitor's request.
+2. **Publication:** `.github/workflows/refresh-rates.yml` runs once daily at 09:23 Singapore time (01:23 UTC) after it is merged into `main`, or manually via Actions. A Node build-time collector extracts known public tables and commits the validated static JSON snapshot. Cloudflare Pages Git integration can build/deploy the updated snapshot. The scheduled collector runs on GitHub Actions; browser refreshes are a separate best-effort path.
 
 Thus loading the page can collect **CORS-permitted** sources directly and pick up the most recently published static feed; it cannot force real-time access to CORS-blocked pages. It does not search or crawl the entire web, bypass access restrictions, or use an LLM to guess financial values.
 
@@ -38,13 +38,30 @@ The scheduled collector requires GitHub Actions to be enabled and repository rul
 
 ### Current source coverage
 
-| Source                                                                                           | Extracted packages                                     | State at migration                                                                       |
-| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| [DBS HDB loans](https://www.dbs.com.sg/personal/loans/home-loans/hdb-loan)                       | 3-Year CPF-OA HDB Loan, full advertised stage schedule | Direct collector retrieval and extraction succeeded                                      |
-| [DBS Green Home Loan](https://www.dbs.com.sg/personal/loans/home-loans/dbs-green-home-loan)      | FHR6 package, initial and thereafter all-in rates      | Direct collector retrieval and extraction succeeded                                      |
-| [HDB interest rate](https://www.hdb.gov.sg/managing-my-home/finances/loan-matters/interest-rate) | Current concessionary quarter                          | Direct request returned HTTP 403; explicitly labelled reviewed Q4 2026 snapshot retained |
+| Source             | Supported observations              | Coverage                                                                                          |
+| ------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------- |
+| DBS HDB / Green    | CPF-OA and FHR6 stage schedules     | Two public products                                                                               |
+| HDB                | Concessionary quarter               | Reviewed snapshot retained when the live page returns 403                                         |
+| Maybank            | 2-year / 3-year fixed, 1M / 3M SORA | Four reviewed completed-property snapshots; automatic retrieval currently times out; BUC excluded |
+| Standard Chartered | Published 3M SORA schedule          | Formula only; source effective date is displayed separately                                       |
+| OCBC / UOB         | Official research links             | Quote required; no guessed rate records                                                           |
+| Citi               | Official pricing PDF link           | Needs document-version and customer-tier review before automated extraction                       |
 
-The initial HDB observation was reviewed against official search-indexed content on 30 October 2026, **not** successfully collected from the live page. It is marked `method: reviewed`. Search-indexed DBS text differed from direct HTML; only direct extracted DBS tables are included. No synthetic bank offers, guessed private-property fixed rates, or SORA-as-mortgage-rate shortcuts are used. OCBC, UOB and MAS are research links only.
+See [source investigation and validation](docs/SOURCE_COVERAGE.md) for URLs,
+fixture provenance, known limitations and live retrieval results.
+
+SORA stages store `rate: null` plus a structured `benchmark` (name, tenor and
+spread). No current benchmark fixing is collected, so the UI displays the formula,
+places these observations after numerical initial rates in either rate sort, and
+does not calculate their monthly payment. Fixed-period packages retain their
+floating thereafter formula. `effectiveFrom` is the bank's stated terms date;
+`observedAt` is when the page was successfully read. Neither is the feed download
+time. A current observation does not imply a newly launched or available offer.
+
+The original HDB snapshot remains explicitly `method: reviewed`. No synthetic
+bank offers or benchmark-as-mortgage-rate shortcuts are used. Existing numeric-only
+exports/caches remain valid; new exports include nullable SORA rates and require
+this updated application to read them. History records spread and term changes.
 
 Sources can change page structure, stop publishing a package, block automation, or return different content by location. Parsers fail closed when expected fields disappear. Old observations are retained with their original date; they are **not proof that a package remains on sale**. Data older than seven days or past its published effective end is marked stale. Feed download time is never treated as source observation time. Source dates are retrieval dates unless an effective period is explicitly provided. There is no claim of full market coverage.
 
@@ -53,9 +70,9 @@ Sources can change page structure, stop publishing a package, block automation, 
 1. Add an exact official URL and source ID to `src/lib/schema.ts` and the CSP allowlist in `public/_headers`.
 2. Add a source-specific parser in `src/lib/parsers.ts`, reading semantic table rows rather than unrelated headline percentages. All-in rates and benchmark spreads must remain separate.
 3. Add small representative fixtures plus malformed-page and rate-change tests. Check usage terms and extraction feasibility for the source before enabling it.
-4. Run `npm run collect`, review the JSON and original page, then commit the snapshot.
+4. Run `npm run verify:sources` for a read-only live check, then `npm run collect` to update a local snapshot. Review JSON against the original page before publishing. The separate official-source CI job records live observations without pushing or deploying.
 
-The collector issues one request per source sequentially, with a 12-second timeout and a 2 MB response cap. Partial failures retain previous observations; total failure exits nonzero so CI does not publish it. DOM parsing does not execute fetched scripts or render external HTML. Requests omit credentials and reject redirects. No third-party proxy or API key is present.
+The collector issues one request per source sequentially, with a 12-second default timeout (30 seconds for Maybank in the scheduled collector) and a 2 MB response cap. Partial failures retain previous observations; total failure exits nonzero so CI does not publish it. DOM parsing does not execute fetched scripts or render external HTML. Requests omit credentials and reject redirects. No third-party proxy or API key is present.
 
 ## Deploy directly to Cloudflare Pages
 
@@ -86,7 +103,7 @@ For an existing project, `npm run deploy` builds and deploys it. Wrangler uses y
 
 ## Data and privacy
 
-`ratepro.cache.v1` in localStorage stores schema-versioned observations, source status and at most 500 prior revisions. Saved package IDs/theme are stored separately. localStorage is intentionally sufficient for this small directory; unavailable/quota-limited/corrupt storage is surfaced to the user. Export before clearing site data or changing domains. The browser contacts only its own origin and the three allowlisted source hosts; lenders see ordinary network requests but no calculator inputs. No analytics or remote fonts are used.
+`ratepro.cache.v1` in localStorage stores schema-versioned observations, source status and at most 500 prior revisions. Saved package IDs/theme are stored separately. localStorage is intentionally sufficient for this small directory; unavailable/quota-limited/corrupt storage is surfaced to the user. Export before clearing site data or changing domains. The browser contacts only its own origin and the allowlisted source hosts; lenders see ordinary network requests but no calculator inputs. No analytics or remote fonts are used.
 
 JSON imports are schema/size/date validated and never execute HTML. They are **untrusted shared observations**, not cryptographic proof of bank verification. Do not import files from unknown sources and assume their rates are genuine; follow the official link. No contact details, borrower documents or loan applications are collected.
 

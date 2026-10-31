@@ -2,6 +2,30 @@ import { CacheSchema, FeedSchema, emptyCache, type Cache, type Feed, type Offer 
 export const CACHE_KEY = 'ratepro.cache.v1';
 export const REFRESH_INTERVAL = 6 * 60 * 60 * 1000;
 export const MAX_BYTES = 2_000_000;
+export function stageDisplay(stage: Offer['stages'][number]) {
+  return stage.rate === null ? stage.formula : `${stage.rate.toFixed(2)}%`;
+}
+export function compareInitialRates(a: Offer, b: Offer, descending = false) {
+  const left = a.stages[0].rate,
+    right = b.stages[0].rate;
+  // Formula-only observations have no comparable numeric rate, in either direction.
+  if (left === null) return right === null ? a.id.localeCompare(b.id) : 1;
+  if (right === null) return -1;
+  return descending ? right - left : left - right;
+}
+export function matchesProperty(offer: Offer, property: string) {
+  return (
+    property === 'All properties' ||
+    offer.property === property ||
+    offer.property === 'HDB / Private'
+  );
+}
+export function offerPayment(offer: Offer, principal: number, years: number) {
+  const rate = offer.stages[0].rate;
+  return rate === null || offer.construction === 'Under construction'
+    ? null
+    : payment(principal, rate, years);
+}
 export function fingerprint(offer: Offer) {
   const { observedAt: _at, method: _method, ...terms } = offer;
   return JSON.stringify(terms);
