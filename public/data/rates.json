@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-31T01:24:31.988Z",
+  "generatedAt": "2026-10-31T05:27:31.147Z",
   "offers": [
     {
       "id": "hdb-concessionary",
@@ -59,7 +59,7 @@
       "lockYears": 3,
       "minLoan": 100000,
       "terms": "CPF-OA-linked variable rate, not a fixed rate. 75% LTV: 25 years max loan tenor (provided borrower age + tenure ≤ 65 years old) 55% LTV: 30 years max loan tenor (provided borrower age + tenure > 65 years old). Confirm eligibility, fees and available package with DBS.",
-      "observedAt": "2026-10-31T01:24:31.988Z",
+      "observedAt": "2026-10-31T05:27:31.147Z",
       "method": "collector"
     },
     {
@@ -88,28 +88,28 @@
       "lockYears": null,
       "minLoan": 1000000,
       "terms": "For eligible green properties under construction. FHR6 is a bank reference rate and may change. Conversion features, green certification, fees and eligibility require confirmation with DBS. Lock-in not extracted.",
-      "observedAt": "2026-10-31T01:24:31.988Z",
+      "observedAt": "2026-10-31T05:27:31.147Z",
       "method": "collector"
     }
   ],
   "sources": [
     {
       "sourceId": "dbs-hdb",
-      "attemptedAt": "2026-10-31T01:24:31.988Z",
-      "successAt": "2026-10-31T01:24:31.988Z",
+      "attemptedAt": "2026-10-31T05:27:31.147Z",
+      "successAt": "2026-10-31T05:27:31.147Z",
       "status": "ok",
       "message": "Collected from official public page"
     },
     {
       "sourceId": "dbs-green",
-      "attemptedAt": "2026-10-31T01:24:31.988Z",
-      "successAt": "2026-10-31T01:24:31.988Z",
+      "attemptedAt": "2026-10-31T05:27:31.147Z",
+      "successAt": "2026-10-31T05:27:31.147Z",
       "status": "ok",
       "message": "Collected from official public page"
     },
     {
       "sourceId": "hdb",
-      "attemptedAt": "2026-10-31T01:24:31.988Z",
+      "attemptedAt": "2026-10-31T05:27:31.147Z",
       "status": "error",
       "message": "Collection failed; last observation retained. HTTP 403"
     }
