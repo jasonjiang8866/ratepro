@@ -1,0 +1,8 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://www.dbs.com.sg https://www.hdb.gov.sg; frame-ancestors 'none'; base-uri 'self'; form-action 'none'; object-src 'none'
+/data/*
+  Cache-Control: public, max-age=0, must-revalidate
