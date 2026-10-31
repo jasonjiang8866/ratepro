@@ -86,7 +86,9 @@ a reviewed fallback, and its retrieval result remains in the daily collector log
 The Citi collector needs `pdftotext` (`sudo apt-get install poppler-utils` on Ubuntu/Debian,
 `brew install poppler` on macOS). GitHub collection jobs install it; Cloudflare
 only builds the static app and does not need it. Citi PDF data uses the published
-snapshot in browsers. Maybank uses standard `curl`, available on GitHub Ubuntu.
+snapshot in browsers. UOB and Maybank use standard `curl`, available on GitHub Ubuntu. Maybank alone
+uses HTTPS with HTTP/1.1 after a diagnosed HTTP/2 stream error, but GitHub
+requests still time out and its experimental check remains failed.
 
 ### Extend sources
 

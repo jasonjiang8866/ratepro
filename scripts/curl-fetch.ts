@@ -2,8 +2,9 @@ import { execFile } from 'node:child_process';
 import { MAX_BYTES } from '../src/lib/data';
 import { RetrievalError } from '../src/lib/sync';
 
-// Maybank's public HTML succeeds with the standard curl client where Node fetch
-// returned its generic CMS 500 page. No proxy, cookie, custom UA or TLS override.
+// UOB succeeds with curl where Node returned HTTP 500. Maybank's local curl
+// success does not establish GitHub availability: HTTP/1.1 still timed out there.
+// No proxy, cookie, custom UA or TLS override.
 export const curlFetch: typeof fetch = async (input, init) => {
   const url = String(input);
   if (

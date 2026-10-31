@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-31T11:24:53.163Z",
+  "generatedAt": "2026-10-31T11:28:41.961Z",
   "offers": [
     {
       "id": "hdb-concessionary",
@@ -59,7 +59,7 @@
       "lockYears": 3,
       "minLoan": 100000,
       "terms": "CPF-OA-linked variable rate, not a fixed rate. 75% LTV: 25 years max loan tenor (provided borrower age + tenure ≤ 65 years old) 55% LTV: 30 years max loan tenor (provided borrower age + tenure > 65 years old). Confirm eligibility, fees and available package with DBS.",
-      "observedAt": "2026-10-31T11:21:14.275Z",
+      "observedAt": "2026-10-31T11:26:03.255Z",
       "method": "collector"
     },
     {
@@ -88,7 +88,7 @@
       "lockYears": null,
       "minLoan": 1000000,
       "terms": "For eligible green properties under construction. FHR6 is a bank reference rate and may change. Conversion features, green certification, fees and eligibility require confirmation with DBS. Lock-in not extracted.",
-      "observedAt": "2026-10-31T11:21:14.275Z",
+      "observedAt": "2026-10-31T11:26:03.255Z",
       "method": "collector"
     },
     {
@@ -148,7 +148,7 @@
       "lockYears": 2,
       "minLoan": 100000,
       "terms": "The source states this schedule is valid from 27 February 2021; a recent observation does not mean a new promotion. Confirm current availability with Standard Chartered. Applies to completed or under-construction HDB/private homes for purchase or refinancing. SORA plus spread is a formula, not an all-in quote. Fees and subsidies are not extracted.",
-      "observedAt": "2026-10-31T11:21:14.275Z",
+      "observedAt": "2026-10-31T11:26:03.255Z",
       "effectiveFrom": "2021-02-27",
       "method": "collector"
     },
@@ -384,7 +384,7 @@
       "lockYears": 2,
       "minLoan": 250000,
       "terms": "Limited promotional tranche for new direct-to-bank customers, completed residential property, purchase or refinancing from another bank/HDB. Fixed-rate packages require a separate quote. Confirm availability and eligibility in the Letter of Offer; prepayment, sale and conversion concessions have conditions. SORA fixing is not collected.",
-      "observedAt": "2026-10-31T11:24:09.325Z",
+      "observedAt": "2026-10-31T11:26:09.304Z",
       "method": "collector"
     },
     {
@@ -447,7 +447,7 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
-      "observedAt": "2026-10-31T11:24:09.325Z",
+      "observedAt": "2026-10-31T11:26:09.304Z",
       "method": "collector"
     },
     {
@@ -511,7 +511,7 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
-      "observedAt": "2026-10-31T11:24:09.325Z",
+      "observedAt": "2026-10-31T11:26:09.304Z",
       "method": "collector"
     },
     {
@@ -573,7 +573,7 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
-      "observedAt": "2026-10-31T11:24:09.325Z",
+      "observedAt": "2026-10-31T11:26:09.304Z",
       "method": "collector"
     },
     {
@@ -636,58 +636,58 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
-      "observedAt": "2026-10-31T11:24:09.325Z",
+      "observedAt": "2026-10-31T11:26:09.304Z",
       "method": "collector"
     }
   ],
   "sources": [
     {
       "sourceId": "dbs-hdb",
-      "attemptedAt": "2026-10-31T11:21:14.275Z",
-      "successAt": "2026-10-31T11:21:14.275Z",
+      "attemptedAt": "2026-10-31T11:26:03.255Z",
+      "successAt": "2026-10-31T11:26:03.255Z",
       "status": "ok",
       "message": "Collected from official public page",
       "attempts": 1
     },
     {
       "sourceId": "dbs-green",
-      "attemptedAt": "2026-10-31T11:21:14.275Z",
-      "successAt": "2026-10-31T11:21:14.275Z",
+      "attemptedAt": "2026-10-31T11:26:03.255Z",
+      "successAt": "2026-10-31T11:26:03.255Z",
       "status": "ok",
       "message": "Collected from official public page",
       "attempts": 1
     },
     {
       "sourceId": "sc-sora",
-      "attemptedAt": "2026-10-31T11:21:14.275Z",
-      "successAt": "2026-10-31T11:21:14.275Z",
+      "attemptedAt": "2026-10-31T11:26:03.255Z",
+      "successAt": "2026-10-31T11:26:03.255Z",
       "status": "ok",
       "message": "Collected from official public page",
       "attempts": 1
     },
     {
       "sourceId": "uob-sora",
-      "attemptedAt": "2026-10-31T11:24:09.325Z",
-      "successAt": "2026-10-31T11:24:09.325Z",
+      "attemptedAt": "2026-10-31T11:26:09.304Z",
+      "successAt": "2026-10-31T11:26:09.304Z",
       "status": "ok",
       "message": "Collected from official public page",
       "attempts": 1
     },
     {
       "sourceId": "citi",
-      "attemptedAt": "2026-10-31T11:24:09.325Z",
-      "successAt": "2026-10-31T11:24:09.325Z",
+      "attemptedAt": "2026-10-31T11:26:09.304Z",
+      "successAt": "2026-10-31T11:26:09.304Z",
       "status": "ok",
       "message": "Collected from official public page",
       "attempts": 1
     },
     {
       "sourceId": "maybank",
-      "attemptedAt": "2026-10-31T11:24:01.900Z",
+      "attemptedAt": "2026-10-31T11:26:05.231Z",
       "status": "error",
-      "message": "Collection failed; last observation retained. curl transport failed (exit 92)",
-      "failureKind": "response",
-      "attempts": 1
+      "message": "Collection failed; last observation retained. Request timed out",
+      "failureKind": "timeout",
+      "attempts": 2
     },
     {
       "sourceId": "hdb",

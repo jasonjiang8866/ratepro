@@ -60,5 +60,31 @@ SHA-256 values of the downloaded originals:
 - Maybank successful curl HTML: `1e00d0348d02c8c7829435b3676dbf13fe52e856f00af3f994469b092eae5ec3`
 
 Local validation: 59 deterministic tests and TypeScript/Vite build pass. The
-actual downloaded Citi PDF also passes the complete binary → Poppler → parser
-path. Live GitHub results and snapshot publication are recorded in the PR.
+actual downloaded Citi PDF also passes the complete binary → Poppler → parser path.
+
+## Live GitHub outcomes
+
+- [Initial check](https://github.com/jasonjiang8866/ratepro/actions/runs/41196486335):
+  Citi PDF succeeded. UOB returned HTTP 500 with Node. Maybank curl failed.
+- [Transport diagnosis](https://github.com/jasonjiang8866/ratepro/actions/runs/41196680968):
+  UOB succeeded with standard curl and Citi succeeded again. Maybank's explicit
+  curl exit code was 92, an HTTP/2 stream error per
+  [curl's error reference](https://curl.se/libcurl/c/libcurl-errors.html).
+- [HTTP/1.1 test](https://github.com/jasonjiang8866/ratepro/actions/runs/41196819156):
+  DBS, SC, UOB and Citi succeeded. Maybank was tested with curl's documented
+  `--http1.1` option while retaining HTTPS certificate verification. It timed out
+  twice instead of returning the HTTP/2 error. **Maybank is not fixed**; its
+  experimental check remains failed. No further network-path or fingerprint
+  changes are attempted. The Node CMS 500 cause remains unproven.
+
+The 13-observation snapshot takes successful bank observations from the third
+run. Maybank retains all four reviewed observations and their original timestamps;
+HDB retains its reviewed quarter. Its snapshot generation timestamp is only when
+these records were assembled, never a substitute for bank observation dates.
+Cloudflare branch preview and browser comparison show Citi tier requirements,
+exclusive loan-band upper limits and floor rates without inventing a SORA fixing.
+
+For Maybank/HDB, the remaining durable routes are a bank-authorised feed/export,
+an explicitly permitted API, or a dated manual review of the official publication.
+No such API has been verified here. A maintained snapshot with expiry warnings is
+the current fallback; repeated forbidden requests or search snippets are not a fix.
