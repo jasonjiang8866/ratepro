@@ -49,6 +49,12 @@ export function parseHdbAskGov(page: Page, at: string): Offer[] {
   const text = page.text.replace(/\s+/g, ' ').trim();
   if (!text.includes('How are CPF interest rates determined?') || !/Updated by\s+CPF\b/.test(text))
     throw Error('AskGov CPF publication identity missing');
+  return [OfferSchema.parse({ ...parseHdbQuarter(page, at), evidenceSourceId: HDB_FALLBACK.id })];
+}
+
+// Shared factual validator; each caller must establish its own publication identity.
+export function parseHdbQuarter(page: Page, at: string): Offer {
+  const text = page.text.replace(/\s+/g, ' ').trim();
   const periods = [
     ...text.matchAll(
       /Computation of CPF OA Interest Rate and HDB Mortgage Rate for (\d{1,2} [A-Za-z]+ \d{4}) to (\d{1,2} [A-Za-z]+ \d{4})/g,
@@ -92,5 +98,5 @@ export function parseHdbAskGov(page: Page, at: string): Offer[] {
     at,
     'collector',
   );
-  return [OfferSchema.parse({ ...offer, evidenceSourceId: HDB_FALLBACK.id })];
+  return offer;
 }

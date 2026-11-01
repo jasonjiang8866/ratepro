@@ -15,7 +15,10 @@
     "verify:sources": "node --import tsx scripts/verify-sources.ts",
     "deploy": "npm run build && wrangler pages deploy dist --project-name ratepro",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "research:cpf": "node --import tsx scripts/cpf-browser.ts",
+    "research:maybank": "node --import tsx scripts/maybank-diagnostics.ts",
+    "test:browser": "RUN_BROWSER_TESTS=1 vitest run tests/retrieval-research.test.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -35,6 +38,7 @@
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^5.0.4",
     "cheerio": "^1.1.2",
+    "playwright": "1.64.1",
     "prettier": "3.6.2",
     "tailwindcss": "^4.1.16",
     "tsx": "^4.20.6",

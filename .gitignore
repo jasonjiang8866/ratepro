@@ -9,3 +9,5 @@ test-results/
 playwright-report/
 source-check.json
 hdb-diagnostics.json
+research-output/
+review-output/
