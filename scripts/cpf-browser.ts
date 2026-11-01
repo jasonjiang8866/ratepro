@@ -25,9 +25,11 @@ export function parseCpfBoard(page: Page, url: string, at: string) {
 // Open shadow DOM is part of the rendered page. Ignore hidden templates and scripts.
 // No network endpoints, internal state, credentials or closed roots are inspected.
 export async function renderedPage(page: BrowserPage): Promise<Page> {
-  return page.evaluate(() => {
-    const tables: string[][][] = [];
-    function text(node: Node): string {
+  // A fixed JavaScript expression avoids TS runners injecting closure helpers
+  // (for example __name) that do not exist in the browser execution context.
+  return page.evaluate<Page>(String.raw`(() => {
+    const tables = [];
+    function text(node) {
       if (node.nodeType === Node.TEXT_NODE) return node.textContent ?? '';
       if (node instanceof Element) {
         if (['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEMPLATE'].includes(node.tagName)) return '';
@@ -36,14 +38,8 @@ export async function renderedPage(page: BrowserPage): Promise<Page> {
         if (node instanceof HTMLSlotElement)
           return node.assignedNodes({ flatten: true }).map(text).join(' ');
         if (node.tagName === 'TABLE') {
-          tables.push(
-            Array.from(node.querySelectorAll('tr'), (row) =>
-              Array.from(
-                row.querySelectorAll('th,td'),
-                (cell) => cell.textContent?.replace(/\s+/g, ' ').trim() ?? '',
-              ),
-            ),
-          );
+          tables.push(Array.from(node.querySelectorAll('tr'), row =>
+            Array.from(row.querySelectorAll('th,td'), cell => cell.textContent?.replace(/\s+/g, ' ').trim() ?? '')));
         }
         if (node.shadowRoot) return text(node.shadowRoot);
       }
@@ -51,7 +47,7 @@ export async function renderedPage(page: BrowserPage): Promise<Page> {
     }
     const content = text(document.body).replace(/\s+/g, ' ').trim();
     return { text: content, tables };
-  });
+  })()`);
 }
 
 export async function probeCpf(out = 'research-output/cpf') {
@@ -109,6 +105,7 @@ export async function probeCpf(out = 'research-output/cpf') {
       .getByText(/^HDB mortgage rate for /)
       .first()
       .waitFor({ state: 'visible', timeout: 20000 });
+    phase = 'reading rendered DOM';
     const evidence = await renderedPage(page);
     if (stop) throw Error(stop);
     const content = JSON.stringify(evidence, null, 2) + '\n';
@@ -130,6 +127,9 @@ export async function probeCpf(out = 'research-output/cpf') {
   } catch (error) {
     report.error = stop ?? 'Navigation, rendering or strict publication validation failed';
     report.phase = phase;
+    if (error instanceof Error) report.errorType = error.name;
+    if (phase === 'reading rendered DOM' && error instanceof Error)
+      report.domError = error.message.split('\n')[0].slice(0, 300);
     if (phase === 'strict publication validation' && error instanceof Error)
       report.validationError = error.message.slice(0, 300);
     if (!page.isClosed()) {
