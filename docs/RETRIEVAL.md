@@ -28,8 +28,18 @@ December 2026 HDB table. Validation rejected an incorrect assumption that the
 visible publisher would use its full name; the actual footer says `CPF Board`
 and the page carries `A Singapore Government Agency Website`. The validator now
 requires that actual branding, the exact official article URL/title and the
-unchanged strict full-quarter/HDB/OA/fee checks. This correction still needs a
-successful live candidate before browser recovery can be claimed.
+unchanged strict full-quarter/HDB/OA/fee checks. The subsequent
+[GitHub browser job](https://github.com/jasonjiang8866/ratepro/actions/runs/41343252641/job/124957570655)
+at `e562d9e` passed both the browser regression test and live validation, including
+waiting for the site's loading overlay to disappear naturally. It extracted an
+explicit HDB 2.60%, OA 2.50% and fee 0.10% for 1 October–31 December 2026, observed
+at `2026-11-01T19:45:14.371Z`. The current DOM artifact hash is
+`329d08dae6e6be5cbff13e7d7ff245ae0765aaadc3b93cf74f7a92f0cf4060a1`.
+The [artifact](https://github.com/jasonjiang8866/ratepro/actions/runs/41343252641/artifacts/13098028469)
+contains the extracted DOM, report and a screenshot of the table. The raw GET
+still contains only the application shell: ordinary page rendering is the
+verified extraction route. This is a research candidate, not an enabled daily
+fallback or evidence of production collection recovery.
 
 The reduced `cpf-board-rendered.json` fixture comes from that real Actions DOM
 artifact, not a search snippet. Original `page.json` SHA-256:
@@ -42,6 +52,30 @@ made one ordinary HTTP/1.1 request: DNS completed at 0.025126 s, connection at
 the 30.002791 s timeout (curl exit 28, HTTP code 0). This narrows the observed
 stall to after TLS, but cannot distinguish server handling, intermediary policy
 or another cause. No proxy, IP, client identity or certificate changes were tried.
+
+Validation at code commit `e562d9e`: [Frontend checks](https://github.com/jasonjiang8866/ratepro/actions/runs/41343252610)
+passed 86 deterministic tests and the production build. The separate Chromium job
+passed four tests (three overlap the normal suite; one browser test is additional),
+for 87 distinct passing tests across the two jobs. The real CLI prepare/stage test
+uses temporary synthetic evidence and verifies that production paths cannot be
+written. No real candidate was human-approved or staged as published data.
+
+[Source health](https://github.com/jasonjiang8866/ratepro/actions/runs/41343252598)
+keeps the existing HDB/AskGov chain separate from CPF browser research. Stable and
+expanded groups passed at this code commit; HDB still failed with prior observations
+retained. Maybank's timing experiment still failed. Standard Chartered also returned
+one non-retried 403 in the
+[preceding stable job](https://github.com/jasonjiang8866/ratepro/actions/runs/41342999259/job/124956795204),
+then succeeded in the later run. This is evidence of intermittent availability,
+not a demonstrated parser bug or a known server-policy cause. The failed attempt
+retained its original `2026-11-01T01:25:52.208Z` observation.
+
+The practical next step is to review this tooling, then connect validated CPF
+candidates to a separate data PR workflow with retained evidence and explicit
+failure/expiry handling. For Maybank and recurring denials, the file-review route
+is available now; an authorised bank/operator export remains preferable to client
+or network changes. No operator messages have been sent. The 13-product production
+snapshot and its observation times are unchanged throughout this development PR.
 
 ## Follow-up: supported access and denial diagnostics — 1 November 2026
 
