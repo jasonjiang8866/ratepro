@@ -8,7 +8,7 @@ import { timingEvidence } from '../scripts/maybank-diagnostics';
 // Synthetic CPF rendering fixture reusing known quarterly facts, not live CPF evidence.
 const fixture = readFileSync(new URL('fixtures/cpf-askgov.html', import.meta.url), 'utf8').replace(
   'Updated by CPF',
-  'Central Provident Fund Board',
+  'A Singapore Government Agency Website CPF Board',
 );
 const at = '2026-11-01T04:00:00.000Z';
 
@@ -18,7 +18,7 @@ describe('read-only research', () => {
     expect(() => parseCpfBoard(nodePage(fixture), 'https://example.com', at)).toThrow('identity');
     expect(() =>
       parseCpfBoard(
-        nodePage(fixture.replace('Central Provident Fund Board', 'other')),
+        nodePage(fixture.replace('A Singapore Government Agency Website CPF Board', 'other')),
         CPF_URL,
         at,
       ),
@@ -29,6 +29,14 @@ describe('read-only research', () => {
     expect(() => parseCpfBoard(nodePage(fixture), CPF_URL, '2027-01-01T00:00:00Z')).toThrow(
       'cover',
     );
+  });
+  it('validates reduced evidence actually rendered on GitHub, including its real CPF Board branding', () => {
+    const page = JSON.parse(readFileSync(new URL('fixtures/cpf-board-rendered.json', import.meta.url), 'utf8'));
+    const offer = parseCpfBoard(page, CPF_URL, at);
+    expect(offer).toMatchObject({ evidenceSourceId: 'cpf-board', method: 'browser',
+      effectiveFrom: '2026-10-01', effectiveUntil: '2026-12-31', observedAt: at });
+    expect(offer.stages[0].rate).toBe(2.6);
+    expect(() => parseCpfBoard({ ...page, text: page.text.replace('A Singapore Government Agency Website', '') }, CPF_URL, at)).toThrow('identity');
   });
   it('reports the last recorded milestone without claiming a root cause or exporting raw curl metadata', () => {
     const raw = {

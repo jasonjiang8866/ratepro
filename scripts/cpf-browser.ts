@@ -6,9 +6,9 @@ import { fileURLToPath } from 'node:url';
 import { parseHdbQuarter } from './hdb-askgov';
 import type { Page } from '../src/lib/parsers';
 import { MAX_BYTES } from '../src/lib/data';
+import { CPF_BOARD, OfferSchema } from '../src/lib/schema';
 
-export const CPF_URL =
-  'https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined';
+export const CPF_URL = CPF_BOARD.url;
 export const sha256 = (data: string | Uint8Array) =>
   createHash('sha256').update(data).digest('hex');
 
@@ -16,10 +16,15 @@ export function parseCpfBoard(page: Page, url: string, at: string) {
   if (
     url !== CPF_URL ||
     !page.text.includes('How are CPF interest rates determined?') ||
-    !/Central Provident Fund Board/.test(page.text)
+    !/\bCPF Board\b/.test(page.text) ||
+    !page.text.includes('A Singapore Government Agency Website')
   )
     throw Error('CPF Board publication identity missing');
-  return parseHdbQuarter(page, at);
+  return OfferSchema.parse({
+    ...parseHdbQuarter(page, at),
+    evidenceSourceId: CPF_BOARD.id,
+    method: 'browser',
+  });
 }
 
 // Open shadow DOM is part of the rendered page. Ignore hidden templates and scripts.

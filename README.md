@@ -13,6 +13,14 @@ npm test
 npm run build
 ```
 
+## Retrieval recovery tools (draft)
+
+Read-only CPF browser and Maybank timing experiments are separate from the daily
+collector. Official HTML/PDF files can be prepared as candidates, reviewed and
+staged for a separate data PR using `npm run review:file`. See
+[the review workflow](docs/REVIEW.md) and [live retrieval evidence](docs/RETRIEVAL.md).
+These tools do not publish data; the existing production snapshot remains unchanged.
+
 ## What it does
 
 - Source-backed rate schedules, minimum loan and commitment information, with official links and per-observation timestamps.

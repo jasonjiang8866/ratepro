@@ -68,7 +68,7 @@ export const OfferSchema = z
     minRelationshipBalance: z.number().min(0).max(100000000).optional(),
     rateFloor: z.number().min(0).max(30).optional(),
     documentDate: day.optional(),
-    evidenceSourceId: z.literal('cpf-askgov').optional(),
+    evidenceSourceId: z.enum(['cpf-askgov', 'cpf-board']).optional(),
     terms: z.string().min(1).max(2000),
     observedAt: date,
     effectiveUntil: day.optional(),
@@ -86,7 +86,7 @@ export const OfferSchema = z
     )
       ctx.addIssue({
         code: 'custom',
-        message: 'AskGov evidence requires the HDB concessionary record and explicit period',
+        message: 'CPF evidence requires the HDB concessionary record and explicit period',
       });
   });
 export type Offer = z.infer<typeof OfferSchema>;
@@ -227,8 +227,15 @@ export const HDB_FALLBACK = {
   url: 'https://ask.gov.sg/cpf/questions/cm2s5b54c005r12kzrep7aayw',
   collectionTimeoutMs: 30000,
 } as const;
+export const CPF_BOARD = {
+  id: 'cpf-board',
+  name: 'CPF Board · HDB quarterly rate',
+  url: 'https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined',
+} as const;
 export function evidenceFor(offer: Offer) {
-  return offer.evidenceSourceId === HDB_FALLBACK.id ? HDB_FALLBACK : sourceFor(offer.sourceId);
+  if (offer.evidenceSourceId === HDB_FALLBACK.id) return HDB_FALLBACK;
+  if (offer.evidenceSourceId === CPF_BOARD.id) return CPF_BOARD;
+  return sourceFor(offer.sourceId);
 }
 export function emptyCache(): Cache {
   return { version: 1, offers: [], history: [], sources: [] };

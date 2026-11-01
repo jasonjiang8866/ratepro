@@ -1,5 +1,48 @@
 # Official retrieval investigation
 
+## Next development round — 1 November 2026
+
+The new [official-file review workflow](REVIEW.md) prepares strict HTML/PDF
+candidates, shows every before/after record, and requires an explicit candidate
+hash/reviewer before staging a separate data PR. It checks evidence and base
+hashes, re-parses the original file, rejects stale/future/expired observations,
+and keeps collection health separate from manual review. This development PR
+still does not change `public/data/rates.json`.
+
+Read-only research is now implemented in a separate Actions workflow. It uses
+normal headless Chromium only for the independent CPF Board article that already
+returns HTTP 200; it does not revisit AskGov with another client to bypass its
+challenge. Page-owned JavaScript requests are allowed to render the publication;
+internal API routes are not called directly or treated as supported public APIs.
+
+[First research run](https://github.com/jasonjiang8866/ratepro/actions/runs/41342452364)
+confirmed that Chromium installs on GitHub and the synthetic shadow-DOM test
+passes. Local Chromium installation failed because the downloaded archive was
+invalid, so local browser execution is not claimed. Live extraction initially
+failed after page loading; the DOM evaluator was then isolated from TypeScript
+runtime closure helpers, with separate rendering/validation diagnostics.
+
+[Second CPF run](https://github.com/jasonjiang8866/ratepro/actions/runs/41342681678/job/124955837031)
+rendered 2,421 text characters and three tables, including the full 1 October–31
+December 2026 HDB table. Validation rejected an incorrect assumption that the
+visible publisher would use its full name; the actual footer says `CPF Board`
+and the page carries `A Singapore Government Agency Website`. The validator now
+requires that actual branding, the exact official article URL/title and the
+unchanged strict full-quarter/HDB/OA/fee checks. This correction still needs a
+successful live candidate before browser recovery can be claimed.
+
+The reduced `cpf-board-rendered.json` fixture comes from that real Actions DOM
+artifact, not a search snippet. Original `page.json` SHA-256:
+`a21edd4a54f87a6a8335c597d8b2883d47d42bdaf61da67958264395028b47da`.
+The separate shadow-DOM fixture is explicitly synthetic test markup.
+
+[Maybank timing job](https://github.com/jasonjiang8866/ratepro/actions/runs/41342452364/job/124955154289)
+made one ordinary HTTP/1.1 request: DNS completed at 0.025126 s, connection at
+0.026586 s, TLS at 0.123151 s; no first response byte or body was recorded before
+the 30.002791 s timeout (curl exit 28, HTTP code 0). This narrows the observed
+stall to after TLS, but cannot distinguish server handling, intermediary policy
+or another cause. No proxy, IP, client identity or certificate changes were tried.
+
 ## Follow-up: supported access and denial diagnostics — 1 November 2026
 
 PR #4 was rechecked against GitHub at `8c2230d`; it remained a draft on

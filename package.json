@@ -18,7 +18,8 @@
     "format:check": "prettier --check .",
     "research:cpf": "node --import tsx scripts/cpf-browser.ts",
     "research:maybank": "node --import tsx scripts/maybank-diagnostics.ts",
-    "test:browser": "RUN_BROWSER_TESTS=1 vitest run tests/retrieval-research.test.ts"
+    "test:browser": "RUN_BROWSER_TESTS=1 vitest run tests/retrieval-research.test.ts",
+    "review:file": "node --import tsx scripts/review-file.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
