@@ -52,6 +52,7 @@ describe('official AskGov HDB quarter', () => {
   it('rejects missing, ambiguous, inconsistent and invalid-quarter content', () => {
     for (const bad of [
       html.replace('Updated by CPF', 'Updated by another agency'),
+      html.replace('Updated by CPF', 'Updated by CPFake'),
       html.replace('HDB mortgage rate for', 'Other mortgage rate for'),
       html.replace('2.60%', 'Not published'),
       html.replace('2.60%', '2.70%'),

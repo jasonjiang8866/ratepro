@@ -47,7 +47,7 @@ function rate(value: string, suffix: RegExp) {
 // Only factual table cells are consumed. Relative "Updated ... ago" text is never a date.
 export function parseHdbAskGov(page: Page, at: string): Offer[] {
   const text = page.text.replace(/\s+/g, ' ').trim();
-  if (!text.includes('How are CPF interest rates determined?') || !/Updated by\s+CPF/.test(text))
+  if (!text.includes('How are CPF interest rates determined?') || !/Updated by\s+CPF\b/.test(text))
     throw Error('AskGov CPF publication identity missing');
   const periods = [
     ...text.matchAll(

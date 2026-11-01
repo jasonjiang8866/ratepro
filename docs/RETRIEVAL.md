@@ -1,5 +1,81 @@
 # Official retrieval investigation
 
+## Follow-up: supported access and denial diagnostics — 1 November 2026
+
+PR #4 was rechecked against GitHub at `8c2230d`; it remained a draft on
+`feat/hdb-askgov-fallback`, based on `1ce8e90`. A fresh clone matched that HEAD.
+The earlier local reconstructed history was not used.
+
+### What official documentation establishes
+
+- The [AskGov help centre](https://ask.gov.sg/help) documents agency administration,
+  [widget integration](https://ask.gov.sg/help/questions/cmeb54o2q00t98tmo9zv8au0w)
+  and [iframe embedding](https://ask.gov.sg/help/questions/cm8crry7500cl12j6dg71xame).
+  These display integrations do not document a supported server-side content export API.
+- [OGP's old AskGov repository](https://github.com/opengovsg/askgovsg) was archived
+  on 24 July 2024. Its README API base is `localhost:6174/api/v1`; this is local
+  development documentation, not a current production API contract. No guessed
+  API route or internal widget endpoint is requested.
+- [AskGov terms](https://ask.gov.sg/terms), clause 3, restrict the granted use and
+  redistribution. Public readability is not evidence of permission for this
+  public directory's automated reuse. Clarify the intended use with the operator
+  and CPF before enabling publication; no legal conclusion or permission is assumed.
+- The [CPF Board article](https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined)
+  independently publishes the explicit HDB/OA quarter and rates. It is a candidate
+  official source, not an enabled third fallback. The existing
+  [quarterly press release](https://www.cpf.gov.sg/member/infohub/news/news-releases/government-extends-4-per-cent-interest-rate-floor-on-special-medisave-and-retirement-account-monies-until-31-december-2027)
+  is another dated official publication. Both need current-period validation and
+  direct runner availability before any implementation can renew an observation.
+- [data.gov.sg](https://guide.data.gov.sg/developer-guide/api-overview) has documented
+  public dataset APIs. This investigation did not identify a dataset containing
+  the current explicit HDB concessionary quarter. A general API or historical
+  bank-interest dataset does not establish a usable replacement.
+
+### Reproducible, read-only diagnosis
+
+`npm run verify:sources -- hdb` now writes `hdb-diagnostics.json` using the exact
+collector requests. It records Node version, timestamps, elapsed times, HTTP
+statuses, a small allowlist of response headers (including support correlation
+IDs when supplied), and hashes/known denial markers from at most 8 KiB of an error
+body. It never logs cookies, raw response bodies or environment credentials.
+Successful response bodies and request options are unchanged. A failed diagnostic
+body read must not erase the original status. Headers/markers can identify a
+response layer, but do not prove a particular WAF rule, IP/geographic restriction,
+or origin policy. The runner and development environment are not controlled
+network equivalents; the recorded Node versions can also differ.
+
+`npm run verify:sources -- hdb --probe-cpf` additionally makes exactly one ordinary
+GET to the independent CPF article. The source-health HDB job uses this research
+option and uploads the diagnostics separately. The candidate never enters
+`collect()`, never creates an offer, and cannot make a failed HDB health check pass.
+Even a candidate HTTP 200 is only a transport observation, not validated rate data.
+No retry, client impersonation, redirect following, proxy/IP change, private API
+or browser automation is added. Diagnostic files are ignored by Git and retained
+as Actions artifacts for seven days. The production daily collector does not run
+this probe.
+
+### Confirmed fixes and next decisions
+
+A regression test reproduced a real cleanup bug: if `body.cancel()` rejected on
+an HTTP 403, `fetchBytes()` classified it as a retryable network failure, losing
+the known denial. Cleanup is now best-effort so the HTTP status (or size rejection)
+remains authoritative. This bug is **not established as the cause of the earlier
+403s**, and fixing it does not restore access. The CPF publisher match also now
+requires a word boundary, rejecting a different name that merely starts with CPF.
+
+If denials persist, retain the draft and original snapshot. Ask the AskGov operator
+(via its help centre contact channel) and CPF to confirm an approved low-volume
+read/export method and reuse terms. Provide the exact URLs, UTC attempt times,
+Node version, method/options, status and supplied correlation IDs from the artifact;
+ask them to check their server logs. Do not request a different network path to
+circumvent a denial. No message has been sent by this project.
+
+Only install another source after permission/access and strict parsing are
+established; preserve actual evidence provenance, full quarter and successful
+retrieval time. Otherwise use a separately dated human review of the official
+publication, keeping `method: reviewed`, or retain the old observation and expiry
+warning. Never use search snippets or page-update/snapshot timestamps as observations.
+
 ## HDB AskGov fallback — 1 November 2026
 
 The HDB primary returned 403 in the scheduled run on 1 November. The independently

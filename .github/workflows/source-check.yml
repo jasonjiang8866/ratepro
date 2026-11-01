@@ -31,6 +31,16 @@ jobs:
         if: matrix.group == 'expanded'
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends poppler-utils
       - run: npm run verify:sources -- ${{ matrix.group }}
+        if: matrix.group != 'hdb'
+      - run: npm run verify:sources -- hdb --probe-cpf
+        if: matrix.group == 'hdb'
+      - uses: actions/upload-artifact@v4
+        if: always() && matrix.group == 'hdb'
+        with:
+          name: hdb-http-diagnostics
+          path: hdb-diagnostics.json
+          if-no-files-found: error
+          retention-days: 7
       - uses: actions/upload-artifact@v4
         if: always()
         with:
