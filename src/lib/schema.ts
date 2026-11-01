@@ -68,14 +68,37 @@ export const OfferSchema = z
     minRelationshipBalance: z.number().min(0).max(100000000).optional(),
     rateFloor: z.number().min(0).max(30).optional(),
     documentDate: day.optional(),
+    evidenceSourceId: z.literal('cpf-askgov').optional(),
     terms: z.string().min(1).max(2000),
     observedAt: date,
     effectiveUntil: day.optional(),
     effectiveFrom: day.optional(),
     method: z.enum(['collector', 'browser', 'reviewed', 'imported']),
   })
-  .strict();
+  .strict()
+  .superRefine((offer, ctx) => {
+    if (
+      offer.evidenceSourceId &&
+      (offer.sourceId !== 'hdb' ||
+        offer.id !== 'hdb-concessionary' ||
+        !offer.effectiveFrom ||
+        !offer.effectiveUntil)
+    )
+      ctx.addIssue({
+        code: 'custom',
+        message: 'AskGov evidence requires the HDB concessionary record and explicit period',
+      });
+  });
 export type Offer = z.infer<typeof OfferSchema>;
+const FailureKind = z.enum(['http', 'timeout', 'network', 'response', 'parse', 'document']);
+export const SourceFailureSchema = z
+  .object({
+    failureKind: FailureKind,
+    httpStatus: z.number().int().min(100).max(599).optional(),
+    attempts: z.number().int().min(1).max(2),
+    message: z.string().max(300),
+  })
+  .strict();
 export const SourceStatusSchema = z
   .object({
     sourceId: SourceId,
@@ -83,11 +106,23 @@ export const SourceStatusSchema = z
     successAt: date.optional(),
     status: z.enum(['ok', 'error']),
     message: z.string().max(300),
-    failureKind: z.enum(['http', 'timeout', 'network', 'response', 'parse', 'document']).optional(),
+    failureKind: FailureKind.optional(),
     httpStatus: z.number().int().min(100).max(599).optional(),
     attempts: z.number().int().min(1).max(2).optional(),
+    fallbackSourceId: z.literal('cpf-askgov').optional(),
+    primaryFailure: SourceFailureSchema.optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((status, ctx) => {
+    if (
+      (status.fallbackSourceId || status.primaryFailure) &&
+      (status.sourceId !== 'hdb' || !status.fallbackSourceId || !status.primaryFailure)
+    )
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Fallback status requires HDB primary failure evidence',
+      });
+  });
 export type SourceStatus = z.infer<typeof SourceStatusSchema>;
 export const FeedSchema = z
   .object({
@@ -185,6 +220,15 @@ export const REFERENCE_SOURCES = [
 ] as const;
 export function sourceFor(id: Offer['sourceId']) {
   return SOURCES.find((s) => s.id === id)!;
+}
+export const HDB_FALLBACK = {
+  id: 'cpf-askgov',
+  name: 'CPF / AskGov · HDB quarterly rate',
+  url: 'https://ask.gov.sg/cpf/questions/cm2s5b54c005r12kzrep7aayw',
+  collectionTimeoutMs: 30000,
+} as const;
+export function evidenceFor(offer: Offer) {
+  return offer.evidenceSourceId === HDB_FALLBACK.id ? HDB_FALLBACK : sourceFor(offer.sourceId);
 }
 export function emptyCache(): Cache {
   return { version: 1, offers: [], history: [], sources: [] };

@@ -1,4 +1,47 @@
-# Official retrieval investigation — 31 October 2026
+# Official retrieval investigation
+
+## HDB AskGov fallback — 1 November 2026
+
+The HDB primary returned 403 in the scheduled run on 1 November. The independently
+published [CPF answer on AskGov](https://ask.gov.sg/cpf/questions/cm2s5b54c005r12kzrep7aayw)
+explicitly gives the HDB mortgage rate and CPF OA rate for 1 October–31 December 2026. It is maintained by CPF, not an answer authored by HDB or an AI-generated rate.
+
+Browser inspection, standard Node fetch (HTTP 200, approximately 11.5 seconds) and
+curl (HTTP 200, approximately 9.7 seconds) succeeded in the development environment.
+The original HTML contains the table; JavaScript rendering and private APIs are
+unnecessary. Its SHA-256 was
+`3f5730d3f51050925722f5613a12272477ac7af76d3defe61d97dd428a1492d2`.
+The reduced fixture keeps the relevant factual table, title and publisher context.
+
+The collector tries HDB first. Only a failure invokes this one allowlisted official
+fallback, with its own 30-second budget and at most one transient retry. An HDB 403
+is not retried. The parser requires one explicit complete calendar quarter,
+matching HDB/OA table periods, a published numerical HDB rate and the consistent
+OA + 0.10% relationship. It does not calculate an absent HDB rate from another row.
+Missing, ambiguous, future or expired content fails closed. Quarter boundaries use
+Singapore time in both primary and fallback parsers.
+
+The product ID remains `hdb-concessionary`; fallback provenance uses
+`evidenceSourceId: cpf-askgov`. The rate card links to the evidence actually used.
+Source status records `fallbackSourceId` plus the original `primaryFailure`, so a
+successful fallback never claims the HDB primary recovered. Top-level `attempts`
+counts fallback attempts when present; `primaryFailure.attempts` counts primary
+attempts. These are separate endpoint budgets, not a combined retry count.
+
+`observedAt` records the successful collection's observation time. The stated
+quarter is stored in `effectiveFrom`/`effectiveUntil`. Neither the relative
+“Updated … ago” label nor snapshot generation becomes an observation date. If
+both sources fail, prior values, provenance and dates remain unchanged. Returning
+to the primary clears fallback provenance without creating a fictitious rate change.
+The browser continues to consume the same-origin snapshot; it does not call AskGov.
+
+Validation: unit tests and a separate read-only `hdb` GitHub Actions source-health
+job cover this chain. Live GitHub results are recorded in the pull request; local
+HTTP success alone is not evidence of GitHub availability or production deployment.
+
+## Earlier findings — 31 October 2026
+
+The following records describe the investigation before the AskGov fallback.
 
 ## Expanded coverage
 

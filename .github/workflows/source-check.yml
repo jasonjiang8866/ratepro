@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [stable, experimental, expanded]
+        group: [stable, experimental, expanded, hdb]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:

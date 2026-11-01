@@ -9,6 +9,7 @@ const groups: Record<string, string[]> = {
   stable: ['dbs-hdb', 'dbs-green', 'sc-sora'],
   experimental: ['maybank'],
   expanded: ['uob-sora', 'citi'],
+  hdb: ['hdb'],
   all: ['dbs-hdb', 'dbs-green', 'sc-sora', 'maybank', 'hdb', 'uob-sora', 'citi'],
 };
 if (!groups[group]) throw Error(`Unknown source group: ${group}`);
@@ -23,11 +24,11 @@ if (process.env.GITHUB_STEP_SUMMARY) {
   await appendFile(
     process.env.GITHUB_STEP_SUMMARY,
     `## ${group} source health\n\n` +
-      '| Source | Retrieval | Retained observations |\n| --- | --- | --- |\n' +
+      '| Source | Retrieval | Evidence endpoint | Retained observations |\n| --- | --- | --- | --- |\n' +
       feed.sources
         .map(
           (s) =>
-            `| ${s.sourceId} | ${s.status} | ${feed.offers.filter((o) => o.sourceId === s.sourceId).length} |`,
+            `| ${s.sourceId} | ${s.status} | ${s.fallbackSourceId ?? 'Primary'} | ${feed.offers.filter((o) => o.sourceId === s.sourceId).length} |`,
         )
         .join('\n') +
       '\n\nRetrieval failures keep prior observations and dates. This check does not publish data or deploy a website. Experimental failures remain failures.\n',

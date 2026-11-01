@@ -41,7 +41,7 @@ The scheduled collector requires GitHub Actions to be enabled and repository rul
 | Source             | Supported observations              | Coverage                                                                                          |
 | ------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------- |
 | DBS HDB / Green    | CPF-OA and FHR6 stage schedules     | Two public products                                                                               |
-| HDB                | Concessionary quarter               | Reviewed snapshot retained when the live page returns 403                                         |
+| HDB                | Concessionary quarter               | HDB primary page, then official CPF / AskGov quarter; previous observation retained if both fail  |
 | Maybank            | 2-year / 3-year fixed, 1M / 3M SORA | Four reviewed completed-property snapshots; automatic retrieval currently times out; BUC excluded |
 | Standard Chartered | Published 3M SORA schedule          | Formula only; source effective date is displayed separately                                       |
 | UOB                | Published completed-property SORA   | New direct-to-bank customers; fixed-rate enquiries remain quote-only                              |
@@ -59,7 +59,13 @@ floating thereafter formula. `effectiveFrom` is the bank's stated terms date;
 `observedAt` is when the page was successfully read. Neither is the feed download
 time. A current observation does not imply a newly launched or available offer.
 
-The original HDB snapshot remains explicitly `method: reviewed`. No synthetic
+HDB uses the primary page when valid, then the official CPF / AskGov fallback.
+The fallback requires an explicit current quarter and a published HDB rate, with
+the matching CPF OA rate and administration spread checked for consistency.
+It preserves `hdb-concessionary` as the single product ID and records
+`evidenceSourceId: cpf-askgov`; its card links to the actual evidence page. Primary
+failure and fallback outcome remain separate in Sources. If both fail, the last
+observation (including an original `method: reviewed` snapshot) is retained unchanged. No synthetic
 bank offers or benchmark-as-mortgage-rate shortcuts are used. Existing numeric-only
 exports/caches remain valid; new exports include nullable SORA rates and require
 this updated application to read them. History records spread and term changes.
@@ -77,11 +83,12 @@ inferred from a reviewed snapshot. Existing caches migrate on their next refresh
 unknown channel-specific timestamps display “Not recorded”.
 
 Source health CI has independent `stable` (DBS/SC), `experimental`
-(Maybank) and `expanded` (UOB/Citi) jobs, with separate artifacts and genuine failure results. No
+(Maybank), `expanded` (UOB/Citi) and `hdb` (primary plus fallback) jobs, with separate artifacts and genuine failure results. No
 `continue-on-error` is used. `npm run verify:sources -- stable` or `-- experimental`
 runs one group; the default checks all sources including HDB. The daily collector
-still attempts all sources and retains failed-source observations. HDB remains
-a reviewed fallback, and its retrieval result remains in the daily collector log.
+still attempts all sources and retains failed-source observations. Use
+`npm run verify:sources -- hdb` for the read-only HDB recovery check. AskGov
+extraction runs only in the collector; it adds no browser request or client dependency.
 
 The Citi collector needs `pdftotext` (`sudo apt-get install poppler-utils` on Ubuntu/Debian,
 `brew install poppler` on macOS). GitHub collection jobs install it; Cloudflare
@@ -97,7 +104,7 @@ requests still time out and its experimental check remains failed.
 3. Add small representative fixtures plus malformed-page and rate-change tests. Check usage terms and extraction feasibility for the source before enabling it.
 4. Run `npm run verify:sources` for a read-only live check, then `npm run collect` to update a local snapshot. Review JSON against the original page before publishing. The separate official-source CI job records live observations without pushing or deploying.
 
-The collector reads sequentially with a 12-second default timeout (30 seconds for Maybank) and a 2 MB cap. Transient network/timeouts and HTTP 408/500/502/503/504 permit at most one retry after two seconds. HTTP 401/403/404/429, redirects, oversized responses and parser failures do not retry. Failure categories and attempt counts are recorded. Partial failure retains prior observations; total failure exits nonzero. No third-party proxy, authentication, spoofed browser identity or TLS override is used. See [retrieval investigation](docs/RETRIEVAL.md).
+The collector reads sequentially with a 12-second default timeout (30 seconds for Maybank and the independent AskGov fallback) and a 2 MB cap. Transient network/timeouts and HTTP 408/500/502/503/504 permit at most one retry per endpoint after two seconds. HTTP 401/403/404/429, redirects, oversized responses and parser failures do not retry the same endpoint. A failed HDB primary can select the separate official AskGov publication. Failure categories and endpoint attempt counts are recorded. Partial failure retains prior observations; total failure exits nonzero. No third-party proxy, authentication, spoofed browser identity or TLS override is used. See [retrieval investigation](docs/RETRIEVAL.md).
 
 ## Deploy directly to Cloudflare Pages
 
