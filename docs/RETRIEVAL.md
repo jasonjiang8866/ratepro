@@ -1,4 +1,254 @@
-# Official retrieval investigation — 31 October 2026
+# Official retrieval investigation
+
+## Next development round — 1 November 2026
+
+The new [official-file review workflow](REVIEW.md) prepares strict HTML/PDF
+candidates, shows every before/after record, and requires an explicit candidate
+hash/reviewer before staging a separate data PR. It checks evidence and base
+hashes, re-parses the original file, rejects stale/future/expired observations,
+and keeps collection health separate from manual review. This development PR
+still does not change `public/data/rates.json`.
+
+Read-only research is now implemented in a separate Actions workflow. It uses
+normal headless Chromium only for the independent CPF Board article that already
+returns HTTP 200; it does not revisit AskGov with another client to bypass its
+challenge. Page-owned JavaScript requests are allowed to render the publication;
+internal API routes are not called directly or treated as supported public APIs.
+
+[First research run](https://github.com/jasonjiang8866/ratepro/actions/runs/41342452364)
+confirmed that Chromium installs on GitHub and the synthetic shadow-DOM test
+passes. Local Chromium installation failed because the downloaded archive was
+invalid, so local browser execution is not claimed. Live extraction initially
+failed after page loading; the DOM evaluator was then isolated from TypeScript
+runtime closure helpers, with separate rendering/validation diagnostics.
+
+[Second CPF run](https://github.com/jasonjiang8866/ratepro/actions/runs/41342681678/job/124955837031)
+rendered 2,421 text characters and three tables, including the full 1 October–31
+December 2026 HDB table. Validation rejected an incorrect assumption that the
+visible publisher would use its full name; the actual footer says `CPF Board`
+and the page carries `A Singapore Government Agency Website`. The validator now
+requires that actual branding, the exact official article URL/title and the
+unchanged strict full-quarter/HDB/OA/fee checks. The subsequent
+[GitHub browser job](https://github.com/jasonjiang8866/ratepro/actions/runs/41343252641/job/124957570655)
+at `e562d9e` passed both the browser regression test and live validation, including
+waiting for the site's loading overlay to disappear naturally. It extracted an
+explicit HDB 2.60%, OA 2.50% and fee 0.10% for 1 October–31 December 2026, observed
+at `2026-11-01T19:45:14.371Z`. The current DOM artifact hash is
+`329d08dae6e6be5cbff13e7d7ff245ae0765aaadc3b93cf74f7a92f0cf4060a1`.
+The [artifact](https://github.com/jasonjiang8866/ratepro/actions/runs/41343252641/artifacts/13098028469)
+contains the extracted DOM, report and a screenshot of the table. The raw GET
+still contains only the application shell: ordinary page rendering is the
+verified extraction route. This is a research candidate, not an enabled daily
+fallback or evidence of production collection recovery.
+
+The reduced `cpf-board-rendered.json` fixture comes from that real Actions DOM
+artifact, not a search snippet. Original `page.json` SHA-256:
+`a21edd4a54f87a6a8335c597d8b2883d47d42bdaf61da67958264395028b47da`.
+The separate shadow-DOM fixture is explicitly synthetic test markup.
+
+[Maybank timing job](https://github.com/jasonjiang8866/ratepro/actions/runs/41342452364/job/124955154289)
+made one ordinary HTTP/1.1 request: DNS completed at 0.025126 s, connection at
+0.026586 s, TLS at 0.123151 s; no first response byte or body was recorded before
+the 30.002791 s timeout (curl exit 28, HTTP code 0). This narrows the observed
+stall to after TLS, but cannot distinguish server handling, intermediary policy
+or another cause. No proxy, IP, client identity or certificate changes were tried.
+
+Validation at code commit `e562d9e`: [Frontend checks](https://github.com/jasonjiang8866/ratepro/actions/runs/41343252610)
+passed 86 deterministic tests and the production build. The separate Chromium job
+passed four tests (three overlap the normal suite; one browser test is additional),
+for 87 distinct passing tests across the two jobs. The real CLI prepare/stage test
+uses temporary synthetic evidence and verifies that production paths cannot be
+written. No real candidate was human-approved or staged as published data.
+
+[Source health](https://github.com/jasonjiang8866/ratepro/actions/runs/41343252598)
+keeps the existing HDB/AskGov chain separate from CPF browser research. Stable and
+expanded groups passed at this code commit; HDB still failed with prior observations
+retained. Maybank's timing experiment still failed. Standard Chartered also returned
+one non-retried 403 in the
+[preceding stable job](https://github.com/jasonjiang8866/ratepro/actions/runs/41342999259/job/124956795204),
+then succeeded in the later run. This is evidence of intermittent availability,
+not a demonstrated parser bug or a known server-policy cause. The failed attempt
+retained its original `2026-11-01T01:25:52.208Z` observation.
+
+The practical next step is to review this tooling, then connect validated CPF
+candidates to a separate data PR workflow with retained evidence and explicit
+failure/expiry handling. For Maybank and recurring denials, the file-review route
+is available now; an authorised bank/operator export remains preferable to client
+or network changes. No operator messages have been sent. The 13-product production
+snapshot and its observation times are unchanged throughout this development PR.
+
+## Follow-up: supported access and denial diagnostics — 1 November 2026
+
+PR #4 was rechecked against GitHub at `8c2230d`; it remained a draft on
+`feat/hdb-askgov-fallback`, based on `1ce8e90`. A fresh clone matched that HEAD.
+The earlier local reconstructed history was not used.
+
+### What official documentation establishes
+
+- The [AskGov help centre](https://ask.gov.sg/help) documents agency administration,
+  [widget integration](https://ask.gov.sg/help/questions/cmeb54o2q00t98tmo9zv8au0w)
+  and [iframe embedding](https://ask.gov.sg/help/questions/cm8crry7500cl12j6dg71xame).
+  These display integrations do not document a supported server-side content export API.
+- [OGP's old AskGov repository](https://github.com/opengovsg/askgovsg) was archived
+  on 24 July 2024. Its README API base is `localhost:6174/api/v1`; this is local
+  development documentation, not a current production API contract. No guessed
+  API route or internal widget endpoint is requested.
+- [AskGov terms](https://ask.gov.sg/terms), clause 3, restrict the granted use and
+  redistribution. Public readability is not evidence of permission for this
+  public directory's automated reuse. Clarify the intended use with the operator
+  and CPF before enabling publication; no legal conclusion or permission is assumed.
+- The [CPF Board article](https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined)
+  independently publishes the explicit HDB/OA quarter and rates. It is a candidate
+  official source, not an enabled third fallback. The existing
+  [quarterly press release](https://www.cpf.gov.sg/member/infohub/news/news-releases/government-extends-4-per-cent-interest-rate-floor-on-special-medisave-and-retirement-account-monies-until-31-december-2027)
+  is another dated official publication. Both need current-period validation and
+  direct runner availability before any implementation can renew an observation.
+- [data.gov.sg](https://guide.data.gov.sg/developer-guide/api-overview) has documented
+  public dataset APIs. This investigation did not identify a dataset containing
+  the current explicit HDB concessionary quarter. A general API or historical
+  bank-interest dataset does not establish a usable replacement.
+
+### Reproducible, read-only diagnosis
+
+`npm run verify:sources -- hdb` now writes `hdb-diagnostics.json` using the exact
+collector requests. It records Node version, timestamps, elapsed times, HTTP
+statuses, a small allowlist of response headers (including support correlation
+IDs when supplied), and hashes/known denial markers from at most 8 KiB of an error
+body. It never logs cookies, raw response bodies or environment credentials.
+Successful response bodies and request options are unchanged. A failed diagnostic
+body read must not erase the original status. Headers/markers can identify a
+response layer, but do not prove a particular WAF rule, IP/geographic restriction,
+or origin policy. The runner and development environment are not controlled
+network equivalents; the recorded Node versions can also differ.
+
+`npm run verify:sources -- hdb --probe-cpf` additionally makes exactly one ordinary
+GET to the independent CPF article. The source-health HDB job uses this research
+option and uploads the diagnostics separately. The candidate never enters
+`collect()`, never creates an offer, and cannot make a failed HDB health check pass.
+Even a candidate HTTP 200 is only a transport observation, not validated rate data.
+No retry, client impersonation, redirect following, proxy/IP change, private API
+or browser automation is added. Diagnostic files are ignored by Git and retained
+as Actions artifacts for seven days. The production daily collector does not run
+this probe.
+
+### New live evidence at `81d606d`
+
+[GitHub HDB job](https://github.com/jasonjiang8866/ratepro/actions/runs/41272305170/job/124747404252)
+at 04:14 UTC / 12:14 Singapore time on 1 November recorded:
+
+| Endpoint          | Development (Node 24.22.1)           | GitHub (Node 22.23.4, Azure eastus)                       | Supported conclusion                                                                                                   |
+| ----------------- | ------------------------------------ | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| HDB primary       | 403                                  | 403, `server: AmazonS3`, `x-cache: Error from cloudfront` | Same 4,760-byte denial body SHA-256 in both environments; cause still unproven                                         |
+| CPF / AskGov      | 200; existing strict parser succeeds | 403, `server: cloudflare`, `cf-mitigated: challenge`      | The runner received a Cloudflare Challenge Page; the triggering rule is unknown                                        |
+| CPF Board article | 200                                  | 200                                                       | Identical 66,490-byte HTML hash, but inspection finds an empty `webruntime-app` body, no tables and no quarter heading |
+
+Cloudflare's [official response-header documentation](https://developers.cloudflare.com/cloudflare-challenges/challenge-types/challenge-pages/detect-response/)
+identifies `cf-mitigated: challenge` as a Challenge Page response. This establishes
+more than a generic 403, but does not identify IP reputation, geographic policy,
+Bot Management, a custom WAF rule, or any particular challenge type. Only the
+operator's logs can distinguish those. The development responses report
+`server: envoy`; they are not evidence of an equivalent direct network path. No
+network configuration was changed. A different Node version is another uncontrolled
+variable, not a demonstrated fix. Do not change clients to get past the challenge.
+
+AskGov support correlation: `cf-ray: a5381309cd507af9-IAD`,
+request time `2026-11-01T04:14:44.707Z`.
+The CPF article's downloaded HTML SHA-256 in both environments was
+`3ac0d7cc2bc6cb6d944c9c17577a23757e0805af3a69f765b2daeeb4a441f2d1`.
+A search engine's rendered article can show the quarter while the GET returns
+only a JavaScript application shell. The probe now records body text length,
+table count and presence of the quarter heading, so this distinction is visible
+in Actions without saving the page or manufacturing a publisher/observation.
+The generic HTML parser removes scripts; no rate table is hidden in the raw HTML.
+
+The HDB source-health job correctly remained **failed**, and its generated feed
+retained all 13 offers exactly, including HDB's `2026-10-30T01:50:00.000Z`
+observation. `public/data/rates.json` was not modified. Neither the CPF HTTP 200
+nor the green frontend build is a recovered collection.
+
+### Practical remaining routes
+
+1. AskGov: request confirmation of supported server-side read/export access and
+   intended reuse from the operator/CPF, supplying the Ray ID and timestamp above.
+   The public help material documents display widgets rather than a content API;
+   no hidden endpoint or challenge-solving flow has been tried.
+2. CPF article: a future experiment could render the ordinary public page with
+   JavaScript on the same runner, stopping on any access challenge; or preferably
+   consume an officially documented export. This would need separate dependency,
+   access-policy and whole-page validation work. A rendered-page success must
+   still pass the full-quarter, publisher and HDB/OA checks. It is not implemented
+   as a production fallback in this PR. [CPF terms](https://www.cpf.gov.sg/member/terms-of-use)
+   distinguish non-commercial informational use from commercial reuse and restrict
+   automated commercial copying; do not describe the page as a supported open API
+   or assume commercial publication permission from an HTTP 200.
+3. Until one route is validated, retain the reviewed snapshot and its expiry;
+   a human can make a new dated review of the official quarterly publication.
+   An observation should be renewed only by that actual review, never by this probe.
+
+### Confirmed fixes and next decisions
+
+A regression test reproduced a real cleanup bug: if `body.cancel()` rejected on
+an HTTP 403, `fetchBytes()` classified it as a retryable network failure, losing
+the known denial. Cleanup is now best-effort so the HTTP status (or size rejection)
+remains authoritative. This bug is **not established as the cause of the earlier
+403s**, and fixing it does not restore access. The CPF publisher match also now
+requires a word boundary, rejecting a different name that merely starts with CPF.
+
+If denials persist, retain the draft and original snapshot. Ask the AskGov operator
+(via its help centre contact channel) and CPF to confirm an approved low-volume
+read/export method and reuse terms. Provide the exact URLs, UTC attempt times,
+Node version, method/options, status and supplied correlation IDs from the artifact;
+ask them to check their server logs. Do not request a different network path to
+circumvent a denial. No message has been sent by this project.
+
+Only install another source after permission/access and strict parsing are
+established; preserve actual evidence provenance, full quarter and successful
+retrieval time. Otherwise use a separately dated human review of the official
+publication, keeping `method: reviewed`, or retain the old observation and expiry
+warning. Never use search snippets or page-update/snapshot timestamps as observations.
+
+## HDB AskGov fallback — 1 November 2026
+
+The HDB primary returned 403 in the scheduled run on 1 November. The independently
+published [CPF answer on AskGov](https://ask.gov.sg/cpf/questions/cm2s5b54c005r12kzrep7aayw)
+explicitly gives the HDB mortgage rate and CPF OA rate for 1 October–31 December 2026. It is maintained by CPF, not an answer authored by HDB or an AI-generated rate.
+
+Browser inspection, standard Node fetch (HTTP 200, approximately 11.5 seconds) and
+curl (HTTP 200, approximately 9.7 seconds) succeeded in the development environment.
+The original HTML contains the table; JavaScript rendering and private APIs are
+unnecessary. Its SHA-256 was
+`3f5730d3f51050925722f5613a12272477ac7af76d3defe61d97dd428a1492d2`.
+The reduced fixture keeps the relevant factual table, title and publisher context.
+
+The collector tries HDB first. Only a failure invokes this one allowlisted official
+fallback, with its own 30-second budget and at most one transient retry. An HDB 403
+is not retried. The parser requires one explicit complete calendar quarter,
+matching HDB/OA table periods, a published numerical HDB rate and the consistent
+OA + 0.10% relationship. It does not calculate an absent HDB rate from another row.
+Missing, ambiguous, future or expired content fails closed. Quarter boundaries use
+Singapore time in both primary and fallback parsers.
+
+The product ID remains `hdb-concessionary`; fallback provenance uses
+`evidenceSourceId: cpf-askgov`. The rate card links to the evidence actually used.
+Source status records `fallbackSourceId` plus the original `primaryFailure`, so a
+successful fallback never claims the HDB primary recovered. Top-level `attempts`
+counts fallback attempts when present; `primaryFailure.attempts` counts primary
+attempts. These are separate endpoint budgets, not a combined retry count.
+
+`observedAt` records the successful collection's observation time. The stated
+quarter is stored in `effectiveFrom`/`effectiveUntil`. Neither the relative
+“Updated … ago” label nor snapshot generation becomes an observation date. If
+both sources fail, prior values, provenance and dates remain unchanged. Returning
+to the primary clears fallback provenance without creating a fictitious rate change.
+The browser continues to consume the same-origin snapshot; it does not call AskGov.
+
+Validation: unit tests and a separate read-only `hdb` GitHub Actions source-health
+job cover this chain. Live GitHub results are recorded in the pull request; local
+HTTP success alone is not evidence of GitHub availability or production deployment.
+
+## Earlier findings — 31 October 2026
+
+The following records describe the investigation before the AskGov fallback.
 
 ## Expanded coverage
 

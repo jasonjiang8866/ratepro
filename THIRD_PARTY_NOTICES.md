@@ -30,3 +30,17 @@ Public mortgage observations are attributed to their originating institutions
 through `sourceId` and the allowlisted source registry. No ownership of the
 underlying public information or bank brands is claimed. The directory does
 not represent an endorsement by any listed institution.
+
+HDB fallback rate facts are attributed to CPF's official AskGov publication:
+https://ask.gov.sg/cpf/questions/cm2s5b54c005r12kzrep7aayw
+The `cpf-askgov` evidence registry identifies this publication separately from the
+HDB primary website. The application does not mirror the full answer or claim
+ownership of government content. AskGov terms: https://ask.gov.sg/terms
+
+CPF Board browser research and reviewed-file provenance refer independently to:
+https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined
+The reduced rendered fixture retains only publication identity and relevant
+quarterly facts. It is not a copy of the full article or an assertion of endorsement.
+
+Playwright is a development-only browser research dependency (Apache-2.0); it is
+not included in the website bundle. Its package retains its upstream licence.
