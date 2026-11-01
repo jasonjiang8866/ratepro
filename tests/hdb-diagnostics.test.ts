@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { diagnosticFetch, type HttpEvidence } from '../scripts/hdb-diagnostics';
 import { retrieve } from '../scripts/retrieval';
 import { fetchBytes } from '../src/lib/sync';
+import { MAX_BYTES } from '../src/lib/data';
 
 describe('read-only HTTP evidence', () => {
   it('preserves the original request and successful body without capturing secrets', async () => {
@@ -70,6 +71,23 @@ describe('read-only HTTP evidence', () => {
     await expect(
       retrieve('https://example.test', upstream, 1000, () => {}, pause),
     ).rejects.toMatchObject({ kind: 'http', httpStatus: 403 });
+    expect(upstream).toHaveBeenCalledTimes(1);
+    expect(pause).not.toHaveBeenCalled();
+  });
+  it('does not retry an oversized stream when cancellation also fails', async () => {
+    const body = new ReadableStream({
+      start(c) {
+        c.enqueue(new Uint8Array(MAX_BYTES + 1));
+      },
+      cancel() {
+        throw Error('cleanup failed');
+      },
+    });
+    const upstream = vi.fn().mockResolvedValue(new Response(body));
+    const pause = vi.fn();
+    await expect(
+      retrieve('https://example.test', upstream, 1000, () => {}, pause),
+    ).rejects.toMatchObject({ kind: 'response', message: 'Response too large' });
     expect(upstream).toHaveBeenCalledTimes(1);
     expect(pause).not.toHaveBeenCalled();
   });

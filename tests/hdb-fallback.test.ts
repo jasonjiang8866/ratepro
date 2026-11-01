@@ -62,6 +62,7 @@ describe('official AskGov HDB quarter', () => {
       html.replaceAll('October 2026 to December 2026', 'July 2026 to September 2026'),
       html + html,
       '<html>Temporarily unavailable</html>',
+      '<html><body><webruntime-app></webruntime-app></body></html>',
     ])
       expect(() => parse(bad)).toThrow();
   });

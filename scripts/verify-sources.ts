@@ -1,5 +1,5 @@
 import { readFile, writeFile, appendFile } from 'node:fs/promises';
-import { collect } from './collect';
+import { collect, nodePage } from './collect';
 import { FeedSchema } from '../src/lib/schema';
 import { fetchBytes } from '../src/lib/sync';
 import { diagnosticFetch, type HttpEvidence } from './hdb-diagnostics';
@@ -28,11 +28,17 @@ if (group === 'hdb') {
     const url = 'https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined';
     try {
       const bytes = await fetchBytes(url, fetcher, 30000);
+      const page = nodePage(new TextDecoder().decode(bytes));
       candidate = {
         url,
         retrieval: 'ok',
         bytes: bytes.length,
         sha256: createHash('sha256').update(bytes).digest('hex'),
+        bodyTextLength: page.text.trim().length,
+        tableCount: page.tables.length,
+        hasQuarterHeading: /Computation of CPF OA Interest Rate and HDB Mortgage Rate for/.test(
+          page.text,
+        ),
         collection: 'Not enabled or validated; HTTP success is not a rate observation',
       };
     } catch {

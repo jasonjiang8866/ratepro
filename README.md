@@ -90,7 +90,9 @@ still attempts all sources and retains failed-source observations. Use
 `npm run verify:sources -- hdb` for the read-only HDB recovery check. AskGov
 extraction runs only in the collector; it adds no browser request or client dependency.
 The HDB health job also retains bounded HTTP diagnostics and makes one read-only
-probe of the independent CPF article. That candidate is not enabled for collection
+probe of the independent CPF article. AskGov returns a Cloudflare challenge on the
+runner; the CPF article returns HTTP 200 with an empty JavaScript app shell.
+That candidate is not enabled for collection
 and cannot turn HDB health green. See [access research and next steps](docs/RETRIEVAL.md).
 PR #4 remains a draft: successful tests or previews do not establish live recovery.
 

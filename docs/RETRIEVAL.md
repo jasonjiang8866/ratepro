@@ -54,6 +54,60 @@ or browser automation is added. Diagnostic files are ignored by Git and retained
 as Actions artifacts for seven days. The production daily collector does not run
 this probe.
 
+### New live evidence at `81d606d`
+
+[GitHub HDB job](https://github.com/jasonjiang8866/ratepro/actions/runs/41272305170/job/124747404252)
+at 04:14 UTC / 12:14 Singapore time on 1 November recorded:
+
+| Endpoint          | Development (Node 24.22.1)           | GitHub (Node 22.23.4, Azure eastus)                       | Supported conclusion                                                                                                   |
+| ----------------- | ------------------------------------ | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| HDB primary       | 403                                  | 403, `server: AmazonS3`, `x-cache: Error from cloudfront` | Same 4,760-byte denial body SHA-256 in both environments; cause still unproven                                         |
+| CPF / AskGov      | 200; existing strict parser succeeds | 403, `server: cloudflare`, `cf-mitigated: challenge`      | The runner received a Cloudflare Challenge Page; the triggering rule is unknown                                        |
+| CPF Board article | 200                                  | 200                                                       | Identical 66,490-byte HTML hash, but inspection finds an empty `webruntime-app` body, no tables and no quarter heading |
+
+Cloudflare's [official response-header documentation](https://developers.cloudflare.com/cloudflare-challenges/challenge-types/challenge-pages/detect-response/)
+identifies `cf-mitigated: challenge` as a Challenge Page response. This establishes
+more than a generic 403, but does not identify IP reputation, geographic policy,
+Bot Management, a custom WAF rule, or any particular challenge type. Only the
+operator's logs can distinguish those. The development responses report
+`server: envoy`; they are not evidence of an equivalent direct network path. No
+network configuration was changed. A different Node version is another uncontrolled
+variable, not a demonstrated fix. Do not change clients to get past the challenge.
+
+AskGov support correlation: `cf-ray: a5381309cd507af9-IAD`,
+request time `2026-11-01T04:14:44.707Z`.
+The CPF article's downloaded HTML SHA-256 in both environments was
+`3ac0d7cc2bc6cb6d944c9c17577a23757e0805af3a69f765b2daeeb4a441f2d1`.
+A search engine's rendered article can show the quarter while the GET returns
+only a JavaScript application shell. The probe now records body text length,
+table count and presence of the quarter heading, so this distinction is visible
+in Actions without saving the page or manufacturing a publisher/observation.
+The generic HTML parser removes scripts; no rate table is hidden in the raw HTML.
+
+The HDB source-health job correctly remained **failed**, and its generated feed
+retained all 13 offers exactly, including HDB's `2026-10-30T01:50:00.000Z`
+observation. `public/data/rates.json` was not modified. Neither the CPF HTTP 200
+nor the green frontend build is a recovered collection.
+
+### Practical remaining routes
+
+1. AskGov: request confirmation of supported server-side read/export access and
+   intended reuse from the operator/CPF, supplying the Ray ID and timestamp above.
+   The public help material documents display widgets rather than a content API;
+   no hidden endpoint or challenge-solving flow has been tried.
+2. CPF article: a future experiment could render the ordinary public page with
+   JavaScript on the same runner, stopping on any access challenge; or preferably
+   consume an officially documented export. This would need separate dependency,
+   access-policy and whole-page validation work. A rendered-page success must
+   still pass the full-quarter, publisher and HDB/OA checks. It is not implemented
+   as a production fallback in this PR. [CPF terms](https://www.cpf.gov.sg/member/terms-of-use)
+   distinguish non-commercial informational use from commercial reuse and restrict
+   automated commercial copying; do not describe the page as a supported open API
+   or assume commercial publication permission from an HTTP 200.
+3. Until one route is validated, retain the reviewed snapshot and its expiry;
+   a human can make a new dated review of the official quarterly publication.
+   An observation should be renewed only by that actual review, never by this probe.
+
 ### Confirmed fixes and next decisions
 
 A regression test reproduced a real cleanup bug: if `body.cancel()` rejected on
