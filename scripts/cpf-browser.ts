@@ -55,6 +55,19 @@ export async function renderedPage(page: BrowserPage): Promise<Page> {
   })()`);
 }
 
+export async function waitForCpfContent(page: BrowserPage, timeout = 20000) {
+  await page
+    .getByText(/^HDB mortgage rate for /)
+    .first()
+    .waitFor({ state: 'visible', timeout });
+  // Salesforce can insert the table before removing its loading overlay.
+  // Wait for the page's own ready state; never dismiss or hide the overlay.
+  await page
+    .getByText('Your page is loading', { exact: true })
+    .first()
+    .waitFor({ state: 'hidden', timeout });
+}
+
 export async function probeCpf(out = 'research-output/cpf') {
   await mkdir(out, { recursive: true });
   const before = sha256(await readFile('public/data/rates.json'));
@@ -106,10 +119,7 @@ export async function probeCpf(out = 'research-output/cpf') {
     const main = await page.goto(CPF_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
     if (!main || main.status() !== 200) throw Error('Main document was not HTTP 200');
     phase = 'waiting for rendered table';
-    await page
-      .getByText(/^HDB mortgage rate for /)
-      .first()
-      .waitFor({ state: 'visible', timeout: 20000 });
+    await waitForCpfContent(page);
     phase = 'reading rendered DOM';
     const evidence = await renderedPage(page);
     if (stop) throw Error(stop);
@@ -120,6 +130,10 @@ export async function probeCpf(out = 'research-output/cpf') {
     phase = 'strict publication validation';
     const offer = parseCpfBoard(evidence, page.url(), observedAt);
     phase = 'screenshot';
+    await page
+      .getByText(/^HDB mortgage rate for /)
+      .first()
+      .scrollIntoViewIfNeeded({ timeout: 5000 });
     await page.screenshot({ path: resolve(out, 'page.png'), fullPage: false, timeout: 5000 });
     if (stop) throw Error(stop);
     Object.assign(report, {

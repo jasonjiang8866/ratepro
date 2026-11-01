@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { chromium } from 'playwright';
 import { nodePage } from '../scripts/collect';
-import { CPF_URL, parseCpfBoard, renderedPage } from '../scripts/cpf-browser';
+import { CPF_URL, parseCpfBoard, renderedPage, waitForCpfContent } from '../scripts/cpf-browser';
 import { timingEvidence } from '../scripts/maybank-diagnostics';
 
 // Synthetic CPF rendering fixture reusing known quarterly facts, not live CPF evidence.
@@ -31,12 +31,25 @@ describe('read-only research', () => {
     );
   });
   it('validates reduced evidence actually rendered on GitHub, including its real CPF Board branding', () => {
-    const page = JSON.parse(readFileSync(new URL('fixtures/cpf-board-rendered.json', import.meta.url), 'utf8'));
+    const page = JSON.parse(
+      readFileSync(new URL('fixtures/cpf-board-rendered.json', import.meta.url), 'utf8'),
+    );
     const offer = parseCpfBoard(page, CPF_URL, at);
-    expect(offer).toMatchObject({ evidenceSourceId: 'cpf-board', method: 'browser',
-      effectiveFrom: '2026-10-01', effectiveUntil: '2026-12-31', observedAt: at });
+    expect(offer).toMatchObject({
+      evidenceSourceId: 'cpf-board',
+      method: 'browser',
+      effectiveFrom: '2026-10-01',
+      effectiveUntil: '2026-12-31',
+      observedAt: at,
+    });
     expect(offer.stages[0].rate).toBe(2.6);
-    expect(() => parseCpfBoard({ ...page, text: page.text.replace('A Singapore Government Agency Website', '') }, CPF_URL, at)).toThrow('identity');
+    expect(() =>
+      parseCpfBoard(
+        { ...page, text: page.text.replace('A Singapore Government Agency Website', '') },
+        CPF_URL,
+        at,
+      ),
+    ).toThrow('identity');
   });
   it('reports the last recorded milestone without claiming a root cause or exporting raw curl metadata', () => {
     const raw = {
@@ -85,6 +98,15 @@ describe('read-only research', () => {
         expect(result.tables).toHaveLength(1);
         expect(result.text).not.toContain('Old quarter');
         expect(parseCpfBoard(result, CPF_URL, at).effectiveUntil).toBe('2026-12-31');
+        await page.evaluate(() => {
+          const overlay = document.createElement('div');
+          overlay.id = 'test-loading';
+          overlay.textContent = 'Your page is loading';
+          document.body.append(overlay);
+        });
+        await expect(waitForCpfContent(page, 100)).rejects.toThrow();
+        await page.locator('#test-loading').evaluate((element) => element.remove());
+        await waitForCpfContent(page, 1000);
       } finally {
         await browser.close();
       }
