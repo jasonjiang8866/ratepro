@@ -733,3 +733,11 @@
 #main:focus {
   outline: none;
 }
+
+.correction-notice {
+  margin-top: 15px;
+  padding: 15px;
+  border-left: 3px solid var(--primary);
+  background: var(--secondary);
+  font-size: 13px;
+}

@@ -320,7 +320,16 @@ export default function App() {
   }
   return (
     <div className="min-h-screen">
-      <a href="#main" className="skip-link">
+      <a
+        href="#main"
+        className="skip-link"
+        onClick={(event) => {
+          event.preventDefault();
+          const main = document.getElementById('main');
+          main?.focus();
+          main?.scrollIntoView();
+        }}
+      >
         Skip to content
       </a>
       <header className="topbar">

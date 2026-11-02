@@ -1,7 +1,12 @@
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
-import { mkdirSync, readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync } from 'node:fs';
 import assert from 'node:assert/strict';
+const corpus = ['insights', 'promotions'].flatMap((folder) =>
+  readdirSync(`content/${folder}`)
+    .filter((file) => file.endsWith('.json'))
+    .map((file) => JSON.parse(readFileSync(`content/${folder}/${file}`, 'utf8'))),
+);
 const base = 'http://127.0.0.1:4173';
 const server = spawn(
   process.execPath,
@@ -40,6 +45,7 @@ try {
     route.request().url().startsWith(base) ? route.continue() : route.abort(),
   );
   const page = await context.newPage();
+  page.setDefaultTimeout(15000);
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   const fits = async () =>
@@ -52,9 +58,16 @@ try {
   await page.getByRole('heading', { name: /A little context/ }).waitFor();
   await fits();
   assert.equal(await page.locator('h1').count(), 1);
-  await page.screenshot({ path: 'test-results/homepage/desktop-light.png', fullPage: true });
+  await page.screenshot({
+    path: 'test-results/homepage/desktop-light.png',
+    fullPage: true,
+    animations: 'disabled',
+  });
   await page.getByRole('button', { name: 'Buying & refinancing guides', exact: true }).click();
-  assert.equal(await page.locator('.story-row').count(), 1);
+  assert.equal(
+    await page.locator('.story-row').count(),
+    corpus.filter((a) => a.category === 'guide').length,
+  );
   await page.getByRole('button', { name: 'All stories', exact: true }).click();
   assert.ok((await page.locator('.story-row').count()) >= 3);
   await page.getByRole('link', { name: 'Read the briefing', exact: true }).click();
@@ -63,13 +76,22 @@ try {
   assert.equal(await page.locator('h1').count(), 1);
   assert.ok((await page.locator('.reader-sources a[href^="https://"]').count()) >= 1);
   await fits();
-  await page.screenshot({ path: 'test-results/homepage/article-desktop.png', fullPage: true });
+  await page.screenshot({
+    path: 'test-results/homepage/article-desktop.png',
+    fullPage: true,
+    animations: 'disabled',
+  });
   await page.reload();
   await page.getByRole('heading', { name: 'At a glance', exact: true }).waitFor();
   await page.goBack();
   await page.getByRole('heading', { name: /A little context/ }).waitFor();
   await page.getByRole('link', { name: 'Compare home loans', exact: true }).click();
   await page.getByRole('heading', { name: 'Find your starting point' }).waitFor();
+  // The skip link must not overwrite the hash route or send readers home.
+  await page.getByRole('link', { name: 'Skip to content', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  assert.match(page.url(), /#\/rates$/);
+  assert.equal(await page.evaluate(() => document.activeElement?.id), 'main');
   await page.locator('.offer-card').first().waitFor();
   assert.equal(
     await page.locator('.offer-card').count(),
@@ -82,16 +104,32 @@ try {
   await page.getByRole('heading', { name: /A little context/ }).waitFor();
   await page.getByRole('button', { name: 'Use dark theme', exact: true }).click();
   assert.equal(await page.locator('html').getAttribute('class'), 'dark');
-  await page.screenshot({ path: 'test-results/homepage/desktop-dark.png', fullPage: true });
+  await page.screenshot({
+    path: 'test-results/homepage/desktop-dark.png',
+    fullPage: true,
+    animations: 'disabled',
+  });
   await page.setViewportSize({ width: 390, height: 844 });
   await fits();
-  await page.screenshot({ path: 'test-results/homepage/mobile-dark.png', fullPage: true });
+  await page.screenshot({
+    path: 'test-results/homepage/mobile-dark.png',
+    fullPage: true,
+    animations: 'disabled',
+  });
   await page.getByRole('button', { name: 'Use light theme', exact: true }).click();
-  await page.screenshot({ path: 'test-results/homepage/mobile-light.png', fullPage: true });
+  await page.screenshot({
+    path: 'test-results/homepage/mobile-light.png',
+    fullPage: true,
+    animations: 'disabled',
+  });
   await page.getByRole('link', { name: 'Read terms & evidence', exact: true }).first().click();
   await page.getByRole('heading', { name: 'The eligibility & conditions' }).waitFor();
   await fits();
-  await page.screenshot({ path: 'test-results/homepage/article-mobile.png', fullPage: true });
+  await page.screenshot({
+    path: 'test-results/homepage/article-mobile.png',
+    fullPage: true,
+    animations: 'disabled',
+  });
   await page.goto(`${base}/#/read/does-not-exist`);
   await page.getByRole('heading', { name: 'We couldn’t find that report.' }).waitFor();
   await page.getByRole('link', { name: 'Back to the journal', exact: true }).click();

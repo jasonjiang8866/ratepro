@@ -50,6 +50,7 @@ function Meta({ article }: { article: Article }) {
   );
 }
 function Reader({ article, now }: { article: Article; now: Date }) {
+  const replacement = articles.find((item) => item.supersedes === article.slug);
   return (
     <article className="reader">
       <a className="text-link" href="#/home">
@@ -59,7 +60,17 @@ function Reader({ article, now }: { article: Article; now: Date }) {
         <Meta article={article} />
         <h1>{article.title}</h1>
         <p className="reader-deck">{article.summary}</p>
-        <span className="story-status">{editorialStatus(article, now)}</span>
+        <span className="story-status">
+          {replacement ? 'Superseded report' : editorialStatus(article, now)}
+        </span>
+        {replacement && (
+          <p className="correction-notice">
+            This report has a correction.{' '}
+            <a className="text-link" href={href(replacement)}>
+              Read the updated report <ArrowRight size={14} />
+            </a>
+          </p>
+        )}
       </header>
       <div className="reader-columns">
         <div className="reader-body">
@@ -108,9 +119,10 @@ function Reader({ article, now }: { article: Article; now: Date }) {
             Report date: {date(article.reportDate)}. Source checks below are separate from rate
             observations in the comparison tool.
           </p>
-          {article.effectiveFrom && (
+          {(article.effectiveFrom || article.effectiveUntil) && (
             <p>
-              Stated period: {date(article.effectiveFrom)}
+              Stated period:{' '}
+              {article.effectiveFrom ? date(article.effectiveFrom) : 'Start not stated'}
               {article.effectiveUntil && ` – ${date(article.effectiveUntil)}`}.
             </p>
           )}
@@ -168,8 +180,9 @@ export function Home({ slug, now }: { slug?: string; now: Date }) {
       </section>
     );
   }
-  const featured = articles.find((a) => a.category === 'market');
-  const packages = articles.filter((a) => a.category === 'package').slice(0, 3);
+  const isSuperseded = (a: Article) => articles.some((item) => item.supersedes === a.slug);
+  const featured = articles.find((a) => a.category === 'market' && !isSuperseded(a));
+  const packages = articles.filter((a) => a.category === 'package' && !isSuperseded(a)).slice(0, 3);
   const archive = articles.filter((a) => category === 'all' || a.category === category);
   return (
     <div className="journal">
@@ -278,7 +291,9 @@ export function Home({ slug, now }: { slug?: string; now: Date }) {
                 </div>
                 <ArrowUpRight size={20} />
               </div>
-              <span className="story-status">{editorialStatus(a, now)}</span>
+              <span className="story-status">
+                {isSuperseded(a) ? 'Superseded report' : editorialStatus(a, now)}
+              </span>
               <h3>
                 <a href={href(a)}>{a.title}</a>
               </h3>
@@ -347,7 +362,9 @@ export function Home({ slug, now }: { slug?: string; now: Date }) {
                   <a href={href(a)}>{a.title}</a>
                 </h3>
                 <p>{a.summary}</p>
-                <span className="story-status">{editorialStatus(a, now)}</span>
+                <span className="story-status">
+                  {isSuperseded(a) ? 'Superseded report' : editorialStatus(a, now)}
+                </span>
               </div>
               <a href={href(a)} className="story-open" aria-label={`Read: ${a.title}`}>
                 <ArrowUpRight size={23} />
