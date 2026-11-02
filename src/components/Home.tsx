@@ -250,7 +250,7 @@ export function Home({ slug, now }: { slug?: string; now: Date }) {
             </div>
           </div>
           <div className="briefing-points">
-            <span className="eyebrow">THREE THINGS TO TAKE AWAY</span>
+            <span className="eyebrow">THE TAKEAWAYS</span>
             {featured.takeaways.map((t, i) => (
               <div className="briefing-point" key={i}>
                 <span>0{i + 1}</span>
