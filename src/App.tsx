@@ -61,6 +61,7 @@ import {
 } from '@/lib/schema';
 import { synchronize } from '@/lib/sync';
 import { cn } from '@/lib/utils';
+import { Home } from '@/components/Home';
 const money = (n: number) =>
   new Intl.NumberFormat('en-SG', {
     style: 'currency',
@@ -127,7 +128,30 @@ export default function App() {
   const [message, setMessage] = useState('Checking for published updates…');
   const [busy, setBusy] = useState(false);
   const [clock, setClock] = useState(Date.now);
-  const [tab, setTab] = useState('Rates');
+  const [route, setRoute] = useState(window.location.hash);
+  const tab =
+    route === '#/rates'
+      ? 'Rates'
+      : route === '#/sources'
+        ? 'Sources'
+        : route === '#/history'
+          ? 'History'
+          : 'Home';
+  const setTab = (next: string) => {
+    window.location.hash = `/${next.toLowerCase()}`;
+  };
+  useEffect(() => {
+    const navigate = () => {
+      setRoute(window.location.hash);
+      // In-page reading-room anchors keep their native scrolling behavior.
+      if (window.location.hash.startsWith('#/')) {
+        window.scrollTo(0, 0);
+        document.getElementById('main')?.focus({ preventScroll: true });
+      }
+    };
+    window.addEventListener('hashchange', navigate);
+    return () => window.removeEventListener('hashchange', navigate);
+  }, []);
   const [query, setQuery] = useState('');
   const [property, setProperty] = useState('All properties');
   const [kind, setKind] = useState('All rates');
@@ -301,12 +325,27 @@ export default function App() {
       </a>
       <header className="topbar">
         <div className="shell flex h-20 items-center justify-between gap-3">
-          <a href="#" className="brand" aria-label="RatePro home" onClick={() => setTab('Rates')}>
+          <a href="#/home" className="brand" aria-label="RatePro home">
             <span className="brand-icon">
               <House size={21} />
             </span>
             ratepro<span className="brand-sg">SG</span>
           </a>
+          <nav className="primary-nav" aria-label="Main navigation">
+            {[
+              ['Home', 'The journal'],
+              ['Rates', 'Compare rates'],
+              ['Sources', 'Our sources'],
+            ].map(([key, label]) => (
+              <a
+                key={key}
+                href={`#/${key.toLowerCase()}`}
+                aria-current={tab === key ? 'page' : undefined}
+              >
+                {label}
+              </a>
+            ))}
+          </nav>
           <div className="flex items-center gap-2">
             <span className="local-pill hidden sm:flex">
               <span />
@@ -323,155 +362,166 @@ export default function App() {
           </div>
         </div>
       </header>
-      <main id="main" className="shell pb-14">
-        <section className="hero">
-          <div>
-            <div className="eyebrow">
-              <span /> INDEPENDENT · PUBLICLY SOURCED
-            </div>
-            <h1>
-              A clearer view of
-              <br />
-              your next home loan<span>.</span>
-            </h1>
-            <p>
-              Explore Singapore’s published mortgage rates.
-              <br className="hidden sm:block" /> Keep the sources, compare the terms, track what
-              changes.
-            </p>
-            <div className="hero-actions">
-              <Button onClick={() => void refresh(true)} disabled={busy}>
-                <RefreshCw className={cn('size-4', busy && 'animate-spin')} />
-                {busy ? 'Checking sources…' : 'Refresh rates'}
-              </Button>
-              <span className="text-xs text-muted-foreground">No account. No sales calls.</span>
-            </div>
-          </div>
-          <div className="hero-note">
-            <div className="flex items-center justify-between">
-              <span className="eyebrow">THE LOCAL-FIRST APPROACH</span>
-              <ShieldCheck className="size-5" />
-            </div>
-            <h2>
-              Useful information.
-              <br />
-              Without the lead form.
-            </h2>
-            <p>
-              Public observations stay in your browser. Export a copy to share, and come back to see
-              what has changed.
-            </p>
-            <div className="hero-note-bottom">
-              <Database size={15} /> Browser saved <span>↗ Open sources</span>
-            </div>
-          </div>
-        </section>
-        <div className="metrics">
-          <div>
-            <span>Published observations</span>
-            <strong>
-              {cache.offers.length.toString().padStart(2, '0')}
-              <small>packages in this directory</small>
-            </strong>
-          </div>
-          <div>
-            <span>Source coverage</span>
-            <strong>
-              {SOURCES.length.toString().padStart(2, '0')}
-              <small>official sources monitored</small>
-            </strong>
-          </div>
-          <div>
-            <span>Latest observation</span>
-            <strong className="metric-date">
-              {lastObserved ? date(lastObserved) : 'Awaiting data'}
-              <small>not a personalised bank quote</small>
-            </strong>
-          </div>
-        </div>
-        <div className="sync-bar" role="status" aria-live="polite">
-          {busy ? (
-            <RefreshCw className="size-4 animate-spin shrink-0" />
-          ) : (
-            <Database className="size-4 shrink-0" />
-          )}
-          <span>{message}</span>
-          <button
-            onClick={() => setTab('Sources')}
-            className="ml-auto shrink-0 underline underline-offset-4"
-          >
-            Source details
-          </button>
-        </div>
-        {cache.offers.length > 0 && (
-          <p className="my-4 text-sm text-muted-foreground">
-            {cache.offers.filter((o) => o.method === 'reviewed').length} manually reviewed snapshots
-            {' · '}
-            {cache.offers.filter((o) => isStale(o, clock)).length} observations need rechecking.{' '}
-            Observations older than 7 days or past their published period are flagged. Downloading a
-            snapshot does not renew its observation dates.
-          </p>
+      <main id="main" tabIndex={-1} className="shell pb-14">
+        {tab === 'Home' && (
+          <Home
+            slug={route.startsWith('#/read/') ? route.slice(7) : undefined}
+            now={new Date(clock)}
+          />
         )}
-        {warning && (
-          <div className="notice" role="alert">
-            <WifiOff size={16} />
-            {warning}
-          </div>
-        )}
-        <div className="section-nav">
-          <div className="flex gap-1" aria-label="Views">
-            {['Rates', 'Sources', 'History'].map((t) => (
+        {tab !== 'Home' && (
+          <>
+            <section className="hero">
+              <div>
+                <div className="eyebrow">
+                  <span /> INDEPENDENT · PUBLICLY SOURCED
+                </div>
+                <h1>
+                  A clearer view of
+                  <br />
+                  your next home loan<span>.</span>
+                </h1>
+                <p>
+                  Explore Singapore’s published mortgage rates.
+                  <br className="hidden sm:block" /> Keep the sources, compare the terms, track what
+                  changes.
+                </p>
+                <div className="hero-actions">
+                  <Button onClick={() => void refresh(true)} disabled={busy}>
+                    <RefreshCw className={cn('size-4', busy && 'animate-spin')} />
+                    {busy ? 'Checking sources…' : 'Refresh rates'}
+                  </Button>
+                  <span className="text-xs text-muted-foreground">No account. No sales calls.</span>
+                </div>
+              </div>
+              <div className="hero-note">
+                <div className="flex items-center justify-between">
+                  <span className="eyebrow">THE LOCAL-FIRST APPROACH</span>
+                  <ShieldCheck className="size-5" />
+                </div>
+                <h2>
+                  Useful information.
+                  <br />
+                  Without the lead form.
+                </h2>
+                <p>
+                  Public observations stay in your browser. Export a copy to share, and come back to
+                  see what has changed.
+                </p>
+                <div className="hero-note-bottom">
+                  <Database size={15} /> Browser saved <span>↗ Open sources</span>
+                </div>
+              </div>
+            </section>
+            <div className="metrics">
+              <div>
+                <span>Published observations</span>
+                <strong>
+                  {cache.offers.length.toString().padStart(2, '0')}
+                  <small>packages in this directory</small>
+                </strong>
+              </div>
+              <div>
+                <span>Source coverage</span>
+                <strong>
+                  {SOURCES.length.toString().padStart(2, '0')}
+                  <small>official sources monitored</small>
+                </strong>
+              </div>
+              <div>
+                <span>Latest observation</span>
+                <strong className="metric-date">
+                  {lastObserved ? date(lastObserved) : 'Awaiting data'}
+                  <small>not a personalised bank quote</small>
+                </strong>
+              </div>
+            </div>
+            <div className="sync-bar" role="status" aria-live="polite">
+              {busy ? (
+                <RefreshCw className="size-4 animate-spin shrink-0" />
+              ) : (
+                <Database className="size-4 shrink-0" />
+              )}
+              <span>{message}</span>
               <button
-                key={t}
-                aria-current={tab === t ? 'page' : undefined}
-                className={cn('nav-item', tab === t && 'active')}
-                onClick={() => setTab(t)}
+                onClick={() => setTab('Sources')}
+                className="ml-auto shrink-0 underline underline-offset-4"
               >
-                {t === 'Rates' ? (
-                  <SlidersHorizontal size={15} />
-                ) : t === 'Sources' ? (
-                  <ExternalLink size={15} />
-                ) : (
-                  <History size={15} />
-                )}{' '}
-                {t}
-                {t === 'History' && cache.history.length > 0 && (
-                  <span className="count">{cache.history.length}</span>
-                )}
+                Source details
               </button>
-            ))}
-          </div>
-          <div className="flex gap-1">
-            <input
-              ref={file}
-              type="file"
-              accept="application/json,.json"
-              className="hidden"
-              aria-label="Import rate observations"
-              onChange={(e) => void importData(e.target.files?.[0])}
-            />
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={busy}
-              aria-label="Import observations"
-              onClick={() => file.current?.click()}
-            >
-              <ArrowUpFromLine size={14} />
-              <span className="hidden sm:inline">Import</span>
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              aria-label="Export observations"
-              onClick={exportData}
-              disabled={!cache.offers.length}
-            >
-              <ArrowDownToLine size={14} />
-              <span className="hidden sm:inline">Export</span>
-            </Button>
-          </div>
-        </div>
+            </div>
+            {cache.offers.length > 0 && (
+              <p className="my-4 text-sm text-muted-foreground">
+                {cache.offers.filter((o) => o.method === 'reviewed').length} manually reviewed
+                snapshots
+                {' · '}
+                {cache.offers.filter((o) => isStale(o, clock)).length} observations need rechecking.{' '}
+                Observations older than 7 days or past their published period are flagged.
+                Downloading a snapshot does not renew its observation dates.
+              </p>
+            )}
+            {warning && (
+              <div className="notice" role="alert">
+                <WifiOff size={16} />
+                {warning}
+              </div>
+            )}
+            <div className="section-nav">
+              <div className="flex gap-1" aria-label="Views">
+                {['Rates', 'Sources', 'History'].map((t) => (
+                  <button
+                    key={t}
+                    aria-current={tab === t ? 'page' : undefined}
+                    className={cn('nav-item', tab === t && 'active')}
+                    onClick={() => setTab(t)}
+                  >
+                    {t === 'Rates' ? (
+                      <SlidersHorizontal size={15} />
+                    ) : t === 'Sources' ? (
+                      <ExternalLink size={15} />
+                    ) : (
+                      <History size={15} />
+                    )}{' '}
+                    {t}
+                    {t === 'History' && cache.history.length > 0 && (
+                      <span className="count">{cache.history.length}</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-1">
+                <input
+                  ref={file}
+                  type="file"
+                  accept="application/json,.json"
+                  className="hidden"
+                  aria-label="Import rate observations"
+                  onChange={(e) => void importData(e.target.files?.[0])}
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={busy}
+                  aria-label="Import observations"
+                  onClick={() => file.current?.click()}
+                >
+                  <ArrowUpFromLine size={14} />
+                  <span className="hidden sm:inline">Import</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  aria-label="Export observations"
+                  onClick={exportData}
+                  disabled={!cache.offers.length}
+                >
+                  <ArrowDownToLine size={14} />
+                  <span className="hidden sm:inline">Export</span>
+                </Button>
+              </div>
+            </div>
+          </>
+        )}
         {tab === 'Rates' && (
           <div className="workspace">
             <section className="min-w-0">

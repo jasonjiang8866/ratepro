@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "slug": "understanding-sora",
+  "category": "guide",
+  "title": "Start with the benchmark. Then read the whole offer.",
+  "summary": "A short guide to the difference between overnight SORA, compounded tenors and the terms you still need to check.",
+  "reportDate": "2026-11-02",
+  "edition": "guide",
+  "eventKey": "sora-explainer-v1",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "Overnight SORA and compounded SORA are different measures.",
+      "sourceIds": ["mas"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "What MAS publishes",
+      "text": "SORA reflects transaction-weighted unsecured overnight Singapore-dollar interbank borrowing. MAS publishes it on the next business day, alongside an index and one-, three- and six-month compounded rates.",
+      "sourceIds": ["mas"],
+      "kind": "fact"
+    },
+    {
+      "heading": "Your comparison checklist",
+      "text": "Our reading framework: identify the tenor your contract uses, then check the lender’s spread, reset schedule, fees and exit conditions. Ask for these together before comparing offers. This page provides no current fixing, forecast or personalised recommendation.",
+      "sourceIds": ["mas"],
+      "kind": "analysis"
+    }
+  ],
+  "sources": [
+    {
+      "id": "mas",
+      "publisher": "Monetary Authority of Singapore",
+      "title": "SORA interest rate benchmark",
+      "url": "https://www.mas.gov.sg/monetary-policy/sora",
+      "checkedAt": "2026-11-02T15:14:38Z",
+      "documentDate": "2026-10-13"
+    }
+  ],
+  "package": null
+}
