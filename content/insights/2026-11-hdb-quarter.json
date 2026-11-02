@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "slug": "2026-11-hdb-quarter",
+  "category": "market",
+  "title": "The HDB rate has a quarterly anchor. Bank loans need a closer look.",
+  "summary": "A November starting point: the published HDB quarter, how SORA is reported, and the questions to take to your lender.",
+  "reportDate": "2026-11-02",
+  "edition": "baseline",
+  "eventKey": "hdb-2026-q4-baseline",
+  "supersedes": null,
+  "effectiveFrom": "2026-10-01",
+  "effectiveUntil": "2026-12-31",
+  "takeaways": [
+    {
+      "text": "HDB: 2.60% p.a. for 1 October–31 December 2026.",
+      "sourceIds": ["cpf"]
+    },
+    {
+      "text": "CPF Ordinary Account: 2.50% p.a. for the same quarter.",
+      "sourceIds": ["cpf"]
+    },
+    {
+      "text": "SORA is a benchmark; MAS also publishes compounded tenors.",
+      "sourceIds": ["mas"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "The published quarter",
+      "text": "CPF lists the HDB mortgage rate at 2.60% per annum for October–December 2026: the OA rate of 2.50% plus a 0.10 percentage-point administration fee. This is an existing quarterly publication, not a new November rate cut.",
+      "sourceIds": ["cpf"],
+      "kind": "fact"
+    },
+    {
+      "heading": "A different reference for bank loans",
+      "text": "MAS publishes overnight SORA and compounded one-, three- and six-month tenors. This briefing does not establish a current SORA fixing or a direction of travel.",
+      "sourceIds": ["mas"],
+      "kind": "fact"
+    },
+    {
+      "heading": "What to do with this information",
+      "text": "Use the quarter as context, then compare the terms of an actual offer. Our editorial view: ask about the benchmark tenor, spread at each stage, fees and the date your commitment ends. A benchmark alone is insufficient to compare your total borrowing cost.",
+      "sourceIds": ["mas"],
+      "kind": "analysis"
+    }
+  ],
+  "sources": [
+    {
+      "id": "cpf",
+      "publisher": "CPF Board",
+      "title": "How are CPF interest rates determined?",
+      "url": "https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined",
+      "checkedAt": "2026-11-02T15:14:38Z",
+      "documentDate": "2026-09-22"
+    },
+    {
+      "id": "mas",
+      "publisher": "Monetary Authority of Singapore",
+      "title": "SORA interest rate benchmark",
+      "url": "https://www.mas.gov.sg/monetary-policy/sora",
+      "checkedAt": "2026-11-02T15:14:38Z",
+      "documentDate": "2026-10-13"
+    }
+  ],
+  "package": null
+}

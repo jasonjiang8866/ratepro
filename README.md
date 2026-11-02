@@ -13,6 +13,15 @@ npm test
 npm run build
 ```
 
+## Editorial journal
+
+The homepage combines source-linked market briefings, dated package observations
+and a reading room with the existing loan comparison tools. Articles live in
+`content/insights/` and `content/promotions/`; `npm run build` validates them before
+bundling. See [the editorial contract](docs/editorial-policy.md) for scheduled-task
+permissions, JSON examples, date semantics, deduplication and draft-PR review.
+Editorial checks never renew rate observation timestamps or modify the rate feed.
+
 ## Retrieval recovery tools (draft)
 
 Read-only CPF browser and Maybank timing experiments are separate from the daily

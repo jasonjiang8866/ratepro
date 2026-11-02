@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "slug": "2026-11-uob-sora-baseline",
+  "category": "package",
+  "title": "UOB’s published SORA package, with the conditions in view.",
+  "summary": "An existing public schedule for completed homes. This first record establishes a baseline; it does not identify a newly launched promotion.",
+  "reportDate": "2026-11-02",
+  "edition": "baseline",
+  "eventKey": "uob-3m-sora-baseline-2026-11",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "Years 1–2: 3M compounded SORA + 0.70% p.a.",
+      "sourceIds": ["uob"]
+    },
+    {
+      "text": "Year 3: +0.80%; year 4 onwards: +1.00%.",
+      "sourceIds": ["uob"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Read before enquiring",
+      "text": "The published schedule has a two-year lock-in and a S$250,000 minimum loan. No current SORA fixing is included here, so these spreads are not all-in mortgage rates.",
+      "sourceIds": ["uob"],
+      "kind": "fact"
+    },
+    {
+      "heading": "Availability and benefits",
+      "text": "UOB describes a limited tranche. One conversion after 24 months from first disbursement is subject to the Letter of Offer. Prepayment and sale concessions have separate conditions; confirm those and all charges with UOB.",
+      "sourceIds": ["uob"],
+      "kind": "fact"
+    }
+  ],
+  "sources": [
+    {
+      "id": "uob",
+      "publisher": "UOB",
+      "title": "3-Month Compounded SORA Package",
+      "url": "https://www.uob.com.sg/personal/borrow/property-loans/about-sora.page",
+      "checkedAt": "2026-11-02T15:14:38Z",
+      "documentDate": null
+    }
+  ],
+  "package": {
+    "lender": "UOB",
+    "eligibility": "New direct-to-bank customers; completed Singapore residential property, purchase or refinancing from another bank/HDB.",
+    "conditions": "Indicative terms; the Letter of Offer confirms rates and benefits. Subject to change without notice.",
+    "expiry": null,
+    "sourceIds": ["uob"]
+  }
+}

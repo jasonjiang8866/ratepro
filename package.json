@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "tsc --noEmit && vite build",
+    "build": "npm run check:content && tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",
     "collect": "node --import tsx scripts/collect.ts",
@@ -16,6 +16,8 @@
     "deploy": "npm run build && wrangler pages deploy dist --project-name ratepro",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "check:content": "node --import tsx scripts/check-content.ts",
+    "test:ui": "node scripts/check-ui.mjs",
     "research:cpf": "node --import tsx scripts/cpf-browser.ts",
     "research:maybank": "node --import tsx scripts/maybank-diagnostics.ts",
     "test:browser": "RUN_BROWSER_TESTS=1 vitest run tests/retrieval-research.test.ts",
