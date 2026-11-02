@@ -1,0 +1,51 @@
+name: Read-only retrieval research
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/retrieval-research.yml'
+      - 'scripts/cpf-browser.ts'
+      - 'scripts/maybank-diagnostics.ts'
+      - 'scripts/hdb-askgov.ts'
+      - 'tests/retrieval-research.test.ts'
+permissions:
+  contents: read
+jobs:
+  cpf-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - run: npm run research:cpf
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cpf-browser-research
+          path: research-output/cpf/
+          if-no-files-found: error
+          retention-days: 7
+  maybank-timing:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run research:maybank
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maybank-timing-research
+          path: research-output/maybank/
+          if-no-files-found: error
+          retention-days: 7

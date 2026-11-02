@@ -30,11 +30,15 @@ export async function fetchBytes(
       redirect: 'error',
     });
     if (!res.ok) {
-      await res.body?.cancel();
+      // Cleanup failure must not turn a known HTTP denial/size rejection into
+      // a retryable network failure.
+      await res.body?.cancel().catch(() => {});
       throw new RetrievalError(`HTTP ${res.status}`, 'http', res.status);
     }
     if (Number(res.headers.get('content-length') ?? 0) > MAX_BYTES) {
-      await res.body?.cancel();
+      // Cleanup failure must not turn a known HTTP denial/size rejection into
+      // a retryable network failure.
+      await res.body?.cancel().catch(() => {});
       throw new RetrievalError('Response too large', 'response');
     }
     // Bound streamed responses too, including those without Content-Length.
@@ -51,7 +55,7 @@ export async function fetchBytes(
         chunks.push(value);
       }
     } finally {
-      await reader.cancel();
+      await reader.cancel().catch(() => {});
     }
     const bytes = new Uint8Array(size);
     let offset = 0;

@@ -1,4 +1,4 @@
-import { OfferSchema, soraFormula, type Offer } from './schema';
+import { OfferSchema, soraFormula, singaporeDay, type Offer } from './schema';
 export interface Page {
   text: string;
   tables: string[][][];
@@ -107,8 +107,8 @@ export function parseDbsGreen(page: Page, at: string, method: Offer['method']): 
   ];
 }
 export function parseHdb(page: Page, at: string, method: Offer['method']): Offer[] {
-  const today = at.slice(0, 10);
-  const candidates: { end: string; rate: number }[] = [];
+  const today = singaporeDay(Date.parse(at));
+  const candidates: { start: string; end: string; rate: number }[] = [];
   for (const table of page.tables)
     for (const r of table) {
       if (r.length !== 2) continue;
@@ -118,7 +118,11 @@ export function parseHdb(page: Page, at: string, method: Offer['method']): Offer
         end = new Date(m[2] + ' 00:00:00 UTC');
       if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime())) continue;
       if (start.toISOString().slice(0, 10) <= today && end.toISOString().slice(0, 10) >= today)
-        candidates.push({ end: end.toISOString().slice(0, 10), rate: percent(r[1]) });
+        candidates.push({
+          start: start.toISOString().slice(0, 10),
+          end: end.toISOString().slice(0, 10),
+          rate: percent(r[1]),
+        });
     }
   if (candidates.length !== 1 || !/concessionary/i.test(page.text))
     throw Error('Current HDB concessionary quarter not found');
@@ -138,6 +142,7 @@ export function parseHdb(page: Page, at: string, method: Offer['method']): Offer
       terms:
         'For eligible HDB buyers. Rate is reviewed quarterly and is not fixed for the full tenure. Confirm HFE eligibility and terms with HDB.',
       observedAt: at,
+      effectiveFrom: candidates[0].start,
       effectiveUntil: candidates[0].end,
       method,
     }),
