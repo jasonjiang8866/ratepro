@@ -17,7 +17,11 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:content": "node --import tsx scripts/check-content.ts",
-    "test:ui": "node scripts/check-ui.mjs"
+    "test:ui": "node scripts/check-ui.mjs",
+    "research:cpf": "node --import tsx scripts/cpf-browser.ts",
+    "research:maybank": "node --import tsx scripts/maybank-diagnostics.ts",
+    "test:browser": "RUN_BROWSER_TESTS=1 vitest run tests/retrieval-research.test.ts",
+    "review:file": "node --import tsx scripts/review-file.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",

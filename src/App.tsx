@@ -55,7 +55,8 @@ import {
   isStale,
   observationAge,
   freshnessWarning,
-  sourceFor,
+  evidenceFor,
+  HDB_FALLBACK,
   type Cache,
   type Offer,
 } from '@/lib/schema';
@@ -739,6 +740,12 @@ export default function App() {
                           availability.
                         </p>
                       )}
+                      {o.evidenceSourceId && (
+                        <p className="text-sm mt-3">
+                          Evidence: {evidenceFor(o).name}. Published quarter ends{' '}
+                          {o.effectiveUntil && date(o.effectiveUntil)}.
+                        </p>
+                      )}
                       <details className="offer-details">
                         <summary>
                           Rate schedule & conditions <ChevronRight size={14} />
@@ -777,7 +784,7 @@ export default function App() {
                           />
                           Compare
                         </label>
-                        <a href={sourceFor(o.sourceId).url} target="_blank" rel="noreferrer">
+                        <a href={evidenceFor(o).url} target="_blank" rel="noreferrer">
                           View official source <ArrowUpRight size={15} />
                         </a>
                       </div>
@@ -948,7 +955,9 @@ export default function App() {
                       <p className="text-sm mt-2">
                         Published collector:{' '}
                         {status?.status === 'ok'
-                          ? 'Successful'
+                          ? status.fallbackSourceId
+                            ? 'Successful via CPF / AskGov fallback'
+                            : 'Successful'
                           : status
                             ? 'Unavailable · previous observations retained'
                             : 'Not recorded'}
@@ -960,6 +969,32 @@ export default function App() {
                         Last successful collector extraction: {timestamp(status?.successAt)}
                       </p>
                       <p className="text-sm mt-2">{status?.message}</p>
+                      {s.id === 'hdb' && (
+                        <div className="text-sm mt-3">
+                          <a
+                            className="source-link"
+                            href={HDB_FALLBACK.url}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Official fallback: CPF / AskGov <ArrowUpRight size={14} />
+                          </a>
+                          <p>
+                            Collector only. Requires an explicit quarter covering the observation
+                            date.
+                          </p>
+                          {status?.primaryFailure && (
+                            <p>
+                              HDB primary failed: {status.primaryFailure.message} ·{' '}
+                              {status.primaryFailure.attempts} attempt(s). Fallback:{' '}
+                              {status.status === 'ok'
+                                ? 'successful'
+                                : 'failed; retained prior observation'}
+                              .
+                            </p>
+                          )}
+                        </div>
+                      )}
                       <p className="text-sm mt-3">
                         Browser direct check:{' '}
                         {'collectorOnly' in s
@@ -978,7 +1013,10 @@ export default function App() {
                       </p>
                       {status?.failureKind && (
                         <p className="text-xs mt-2">
-                          Failure category: {status.failureKind}
+                          {status.fallbackSourceId
+                            ? 'Fallback failure category'
+                            : 'Failure category'}
+                          : {status.failureKind}
                           {status.httpStatus ? ` (HTTP ${status.httpStatus})` : ''} ·{' '}
                           {status.attempts ?? 1} attempt(s). Previous observations retained.
                         </p>

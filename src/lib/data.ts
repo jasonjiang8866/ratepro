@@ -47,7 +47,7 @@ export function offerPayment(offer: Offer, principal: number, years: number) {
     : payment(principal, rate, years);
 }
 export function fingerprint(offer: Offer) {
-  const { observedAt: _at, method: _method, ...terms } = offer;
+  const { observedAt: _at, method: _method, evidenceSourceId: _evidence, ...terms } = offer;
   return JSON.stringify(terms);
 }
 export function mergeFeed(cache: Cache, raw: unknown, now = new Date().toISOString()): Cache {
