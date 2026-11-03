@@ -24,6 +24,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { LoanAmountInput } from '@/components/LoanAmountInput';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Dialog,
@@ -892,14 +893,7 @@ function MarketApp({
                   <label className="field-label" htmlFor="loan">
                     Loan amount (S$)
                   </label>
-                  <Input
-                    id="loan"
-                    type="number"
-                    min="1"
-                    max="100000000"
-                    value={principal}
-                    onChange={(e) => setPrincipal(e.target.value)}
-                  />
+                  <LoanAmountInput id="loan" value={principal} onValueChange={setPrincipal} />
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="field-label" htmlFor="tenure">
