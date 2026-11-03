@@ -187,6 +187,12 @@ individual Radix imports. See `THIRD_PARTY_NOTICES.md`.
 
 ## Country editions: SG and JP
 
+The journal uses country-specific home illustrations and category covers. Japan's
+explorer offers visual rate-type filters, card/table views and comparison summaries
+with expandable full terms. Rate-structure drawings are schematic, not forecasts;
+the repayment ring uses only the visitor's constant-rate scenario and shows no
+result until valid inputs are supplied. Source dates and rate bases remain explicit.
+
 RatePro keeps one visual identity with country-specific content. Use the header
 selector to switch **ratepro SG / ratepro JP**. Shared URLs carry `?market=SG` or
 `?market=JP`; old Singapore hash links keep their meaning. A browser remembers the

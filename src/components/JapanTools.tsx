@@ -28,6 +28,8 @@ export function JapanTools({ tab, now }: { tab: string; now: Date }) {
     Number(rate) >= 0 &&
     Number(rate) <= 30;
   const monthly = valid ? payment(Number(principal), Number(rate), Number(years)) : null;
+  const totalInterest =
+    monthly === null ? null : Math.max(0, monthly * Number(years) * 12 - Number(principal));
   if (tab === 'Sources') {
     const sources = [...new Map(records.flatMap((a) => a.sources).map((s) => [s.url, s])).values()];
     return (
@@ -89,13 +91,11 @@ export function JapanTools({ tab, now }: { tab: string; now: Date }) {
         <em>Then compare the terms.</em>
       </h1>
       <p className="reader-deck">
-        Read official bank observations alongside reviewed publications and a yen repayment
-        scenario.
+        Find your rate type. Compare the details. Try a yen repayment scenario.
       </p>
       <p className="market-coverage">
-        <strong>Research edition.</strong> The reports below are selected observations, not an
-        exhaustive live rate ranking or a personalised quote. Bank observations are collected daily;
-        always confirm the applicable rate and full terms with the lender.
+        <strong>Research edition.</strong> Selected official observations · not personalised quotes.
+        Confirm eligibility and full terms with the lender.
       </p>
       <div className="jp-layout">
         <div>
@@ -165,11 +165,51 @@ export function JapanTools({ tab, now }: { tab: string; now: Date }) {
             <span>Estimated monthly payment · JPY</span>
             <strong>{monthly !== null ? marketMoney(monthly, 'JP') : '—'}</strong>
           </div>
+          {totalInterest !== null && (
+            <div className="repayment-visual">
+              <div
+                className="repayment-ring"
+                role="img"
+                aria-label={`Constant-rate illustration: principal ${marketMoney(Number(principal), 'JP')}, total interest ${marketMoney(totalInterest, 'JP')}`}
+                style={{
+                  background: `conic-gradient(var(--primary) ${(Number(principal) / (Number(principal) + totalInterest)) * 100}%, var(--visual-sun) 0)`,
+                }}
+              >
+                <span>
+                  {years}
+                  <small>years</small>
+                </span>
+              </div>
+              <dl>
+                <div>
+                  <dt>
+                    <i />
+                    Principal
+                  </dt>
+                  <dd>{marketMoney(Number(principal), 'JP')}</dd>
+                </div>
+                <div>
+                  <dt>
+                    <i />
+                    Total interest
+                  </dt>
+                  <dd>{marketMoney(totalInterest, 'JP')}</dd>
+                </div>
+              </dl>
+            </div>
+          )}
           <p className="calc-footnote">
-            A constant-rate, equal-payment illustration only. Excludes fees, insurance, tax relief,
-            bonus repayments and rate resets. It does not model staged Flat35 discounts or any
-            five-year / 125% payment rule. Tenure and borrowing eligibility depend on the lender.
+            Illustration assumes your entered rate stays constant for the entire loan.
           </p>
+          <details className="visual-disclosure">
+            <summary>Assumptions & exclusions</summary>
+            <p className="calc-footnote">
+              A constant-rate, equal-payment illustration only. Excludes fees, insurance, tax
+              relief, bonus repayments and rate resets. It does not model staged Flat35 discounts or
+              any five-year / 125% payment rule. Tenure and borrowing eligibility depend on the
+              lender.
+            </p>
+          </details>
           {!valid && (
             <p className="text-sm">
               Enter a loan up to ¥1 billion, 1–50 years and an assumed rate of 0–30%.

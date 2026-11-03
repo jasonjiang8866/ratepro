@@ -13,6 +13,7 @@ import { articles as allArticles } from '../lib/content';
 import { articleHref, marketInfo, type MarketCode } from '../lib/markets';
 import { categories, editorialStatus, readingMinutes, type Article } from '../lib/editorial';
 import './home.css';
+import { HomeIllustration, StoryIllustration } from './MortgageVisuals';
 
 const date = (s: string, market: MarketCode = 'SG') =>
   new Intl.DateTimeFormat('en-SG', {
@@ -214,27 +215,7 @@ export function Home({ slug, now, market }: { slug?: string; now: Date; market: 
             </a>
           </div>
         </div>
-        <aside className="journal-principles">
-          <span className="eyebrow">LESS NOISE. MORE CONTEXT.</span>
-          <div>
-            <span className="principle-number">01</span>
-            <p>
-              <strong>Go to the source.</strong>Official publications, linked in every report.
-            </p>
-          </div>
-          <div>
-            <span className="principle-number">02</span>
-            <p>
-              <strong>Read the conditions.</strong>Eligibility and fine print belong in the story.
-            </p>
-          </div>
-          <div>
-            <span className="principle-number">03</span>
-            <p>
-              <strong>Know the date.</strong>A dated observation is a starting point.
-            </p>
-          </div>
-        </aside>
+        <HomeIllustration market={market} />
       </section>
       {market === 'JP' && (
         <p className="market-coverage">
@@ -310,7 +291,10 @@ export function Home({ slug, now, market }: { slug?: string; now: Date; market: 
               <h3>
                 <a href={href(a)}>{a.title}</a>
               </h3>
-              <p>{a.package!.eligibility}</p>
+              <details className="visual-disclosure">
+                <summary>Who is this for?</summary>
+                <p>{a.package!.eligibility}</p>
+              </details>
               <div className="watch-expiry">
                 {a.package!.expiry
                   ? `Published end: ${date(a.package!.expiry)}`
@@ -367,11 +351,11 @@ export function Home({ slug, now, market }: { slug?: string; now: Date; market: 
             </button>
           ))}
         </div>
-        <div className="story-list">
-          {archive.map((a, i) => (
-            <article key={a.slug} className="story-row">
-              <span className="story-number">{String(i + 1).padStart(2, '0')}</span>
-              <div>
+        <div className="story-list visual-story-grid">
+          {archive.map((a) => (
+            <article key={a.slug} className="story-row visual-story-card">
+              <StoryIllustration category={a.category} />
+              <div className="visual-story-body">
                 <Meta article={a} />
                 <h3>
                   <a href={href(a)}>{a.title}</a>
@@ -381,8 +365,8 @@ export function Home({ slug, now, market }: { slug?: string; now: Date; market: 
                   {isSuperseded(a) ? 'Superseded report' : editorialStatus(a, now)}
                 </span>
               </div>
-              <a href={href(a)} className="story-open" aria-label={`Read: ${a.title}`}>
-                <ArrowUpRight size={23} />
+              <a href={href(a)} className="visual-story-open" aria-label={`Read: ${a.title}`}>
+                Read story <ArrowUpRight size={17} />
               </a>
             </article>
           ))}
