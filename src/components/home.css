@@ -943,11 +943,16 @@
 .jp-comparison-dialog > * {
   min-width: 0;
 }
+.jp-comparison-dialog > :first-child {
+  padding-right: 1rem;
+}
 .jp-comparison-scroll {
   min-width: 0;
   max-width: 100%;
+  /* Keep off-screen, visually hidden table labels inside this scroll area. */
+  position: relative;
 }
-.jp-comparison-scroll table {
+.jp-comparison-scroll.comparison-scroll table {
   min-width: 660px;
   table-layout: fixed;
 }
