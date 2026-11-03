@@ -179,6 +179,92 @@ try {
   assert.equal(await page.getByLabel('Loan amount (JPY)').inputValue(), '30,000,000');
   await fits();
   await page.screenshot({ path: 'test-results/homepage/japan-rates-mobile.png', fullPage: true });
+  // Compare terms without silently ranking different rate bases or purposes.
+  const jpChecks = page.locator('.jp-bank-card').first().getByRole('checkbox');
+  await jpChecks.nth(0).check();
+  assert.equal(
+    await page.getByRole('button', { name: 'Compare terms', exact: true }).isEnabled(),
+    false,
+  );
+  await jpChecks.nth(1).check();
+  await page.locator('.jp-bank-card').nth(1).locator('summary').first().click();
+  await page.locator('.jp-bank-card').nth(1).getByRole('checkbox').first().check();
+  assert.equal(await jpChecks.nth(2).isEnabled(), false, 'Selection capped at three');
+  await fits();
+  await page.getByRole('button', { name: 'Compare terms', exact: true }).click();
+  const jpDialog = page.getByRole('dialog', { name: 'Compare Japan loan terms' });
+  await jpDialog.waitFor();
+  assert.match(await jpDialog.innerText(), /Different rate bases/);
+  assert.match(await jpDialog.innerText(), /Different rate types or fixed periods/);
+  assert.match(await jpDialog.innerText(), /To verify/);
+  assert.equal(await jpDialog.getByRole('link', { name: /official rates/ }).count(), 3);
+  assert.equal(
+    await jpDialog
+      .getByRole('row', { name: /Borrowing purpose/ })
+      .innerText()
+      .then((t) => (t.match(/Refinance/g) ?? []).length),
+    3,
+  );
+  assert.ok(
+    await jpDialog
+      .getByRole('row', { name: /Published annual rate/ })
+      .innerText()
+      .then((t) => t.includes(expectedRate('Refinance'))),
+  );
+  await page.screenshot({ path: 'test-results/homepage/japan-comparison-mobile.png' });
+  const jpMobileGeometry = await jpDialog.evaluate((el) => ({
+    dialog: { clientWidth: el.clientWidth, scrollWidth: el.scrollWidth },
+    children: [...el.children].map((child) => ({
+      tag: child.tagName,
+      class: child.className,
+      clientWidth: child.clientWidth,
+      scrollWidth: child.scrollWidth,
+    })),
+  }));
+  assert.equal(
+    jpMobileGeometry.dialog.scrollWidth <= jpMobileGeometry.dialog.clientWidth,
+    true,
+    `Mobile dialog contains the table overflow: ${JSON.stringify(jpMobileGeometry)}`,
+  );
+  await fits();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: 'test-results/homepage/japan-comparison-desktop.png' });
+  await jpDialog
+    .getByRole('button', { name: /^Remove / })
+    .last()
+    .click();
+  assert.equal(
+    await jpDialog
+      .getByRole('note', { name: 'Comparison differences' })
+      .innerText()
+      .then((t) => t.includes('Different rate bases')),
+    false,
+  );
+  await page.keyboard.press('Escape');
+  await jpDialog.waitFor({ state: 'hidden' });
+  assert.equal(await jpDialog.count(), 0);
+  assert.equal(
+    await page
+      .getByRole('button', { name: 'Compare terms', exact: true })
+      .evaluate((el) => el === document.activeElement),
+    true,
+  );
+  assert.equal(await jpChecks.nth(2).isEnabled(), true);
+  await page.getByLabel('Japan borrowing purpose').selectOption('Purchase');
+  assert.equal(await page.getByLabel('Japan comparison selection').count(), 0);
+  assert.equal(await page.locator('.jp-bank-card input:checked').count(), 0);
+  await jpChecks.nth(0).check();
+  await jpChecks.nth(1).check();
+  await page.getByRole('button', { name: 'Compare terms', exact: true }).click();
+  await jpDialog
+    .getByRole('button', { name: /^Remove / })
+    .first()
+    .click();
+  await jpDialog.waitFor({ state: 'hidden' });
+  assert.equal(await jpDialog.count(), 0, 'Removing down to one closes comparison');
+  await page.getByRole('button', { name: 'Clear Japan comparison', exact: true }).click();
+  assert.equal(await page.locator('.jp-bank-card input:checked').count(), 0);
+  await page.setViewportSize({ width: 320, height: 740 });
   await page.getByLabel('Your assumed annual rate (%)').fill('2');
   assert.match(await page.locator('.payment strong').innerText(), /[¥￥]/);
   assert.equal(await page.locator('.offer-card').count(), 0);

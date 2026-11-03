@@ -197,6 +197,11 @@ interface language; the first two editions are in English.
 - **JP:** official-source explainers, dated Flat35 package research, a Japanese
   source directory and a JPY repayment scenario calculator. Daily MUFG applied-rate
   and SMBC standard-rate observations use a separate JPY feed; no SG rates appear in this edition.
+  Select 2–3 rows for a side-by-side terms comparison. Changing purchase/refinance
+  clears the selection. Mixed rate bases, fixed periods and publication months are
+  flagged; unstructured fees, insurance and eligibility details stay marked
+  **To verify**, with original conditions and official links. This is not a price
+  ranking or a total-cost calculation; SMBC individual discount plans remain uncollected.
 - **Research:** `config/markets.json` lists supported countries. The ChatGPT task
   researches SG and JP and submits reviewed-content Draft PRs; it does not publish
   or modify rate observations. See [editorial policy](docs/editorial-policy.md).

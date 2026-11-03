@@ -927,3 +927,74 @@
 .jp-layout > div {
   min-width: 0;
 }
+.jp-compare-check {
+  justify-content: center;
+  min-width: 2rem;
+  min-height: 2.5rem;
+}
+.jp-compare-check input:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.jp-comparison-dialog {
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+}
+.jp-comparison-dialog > * {
+  min-width: 0;
+}
+.jp-comparison-dialog > :first-child {
+  padding-right: 1rem;
+}
+.jp-comparison-scroll {
+  min-width: 0;
+  max-width: 100%;
+  /* Keep off-screen, visually hidden table labels inside this scroll area. */
+  position: relative;
+}
+.jp-comparison-scroll.comparison-scroll table {
+  min-width: 660px;
+  table-layout: fixed;
+}
+.jp-comparison-scroll th:first-child {
+  width: 145px;
+}
+.jp-comparison-scroll td,
+.jp-comparison-scroll th {
+  overflow-wrap: anywhere;
+}
+.jp-comparison-scroll small {
+  display: block;
+  font-weight: 400;
+  margin-top: 0.4rem;
+}
+.jp-comparison-scroll summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.jp-comparison-scroll .jp-conditions {
+  margin-top: 0.8rem;
+}
+.jp-remove {
+  margin-top: 0.5rem;
+  padding-inline: 0.4rem;
+}
+.jp-comparison-notice {
+  background: var(--secondary);
+  border-left: 3px solid var(--primary);
+  border-radius: 0.3rem;
+  padding: 0.8rem 1rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.jp-comparison-notice p {
+  margin-top: 0.5rem;
+}
+@media (max-width: 480px) {
+  .jp-comparison-dialog {
+    padding: 1rem;
+  }
+  .jp-compare-dock {
+    gap: 5px;
+  }
+}
