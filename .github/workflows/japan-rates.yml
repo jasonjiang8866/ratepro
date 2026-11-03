@@ -1,0 +1,56 @@
+name: Japan bank rates
+on:
+  schedule:
+    - cron: '43 1 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/japan-rates.yml'
+      - 'scripts/collect-japan.ts'
+      - 'scripts/japan-parsers.ts'
+      - 'scripts/retrieval.ts'
+      - 'src/lib/japan-rates.ts'
+      - 'tests/japan-rates.test.ts'
+      - 'tests/fixtures/japan/**'
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && format('japan-rates-pr-{0}', github.event.number) || 'refresh-public-rates' }}
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Check live Japan sources (PR only; no snapshot writes)
+        if: github.event_name == 'pull_request'
+        run: npm run verify:jp
+      - name: Collect Japan snapshot
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: npm run collect:jp
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: japan-source-evidence
+          path: japan-source-check.json
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Commit validated Japan snapshot
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/data/rates-jp.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'data: refresh Japan mortgage observations'
+          git push origin HEAD:main

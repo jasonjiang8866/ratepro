@@ -6,6 +6,7 @@ import { editorialStatus } from '../lib/editorial';
 import { payment } from '../lib/data';
 import { Input } from './ui/input';
 import { LoanAmountInput } from './LoanAmountInput';
+import { JapanRates } from './JapanRates';
 
 export function JapanTools({ tab, now }: { tab: string; now: Date }) {
   const records = articles.filter((a) => a.market === 'JP');
@@ -37,9 +38,11 @@ export function JapanTools({ tab, now }: { tab: string; now: Date }) {
           Original Japanese publications, with dated English reading notes.
         </p>
         <p className="market-coverage">
-          These are editorial source checks. No automated Japanese bank-rate collector is connected,
-          and no Singapore observations are used here.
+          Automated bank observations and editorial evidence have separate timestamps. Japan uses
+          its own JPY snapshot; no Singapore observations are included.
         </p>
+        <JapanRates now={now} sourcesOnly />
+        <h2>Editorial evidence</h2>
         <div className="jp-source-grid">
           {sources.map((s) => (
             <article className="watch-card" key={s.url}>
@@ -69,8 +72,8 @@ export function JapanTools({ tab, now }: { tab: string; now: Date }) {
       <section className="journal-empty">
         <h1>Japan’s observation history starts here.</h1>
         <p>
-          Japan does not yet have an automated rate feed or browser rate history. Dated research
-          remains in the journal.
+          Japan’s daily snapshots are versioned in the repository. A browser change-history view is
+          not available yet; dated research remains in the journal.
         </p>
         <a className="text-link" href="#/home">
           Read the Japan journal <ArrowRight size={16} />
@@ -85,14 +88,18 @@ export function JapanTools({ tab, now }: { tab: string; now: Date }) {
         <br />
         <em>Then compare the terms.</em>
       </h1>
-      <p className="reader-deck">Start with reviewed publications and a yen repayment scenario.</p>
+      <p className="reader-deck">
+        Read official bank observations alongside reviewed publications and a yen repayment
+        scenario.
+      </p>
       <p className="market-coverage">
         <strong>Research edition.</strong> The reports below are selected observations, not an
-        exhaustive live rate ranking or a personalised quote. Automated Japanese bank-rate
-        collection is not connected yet.
+        exhaustive live rate ranking or a personalised quote. Bank observations are collected daily;
+        always confirm the applicable rate and full terms with the lender.
       </p>
       <div className="jp-layout">
         <div>
+          <JapanRates now={now} />
           <h2>Reviewed package observations</h2>
           {packages.map((a) => (
             <article className="watch-card" key={a.slug}>

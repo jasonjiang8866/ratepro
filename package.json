@@ -21,7 +21,9 @@
     "research:cpf": "node --import tsx scripts/cpf-browser.ts",
     "research:maybank": "node --import tsx scripts/maybank-diagnostics.ts",
     "test:browser": "RUN_BROWSER_TESTS=1 vitest run tests/retrieval-research.test.ts",
-    "review:file": "node --import tsx scripts/review-file.ts"
+    "review:file": "node --import tsx scripts/review-file.ts",
+    "collect:jp": "node --import tsx scripts/collect-japan.ts",
+    "verify:jp": "node --import tsx scripts/collect-japan.ts --check"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",

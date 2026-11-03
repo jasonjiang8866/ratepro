@@ -238,8 +238,9 @@ export function Home({ slug, now, market }: { slug?: string; now: Date; market: 
       </section>
       {market === 'JP' && (
         <p className="market-coverage">
-          <strong>JAPAN / 日本 · JPY</strong> Reviewed explainers and package observations.
-          Automated bank-rate collection is not connected yet.
+          <strong>JAPAN / 日本 · JPY</strong> Reviewed explainers and package observations. Daily
+          bank-rate observations are available in the loan explorer, with source dates and
+          conditions.
         </p>
       )}
       <div className="journal-divider">
