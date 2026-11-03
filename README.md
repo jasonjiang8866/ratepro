@@ -184,3 +184,27 @@ existing Pages project, custom domain or deployment history.
 
 `src/components/ui/` contains shadcn/ui registry components with local utility and
 individual Radix imports. See `THIRD_PARTY_NOTICES.md`.
+
+## Country editions: SG and JP
+
+RatePro keeps one visual identity with country-specific content. Use the header
+selector to switch **ratepro SG / ratepro JP**. Shared URLs carry `?market=SG` or
+`?market=JP`; old Singapore hash links keep their meaning. A browser remembers the
+last selected market for visits without a deep link. Selection is independent of
+interface language; the first two editions are in English.
+
+- **SG:** existing automatic observations, comparison, browser cache and history.
+- **JP:** official-source explainers, dated Flat35 package research, a Japanese
+  source directory and a JPY repayment scenario calculator. Automated Japanese
+  bank-rate ingestion is **not connected yet**; no SG rates appear in this edition.
+- **Research:** `config/markets.json` lists supported countries. The ChatGPT task
+  researches SG and JP and submits reviewed-content Draft PRs; it does not publish
+  or modify rate observations. See [editorial policy](docs/editorial-policy.md).
+
+Japan’s initial records were checked on 3 November 2026. They are baselines, not
+claims that every fact or product is newly launched. Japanese record expiry uses
+Asia/Tokyo; Singapore uses Asia/Singapore. UTC evidence timestamps remain distinct.
+
+Validation: `npm test`, `npm run build`, and `npm run test:ui`. The UI suite covers
+country switching, share links, Back/Forward, isolated SG feed access, yen scenarios,
+mobile layout and light/dark themes, as well as the original Singapore journeys.

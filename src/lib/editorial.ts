@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { MARKET_CODES, marketDay } from './markets';
 
 const text = z.string().trim().min(1).max(3000);
 const id = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
@@ -28,6 +29,8 @@ const section = z
 export const ArticleSchema = z
   .object({
     schemaVersion: z.literal(1),
+    // Missing market remains SG for legacy records and already-open content PRs.
+    market: z.enum(MARKET_CODES).default('SG'),
     slug: id,
     category: z.enum(['market', 'guide', 'package']),
     title: z.string().trim().min(1).max(120),
@@ -72,12 +75,12 @@ export function validateArticles(raw: unknown[], now = new Date()): Article[] {
   const articles = raw.map((value) => ArticleSchema.parse(value));
   const slugs = new Set<string>();
   const events = new Set<string>();
-  const today = singaporeDay(now);
   for (const a of articles) {
-    if (slugs.has(a.slug) || events.has(a.eventKey))
+    const today = marketDay(now, a.market);
+    if (slugs.has(a.slug) || events.has(`${a.market}:${a.eventKey}`))
       throw new Error(`Duplicate slug/event: ${a.slug}`);
     slugs.add(a.slug);
-    events.add(a.eventKey);
+    events.add(`${a.market}:${a.eventKey}`);
     if (a.reportDate > today) throw new Error(`Future report: ${a.slug}`);
     if ((a.category === 'package') !== (a.package !== null))
       throw new Error(`Package fields/category mismatch: ${a.slug}`);
@@ -94,10 +97,10 @@ export function validateArticles(raw: unknown[], now = new Date()): Article[] {
     for (const s of a.sources) {
       if (
         new Date(s.checkedAt).getTime() > now.getTime() ||
-        singaporeDay(new Date(s.checkedAt)) > a.reportDate
+        marketDay(new Date(s.checkedAt), a.market) > a.reportDate
       )
         throw new Error(`Future check: ${a.slug}`);
-      if (s.documentDate && s.documentDate > singaporeDay(new Date(s.checkedAt)))
+      if (s.documentDate && s.documentDate > marketDay(new Date(s.checkedAt), a.market))
         throw new Error(`Future source document: ${a.slug}`);
     }
     for (const claim of [...a.takeaways, ...a.sections, ...(a.package ? [a.package] : [])]) {
@@ -108,7 +111,7 @@ export function validateArticles(raw: unknown[], now = new Date()): Article[] {
   for (const a of articles) {
     if (a.supersedes) {
       const previous = articles.find((item) => item.slug === a.supersedes);
-      if (!previous || previous.reportDate >= a.reportDate)
+      if (!previous || previous.market !== a.market || previous.reportDate >= a.reportDate)
         throw new Error(`Invalid supersedes: ${a.slug}`);
     }
   }
@@ -117,7 +120,7 @@ export function validateArticles(raw: unknown[], now = new Date()): Article[] {
   );
 }
 export function editorialStatus(a: Article, now = new Date()): string {
-  const today = singaporeDay(now);
+  const today = marketDay(now, a.market);
   const end = [a.effectiveUntil, a.package?.expiry].filter((v): v is string => !!v).sort()[0];
   if (end && today > end) return 'Period ended';
   if (a.effectiveFrom && today < a.effectiveFrom) return 'Upcoming period';

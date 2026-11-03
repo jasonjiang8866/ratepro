@@ -9,18 +9,19 @@ import {
   ExternalLink,
   SlidersHorizontal,
 } from 'lucide-react';
-import { articles } from '../lib/content';
+import { articles as allArticles } from '../lib/content';
+import { articleHref, marketInfo, type MarketCode } from '../lib/markets';
 import { categories, editorialStatus, readingMinutes, type Article } from '../lib/editorial';
 import './home.css';
 
-const date = (s: string) =>
+const date = (s: string, market: MarketCode = 'SG') =>
   new Intl.DateTimeFormat('en-SG', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
-    timeZone: 'Asia/Singapore',
+    timeZone: marketInfo(market).timeZone,
   }).format(new Date(s));
-const href = (a: Article) => `#/read/${a.slug}`;
+const href = articleHref;
 function SourceLinks({ article, ids }: { article: Article; ids: string[] }) {
   return (
     <span className="evidence-links">
@@ -50,7 +51,9 @@ function Meta({ article }: { article: Article }) {
   );
 }
 function Reader({ article, now }: { article: Article; now: Date }) {
-  const replacement = articles.find((item) => item.supersedes === article.slug);
+  const replacement = allArticles.find(
+    (item) => item.market === article.market && item.supersedes === article.slug,
+  );
   return (
     <article className="reader">
       <a className="text-link" href="#/home">
@@ -139,15 +142,15 @@ function Reader({ article, now }: { article: Article; now: Date }) {
                 {new Intl.DateTimeFormat('en-SG', {
                   dateStyle: 'medium',
                   timeStyle: 'short',
-                  timeZone: 'Asia/Singapore',
+                  timeZone: marketInfo(article.market).timeZone,
                 }).format(new Date(s.checkedAt))}{' '}
-                SGT
+                {marketInfo(article.market).timeZoneLabel}
               </small>
               <small>Document date: {s.documentDate ? date(s.documentDate) : 'Not stated'}</small>
             </div>
           ))}
           {article.supersedes && (
-            <a className="text-link" href={`#/read/${article.supersedes}`}>
+            <a className="text-link" href={href({ ...article, slug: article.supersedes })}>
               Earlier report <ArrowRight size={14} />
             </a>
           )}
@@ -165,7 +168,9 @@ function Reader({ article, now }: { article: Article; now: Date }) {
     </article>
   );
 }
-export function Home({ slug, now }: { slug?: string; now: Date }) {
+export function Home({ slug, now, market }: { slug?: string; now: Date; market: MarketCode }) {
+  const articles = allArticles.filter((a) => a.market === market);
+  const info = marketInfo(market);
   const [category, setCategory] = useState('all');
   if (slug) {
     const article = articles.find((a) => a.slug === slug);
@@ -189,7 +194,7 @@ export function Home({ slug, now }: { slug?: string; now: Date }) {
       <section className="journal-hero">
         <div>
           <div className="eyebrow">
-            <span /> THE SINGAPORE HOME LOAN JOURNAL
+            <span /> THE {info.name.toUpperCase()} HOME LOAN JOURNAL
           </div>
           <h1>
             A little context.
@@ -201,7 +206,8 @@ export function Home({ slug, now }: { slug?: string; now: Date }) {
           </p>
           <div className="journal-actions">
             <a className="journal-button" href="#/rates">
-              Compare home loans <ArrowUpRight size={18} />
+              {market === 'SG' ? 'Compare home loans' : 'Explore Japan home loans'}{' '}
+              <ArrowUpRight size={18} />
             </a>
             <a className="text-link" href="#journal-stories">
               Read the latest <ArrowRight size={16} />
@@ -230,9 +236,15 @@ export function Home({ slug, now }: { slug?: string; now: Date }) {
           </div>
         </aside>
       </section>
+      {market === 'JP' && (
+        <p className="market-coverage">
+          <strong>JAPAN / 日本 · JPY</strong> Reviewed explainers and package observations.
+          Automated bank-rate collection is not connected yet.
+        </p>
+      )}
       <div className="journal-divider">
         <span>THE BRIEFING</span>
-        <span>SINGAPORE · INDEPENDENT PERSPECTIVE</span>
+        <span>{info.name.toUpperCase()} · INDEPENDENT PERSPECTIVE</span>
       </div>
       {featured ? (
         <section className="briefing" aria-labelledby="briefing-title">
@@ -287,7 +299,7 @@ export function Home({ slug, now }: { slug?: string; now: Date }) {
                 <span className="lender-monogram">{a.package!.lender.slice(0, 1)}</span>
                 <div>
                   <strong>{a.package!.lender}</strong>
-                  <small>Checked {date(a.sources[0].checkedAt)}</small>
+                  <small>Checked {date(a.sources[0].checkedAt, a.market)}</small>
                 </div>
                 <ArrowUpRight size={20} />
               </div>
@@ -301,7 +313,9 @@ export function Home({ slug, now }: { slug?: string; now: Date }) {
               <div className="watch-expiry">
                 {a.package!.expiry
                   ? `Published end: ${date(a.package!.expiry)}`
-                  : 'End date not stated · limited availability may apply'}
+                  : a.effectiveUntil
+                    ? `Stated period through ${date(a.effectiveUntil)} · application deadline not stated`
+                    : 'End date not stated · limited availability may apply'}
               </div>
               <a className="text-link" href={href(a)}>
                 Read terms & evidence <ArrowRight size={15} />

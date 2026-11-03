@@ -20,8 +20,7 @@ files/open PRs before creating another report. A scheduled run alone is not a
 reason to publish: weekdays need a material development; Monday may synthesise
 the week. The first record must say it is a baseline, not a new launch.
 
-The scheduled task's ability to create GitHub PRs in background execution still
-requires an actual successful run. If access fails, return complete JSON drafts
+The scheduled task created Draft PR #6 on 3 November 2026, verifying the SG research-to-PR path. Japan execution still needs its first actual scheduled run. If access fails, return complete JSON drafts
 and an accurate failure description in the task conversation. Do not claim that
 files were committed. Once a content PR is reviewed and merged, the existing
 Cloudflare Git integration builds the site. The homepage displays the latest
@@ -30,28 +29,29 @@ age/expiry warnings; all reports remain accessible in the reading room.
 
 ## JSON format (version 1)
 
-The executable schema is `src/lib/editorial.ts`. See the three initial files for
-complete examples. All fields are required, including explicit `null` values.
+Supported research markets are listed in `config/markets.json` (currently SG and JP). The executable schema is `src/lib/editorial.ts`. See the three initial files for
+complete examples. New records must explicitly include `market: "SG"` or `market: "JP"`. Legacy version-1 records without a market decode as SG, including existing content PRs. Other fields are required, including explicit `null` values.
 Unknown keys are rejected. Filename must be `<slug>.json` with lowercase kebab
 case. Use `content/insights/` for `market` and `guide`, `content/promotions/` for
 `package`. No Markdown, HTML, JSX, executable content or arbitrary embedded links.
 React renders text; source URLs are HTTPS only, without credentials.
 
-| Field                             | Meaning                                                                                 |
-| --------------------------------- | --------------------------------------------------------------------------------------- |
-| `schemaVersion`                   | Always `1`                                                                              |
-| `slug`                            | Unique stable reader URL, `/#/read/<slug>`                                              |
-| `category`                        | `market`, `guide`, or `package`                                                         |
-| `title`, `summary`                | Plain English; title ≤120 characters, summary ≤260                                      |
-| `reportDate`                      | Singapore calendar day the report was written, not a source observation or offer launch |
-| `edition`                         | `baseline`, `update`, `weekly`, or `guide`                                              |
-| `eventKey`                        | Unique underlying event/package-and-period key; retain when revising the same record    |
-| `supersedes`                      | Earlier report slug for a substantive correction, otherwise null                        |
-| `effectiveFrom`, `effectiveUntil` | Explicitly stated coverage period, YYYY-MM-DD or null; do not infer from a page update  |
-| `takeaways`                       | 1–3 objects `{text, sourceIds}`                                                         |
-| `sections`                        | 1–12 objects `{heading, kind, text, sourceIds}`; `kind` is `fact` or `analysis`         |
-| `sources`                         | Objects `{id, publisher, title, url, checkedAt, documentDate}`                          |
-| `package`                         | Null except package reports, which require the object below                             |
+| Field                             | Meaning                                                                                                                         |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `market`                          | ISO country code from `config/markets.json`; SG or JP                                                                           |
+| `schemaVersion`                   | Always `1`                                                                                                                      |
+| `slug`                            | Unique stable reader URL, `/?market=JP#/read/<slug>` (use the record’s market; old SG links remain valid)                       |
+| `category`                        | `market`, `guide`, or `package`                                                                                                 |
+| `title`, `summary`                | Plain English; title ≤120 characters, summary ≤260                                                                              |
+| `reportDate`                      | Market-local calendar day the report was written (SG: Asia/Singapore; JP: Asia/Tokyo), not a source observation or offer launch |
+| `edition`                         | `baseline`, `update`, `weekly`, or `guide`                                                                                      |
+| `eventKey`                        | Underlying event/package-and-period key, unique within each market; retain when revising the same record                        |
+| `supersedes`                      | Earlier report slug for a substantive correction, otherwise null                                                                |
+| `effectiveFrom`, `effectiveUntil` | Explicitly stated coverage period, YYYY-MM-DD or null; do not infer from a page update                                          |
+| `takeaways`                       | 1–3 objects `{text, sourceIds}`                                                                                                 |
+| `sections`                        | 1–12 objects `{heading, kind, text, sourceIds}`; `kind` is `fact` or `analysis`                                                 |
+| `sources`                         | Objects `{id, publisher, title, url, checkedAt, documentDate}`                                                                  |
+| `package`                         | Null except package reports, which require the object below                                                                     |
 
 `checkedAt` is when the **actual official source content** was successfully read,
 UTC ISO timestamp with Z. Search snippets, build dates and a bank's page-update
@@ -86,7 +86,7 @@ citations, duplicate slugs/events/source URLs and invalid correction references.
 An announced future effective period is allowed and labelled upcoming.
 
 A report's oldest cited source check controls the seven-day recheck warning.
-Published expiry/period ends are inclusive Singapore dates. Once they pass, the
+Published expiry/period ends are inclusive market-local dates. Once they pass, the
 report says “Period ended”; it is retained as history, not advertised as currently
 available. Recheck warnings are computed in the browser as time advances, even
 without a new deployment. A visitor's inaccurate clock can affect warnings but
@@ -94,7 +94,7 @@ cannot prevent the page loading. Nothing says “active” merely because it is 
 
 Correct typos in place. For substantive factual corrections, publish a new event
 key/slug and set `supersedes` to the older record, explaining the correction in
-the text. The earlier report must have an earlier report date. For a same-day
+the text. The earlier report must belong to the same market and have an earlier report date. For a same-day
 correction, update the existing report with an explicit correction section;
 do not silently erase the material correction. Avoid publishing identical facts
 under a new title on every run. Human review compares open PRs and prior editions;
@@ -122,3 +122,34 @@ verify date meanings, read mobile layouts, and inspect the diff before merging.
 This is a static SPA using shareable hash URLs and browser Back/Forward. Article
 metadata is visible to readers; individual pre-rendered SEO pages and a SORA
 history feed are outside this first release. No synthetic trend chart is shown.
+
+## Japan coverage and research requirements
+
+Use Japanese official sources first: BOJ for monetary policy; JHF/Flat35 for housing
+finance; MLIT and official statistics for housing; lenders for actual offers and
+complete terms. Retain original Japanese titles where useful and write the website
+body in English. Chinese completion messages are for the owner, not article text.
+
+Separate variable (変動金利), initial fixed-period (固定期間選択型), and full-term
+fixed (全期間固定) products. Record JPY amounts, funding/application month, LTV,
+borrower residency/nationality requirements, owner occupancy vs investment use,
+loan term, group credit life insurance (団信), fees/guarantee charges, discount
+qualifications, reset schedule and early-repayment terms where verified. Do not
+assume five-year/125% rules apply to every lender or cap interest. Do not import
+SG eligibility, CPF/HDB, SORA, lock-in semantics or SGD into Japanese records.
+BOJ decisions, market benchmarks and borrower mortgage rates are different facts.
+Never substitute an advertised rate for an all-in cost or guaranteed approval.
+
+Japan starts with reviewed research and a generic yen scenario calculator. The
+Japanese explorer reads package content automatically; it is not connected to the
+SG rate feed and has no automated bank collector. No unverified quote may be added
+to a ranking. A baseline condition summary may explicitly leave unverified lender
+fees/limits unknown. A confirmed promotion requires the full qualifying terms.
+Monthly illustrations expire on the last day of that stated month in Japan, even
+when no campaign application deadline is published.
+
+New JP slugs/event keys should begin `jp-`; SG legacy names remain stable. Slugs are
+still globally unique. Keep reports separate by country, including weekly reports.
+Country configuration is read-only for the scheduled task. Until multi-market
+schema support is on main, return Japanese research as a conversation draft; never
+write Japan content into a legacy SG-only record or change application code.

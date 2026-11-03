@@ -50,5 +50,6 @@
     "conditions": "Indicative terms; the Letter of Offer confirms rates and benefits. Subject to change without notice.",
     "expiry": null,
     "sourceIds": ["uob"]
-  }
+  },
+  "market": "SG"
 }

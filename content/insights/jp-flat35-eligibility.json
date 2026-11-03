@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-flat35-eligibility",
+  "category": "guide",
+  "title": "Buying in Japan? Check borrowing eligibility first",
+  "summary": "A property search and a mortgage application raise different questions. Start with the product’s borrower and property conditions.",
+  "reportDate": "2026-11-03",
+  "edition": "guide",
+  "eventKey": "jp-flat35-eligibility",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "Flat35 requires Japanese nationality or qualifying Japanese permanent-residence status.",
+      "sourceIds": ["eligibility"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Residence status matters",
+      "kind": "fact",
+      "text": "JHF lists Japanese nationals, permanent residents and special permanent residents as eligible nationality/residence categories for Flat35. Other underwriting conditions still apply.",
+      "sourceIds": ["eligibility"]
+    },
+    {
+      "heading": "Read this narrowly",
+      "kind": "analysis",
+      "text": "This is a condition of Flat35, not a claim that all lenders have identical rules. Singapore permanent residence does not establish Japanese permanent residence. Ask the intended lender about your own status and documentation before budgeting around a loan.",
+      "sourceIds": ["eligibility"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "eligibility",
+      "publisher": "Japan Housing Finance Agency",
+      "title": "Flat35 eligibility and product conditions",
+      "url": "https://www.flat35.com/loan/lineup/flat35/conditions/index.html",
+      "checkedAt": "2026-11-03T04:42:06Z",
+      "documentDate": "2026-04-01"
+    }
+  ],
+  "package": null
+}
