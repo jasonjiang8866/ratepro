@@ -864,3 +864,66 @@
     font-size: 12px;
   }
 }
+
+.jp-bank-rates {
+  margin-bottom: 2.5rem;
+  min-width: 0;
+}
+.jp-bank-rates > p {
+  margin-bottom: 1rem;
+}
+.jp-bank-card {
+  margin-top: 1.2rem;
+  min-width: 0;
+}
+.jp-bank-card details {
+  margin: 1rem 0;
+}
+.jp-bank-card summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.jp-purpose {
+  display: block;
+  padding: 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--card);
+  color: inherit;
+  margin-top: 0.5rem;
+}
+.jp-rate-table {
+  overflow-x: auto;
+  margin-top: 0.8rem;
+}
+.jp-rate-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.jp-rate-table caption {
+  text-align: left;
+  margin-bottom: 0.6rem;
+}
+.jp-rate-table th,
+.jp-rate-table td {
+  padding: 0.75rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.jp-rate-table small {
+  display: block;
+  font-weight: 400;
+  margin-top: 0.3rem;
+}
+.jp-rate-table td {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.jp-conditions {
+  overflow-wrap: anywhere;
+  line-height: 1.9;
+}
+.jp-layout > div {
+  min-width: 0;
+}

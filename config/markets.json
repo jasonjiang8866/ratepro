@@ -12,11 +12,11 @@
   {
     "code": "JP",
     "name": "Japan",
-    "nativeName": "\u65e5\u672c",
+    "nativeName": "日本",
     "currency": "JPY",
     "locale": "en-JP",
     "timeZone": "Asia/Tokyo",
     "timeZoneLabel": "JST",
-    "coverage": "Reviewed research \u00b7 rate collection not connected"
+    "coverage": "Selected bank rate observations + editorial research"
   }
 ]

@@ -140,11 +140,13 @@ SG eligibility, CPF/HDB, SORA, lock-in semantics or SGD into Japanese records.
 BOJ decisions, market benchmarks and borrower mortgage rates are different facts.
 Never substitute an advertised rate for an all-in cost or guaranteed approval.
 
-Japan starts with reviewed research and a generic yen scenario calculator. The
-Japanese explorer reads package content automatically; it is not connected to the
-SG rate feed and has no automated bank collector. No unverified quote may be added
-to a ranking. A baseline condition summary may explicitly leave unverified lender
-fees/limits unknown. A confirmed promotion requires the full qualifying terms.
+Japan's bank-rate observations are collected separately into `public/data/rates-jp.json`
+by the Japan bank rates workflow. MUFG applied rates and SMBC standard rates must
+not be treated as comparable discounted offers. The research task continues to
+write editorial records only; do not change the automated feed or its observation
+dates. Read `README.md` for source scope and schedule. The yen calculator is a
+user-entered constant-rate scenario, not a quote or staged repayment simulation.
+
 Monthly illustrations expire on the last day of that stated month in Japan, even
 when no campaign application deadline is published.
 

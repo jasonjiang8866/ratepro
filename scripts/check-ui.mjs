@@ -160,6 +160,25 @@ try {
   await page.reload();
   await page.getByText('THE JAPAN HOME LOAN JOURNAL', { exact: true }).waitFor();
   await page.getByRole('link', { name: 'Loan explorer', exact: true }).click();
+  await page.getByRole('heading', { name: 'Published bank rates', exact: true }).waitFor();
+  assert.equal(await page.locator('.jp-bank-card').count(), 2);
+  const jpFeed = JSON.parse(readFileSync('public/data/rates-jp.json', 'utf8'));
+  const expectedRate = (purpose) =>
+    jpFeed.observations
+      .find((o) => o.sourceId === 'jp-mufg')
+      .rates.find((r) => r.kind === 'Variable' && r.purpose === purpose)
+      .annualRate.toFixed(3) + '%';
+  assert.match(
+    await page.locator('.jp-bank-card').first().innerText(),
+    new RegExp(expectedRate('Purchase').replace('.', '\\.')),
+  );
+  await page.getByLabel('Japan borrowing purpose').selectOption('Refinance');
+  assert.ok(
+    (await page.locator('.jp-bank-card').first().innerText()).includes(expectedRate('Refinance')),
+  );
+  assert.equal(await page.getByLabel('Loan amount (JPY)').inputValue(), '30,000,000');
+  await fits();
+  await page.screenshot({ path: 'test-results/homepage/japan-rates-mobile.png', fullPage: true });
   await page.getByLabel('Your assumed annual rate (%)').fill('2');
   assert.match(await page.locator('.payment strong').innerText(), /[¥￥]/);
   assert.equal(await page.locator('.offer-card').count(), 0);
@@ -173,6 +192,22 @@ try {
   await page.getByRole('heading', { name: 'Follow Japan’s sources.' }).waitFor();
   assert.equal(await page.locator('.jp-tools a[href*=".sg"]').count(), 0);
   assert.deepEqual(jpRequests, [], 'Japan must not request the Singapore rate feed');
+  const offline = await context.newPage();
+  await offline.route('**/data/rates-jp.json', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ market: 'SG' }),
+    }),
+  );
+  await offline.goto(`${base}/?market=JP#/rates`);
+  await offline.getByRole('status').filter({ hasText: 'Published feed unavailable' }).waitFor();
+  assert.equal(await offline.locator('.jp-bank-card').count(), 2);
+  assert.ok(
+    (await offline.locator('.jp-bank-card').first().innerText()).includes(expectedRate('Purchase')),
+  );
+  await offline.close();
+
   await page.getByRole('link', { name: 'RatePro home', exact: true }).click();
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.screenshot({ path: 'test-results/homepage/japan-desktop-light.png', fullPage: true });
