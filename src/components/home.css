@@ -938,9 +938,14 @@
 }
 .jp-comparison-dialog {
   min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+}
+.jp-comparison-dialog > * {
+  min-width: 0;
 }
 .jp-comparison-scroll {
   min-width: 0;
+  max-width: 100%;
 }
 .jp-comparison-scroll table {
   min-width: 660px;

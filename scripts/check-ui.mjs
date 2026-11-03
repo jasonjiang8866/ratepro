@@ -211,13 +211,22 @@ try {
       .innerText()
       .then((t) => t.includes(expectedRate('Refinance'))),
   );
+  await page.screenshot({ path: 'test-results/homepage/japan-comparison-mobile.png' });
+  const jpMobileGeometry = await jpDialog.evaluate((el) => ({
+    dialog: { clientWidth: el.clientWidth, scrollWidth: el.scrollWidth },
+    children: [...el.children].map((child) => ({
+      tag: child.tagName,
+      class: child.className,
+      clientWidth: child.clientWidth,
+      scrollWidth: child.scrollWidth,
+    })),
+  }));
   assert.equal(
-    await jpDialog.evaluate((el) => el.scrollWidth <= el.clientWidth),
+    jpMobileGeometry.dialog.scrollWidth <= jpMobileGeometry.dialog.clientWidth,
     true,
-    'Mobile dialog contains the table overflow',
+    `Mobile dialog contains the table overflow: ${JSON.stringify(jpMobileGeometry)}`,
   );
   await fits();
-  await page.screenshot({ path: 'test-results/homepage/japan-comparison-mobile.png' });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.screenshot({ path: 'test-results/homepage/japan-comparison-desktop.png' });
   await jpDialog
