@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-2026-11-flat35-baseline",
+  "category": "package",
+  "title": "Flat35 in November: read both stages of the illustration",
+  "summary": "JHF shows a conditional 2.81% first-five-year illustration, then 3.81%. The introductory figure depends on four discount points.",
+  "reportDate": "2026-11-03",
+  "edition": "baseline",
+  "eventKey": "jp-2026-11-flat35-baseline",
+  "supersedes": null,
+  "effectiveFrom": "2026-11-01",
+  "effectiveUntil": "2026-11-30",
+  "takeaways": [
+    {
+      "text": "JHF’s November illustration is conditional, not a universal borrower quote.",
+      "sourceIds": ["jhf"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "What the published illustration includes",
+      "kind": "fact",
+      "text": "For loan-to-value of 90% or less with new JHF group credit life insurance, the Flat35 illustration shows 2.81% for five years and 3.81% from year six. The initial reduction assumes four points, worth one percentage point. JHF describes these as the most commonly offered rates, not a guaranteed lowest rate.",
+      "sourceIds": ["jhf"]
+    },
+    {
+      "heading": "What remains to check",
+      "kind": "analysis",
+      "text": "Confirm discount qualification, lender fees, insurance options and the applicable funding-month terms. This baseline does not establish an all-in cost, lender approval or campaign entitlement.",
+      "sourceIds": ["jhf"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "jhf",
+      "publisher": "Japan Housing Finance Agency",
+      "title": "Flat35: November 2026 illustration",
+      "url": "https://www.flat35.com/?vm=r",
+      "checkedAt": "2026-11-03T04:42:06Z",
+      "documentDate": null
+    },
+    {
+      "id": "eligibility",
+      "publisher": "Japan Housing Finance Agency",
+      "title": "Flat35 eligibility and product conditions",
+      "url": "https://www.flat35.com/loan/lineup/flat35/conditions/index.html",
+      "checkedAt": "2026-11-03T04:42:06Z",
+      "documentDate": "2026-04-01"
+    }
+  ],
+  "package": {
+    "lender": "JHF · Flat35",
+    "eligibility": "Subject to Japanese nationality / qualifying Japanese permanent residence, underwriting and eligible housing. This illustration assumes LTV ≤90% and new JHF group credit life insurance.",
+    "conditions": "Four discount points required for the illustrated initial reduction. JHF states Flat35 cannot fund investment-property purchases. Lender-specific fees, loan amount and individual approval have not been verified here; consult the full conditions.",
+    "expiry": null,
+    "sourceIds": ["jhf", "eligibility"]
+  }
+}

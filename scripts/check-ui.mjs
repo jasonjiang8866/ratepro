@@ -66,7 +66,7 @@ try {
   await page.getByRole('button', { name: 'Buying & refinancing guides', exact: true }).click();
   assert.equal(
     await page.locator('.story-row').count(),
-    corpus.filter((a) => a.category === 'guide').length,
+    corpus.filter((a) => (a.market ?? 'SG') === 'SG' && a.category === 'guide').length,
   );
   await page.getByRole('button', { name: 'All stories', exact: true }).click();
   assert.ok((await page.locator('.story-row').count()) >= 3);
@@ -136,6 +136,71 @@ try {
   await page.setViewportSize({ width: 320, height: 740 });
   await fits();
   await page.keyboard.press('Tab');
+  // Countries must isolate content, data retrieval, currency and shared links.
+  const jpRequests = [];
+  page.on('request', (request) => {
+    if (request.url().includes('/data/rates.json')) jpRequests.push(request.url());
+  });
+  await page.getByLabel('Country / market').selectOption('JP');
+  await page.getByText('THE JAPAN HOME LOAN JOURNAL', { exact: true }).waitFor();
+  assert.equal(await page.locator('.brand-sg').innerText(), 'JP');
+  assert.equal(
+    await page.locator('.story-row').count(),
+    corpus.filter((a) => a.market === 'JP').length,
+  );
+  assert.equal(
+    await page
+      .locator('.journal')
+      .innerText()
+      .then((t) => /UOB|SORA|HDB/.test(t)),
+    false,
+  );
+  await fits();
+  await page.screenshot({ path: 'test-results/homepage/japan-mobile-light.png', fullPage: true });
+  await page.reload();
+  await page.getByText('THE JAPAN HOME LOAN JOURNAL', { exact: true }).waitFor();
+  await page.getByRole('link', { name: 'Loan explorer', exact: true }).click();
+  await page.getByLabel('Your assumed annual rate (%)').fill('2');
+  assert.match(await page.locator('.payment strong').innerText(), /[¥￥]/);
+  assert.equal(await page.locator('.offer-card').count(), 0);
+  assert.equal(await page.getByRole('button', { name: 'Refresh rates', exact: true }).count(), 0);
+  await page.getByLabel('Your assumed annual rate (%)').fill('');
+  assert.equal(await page.locator('.payment strong').innerText(), '—');
+  await page.getByLabel('Your assumed annual rate (%)').fill('0');
+  assert.match(await page.locator('.payment strong').innerText(), /71,429/);
+  await fits();
+  await page.getByRole('link', { name: 'Our sources', exact: true }).click();
+  await page.getByRole('heading', { name: 'Follow Japan’s sources.' }).waitFor();
+  assert.equal(await page.locator('.jp-tools a[href*=".sg"]').count(), 0);
+  assert.deepEqual(jpRequests, [], 'Japan must not request the Singapore rate feed');
+  await page.getByRole('link', { name: 'RatePro home', exact: true }).click();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: 'test-results/homepage/japan-desktop-light.png', fullPage: true });
+  await page.getByRole('button', { name: 'Use dark theme', exact: true }).click();
+  await page.screenshot({ path: 'test-results/homepage/japan-desktop-dark.png', fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: 'test-results/homepage/japan-mobile-dark.png', fullPage: true });
+  await page.getByRole('link', { name: 'Read terms & evidence', exact: true }).first().click();
+  await page.getByRole('heading', { name: 'The eligibility & conditions' }).waitFor();
+  assert.match(await page.locator('.reader-sources').innerText(), /JST/);
+  await page.reload();
+  await page.getByRole('heading', { name: 'The eligibility & conditions' }).waitFor();
+  await page.getByLabel('Country / market').selectOption('SG');
+  await page.getByText('THE SINGAPORE HOME LOAN JOURNAL', { exact: true }).waitFor();
+  await page.goBack();
+  await page.getByRole('heading', { name: 'The eligibility & conditions' }).waitFor();
+  assert.equal(await page.locator('.brand-sg').innerText(), 'JP');
+  await page.goForward();
+  await page.getByText('THE SINGAPORE HOME LOAN JOURNAL', { exact: true }).waitFor();
+  // Saved JP never changes the meaning of an old Singapore hash link.
+  await page.getByLabel('Country / market').selectOption('JP');
+  await page.goto(`${base}/#/read/2026-11-hdb-quarter`);
+  await page.getByRole('heading', { name: 'At a glance', exact: true }).waitFor();
+  assert.equal(await page.locator('.brand-sg').innerText(), 'SG');
+  await page.goto(`${base}/?market=JP#/read/2026-11-hdb-quarter`);
+  await page.getByRole('heading', { name: 'We couldn’t find that report.' }).waitFor();
+  await page.goto(`${base}/?market=UNKNOWN#/home`);
+  await page.getByText('THE SINGAPORE HOME LOAN JOURNAL', { exact: true }).waitFor();
   assert.deepEqual(errors, [], 'No runtime errors');
   console.log(
     'Homepage UI checks passed: navigation, filters, deep links, directory, sources, mobile, themes and overflow.',

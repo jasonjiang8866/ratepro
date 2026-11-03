@@ -63,6 +63,9 @@ import {
 import { synchronize } from '@/lib/sync';
 import { cn } from '@/lib/utils';
 import { Home } from '@/components/Home';
+import { JapanTools } from '@/components/JapanTools';
+import { articles } from '@/lib/content';
+import { markets, marketInfo, resolveMarket, isMarket, type MarketCode } from '@/lib/markets';
 const money = (n: number) =>
   new Intl.NumberFormat('en-SG', {
     style: 'currency',
@@ -120,7 +123,60 @@ function Select({
     </label>
   );
 }
+function currentMarket() {
+  let saved: unknown;
+  try {
+    saved = localStorage.getItem('ratepro.market');
+  } catch {
+    /* Session-only selection. */
+  }
+  const article = articles.find((a) => window.location.hash === `#/read/${a.slug}`);
+  return resolveMarket(window.location.search, window.location.hash, saved, article?.market);
+}
 export default function App() {
+  const [market, setMarket] = useState(currentMarket);
+  useEffect(() => {
+    const update = () => setMarket(currentMarket());
+    window.addEventListener('popstate', update);
+    window.addEventListener('hashchange', update);
+    // Make all subsequent hash links retain the selected market.
+    if (!new URLSearchParams(location.search).has('market')) {
+      const url = new URL(location.href);
+      url.searchParams.set('market', market);
+      history.replaceState(null, '', url);
+    }
+    return () => {
+      window.removeEventListener('popstate', update);
+      window.removeEventListener('hashchange', update);
+    };
+  }, [market]);
+  function chooseMarket(next: string) {
+    if (!isMarket(next) || next === market) return;
+    const url = new URL(location.href);
+    url.searchParams.set('market', next);
+    url.hash = '/home';
+    history.pushState(null, '', url);
+    try {
+      localStorage.setItem('ratepro.market', next);
+    } catch {
+      /* URL still works. */
+    }
+    setMarket(next);
+    window.scrollTo(0, 0);
+  }
+  return <MarketApp key={market} market={market} chooseMarket={chooseMarket} />;
+}
+function MarketApp({
+  market,
+  chooseMarket,
+}: {
+  market: MarketCode;
+  chooseMarket: (value: string) => void;
+}) {
+  const info = marketInfo(market);
+  useEffect(() => {
+    document.title = `RatePro ${market} · ${info.name} home loans`;
+  }, [market, info.name]);
   const [loaded] = useState(initial);
   const [cache, setCache] = useState<Cache>(loaded.cache);
   const current = useRef(cache);
@@ -151,7 +207,11 @@ export default function App() {
       }
     };
     window.addEventListener('hashchange', navigate);
-    return () => window.removeEventListener('hashchange', navigate);
+    window.addEventListener('popstate', navigate);
+    return () => {
+      window.removeEventListener('hashchange', navigate);
+      window.removeEventListener('popstate', navigate);
+    };
   }, []);
   const [query, setQuery] = useState('');
   const [property, setProperty] = useState('All properties');
@@ -185,7 +245,7 @@ export default function App() {
     }
   }
   async function refresh(force = false) {
-    if (running.current) return;
+    if (market !== 'SG' || running.current) return;
     running.current = true;
     setBusy(true);
     try {
@@ -213,6 +273,7 @@ export default function App() {
     return () => window.clearInterval(tick);
   }, []);
   useEffect(() => {
+    if (market !== 'SG') return;
     void refresh();
     const online = () => void refresh(true);
     window.addEventListener('online', online);
@@ -339,12 +400,12 @@ export default function App() {
             <span className="brand-icon">
               <House size={21} />
             </span>
-            ratepro<span className="brand-sg">SG</span>
+            ratepro<span className="brand-sg">{market}</span>
           </a>
           <nav className="primary-nav" aria-label="Main navigation">
             {[
               ['Home', 'The journal'],
-              ['Rates', 'Compare rates'],
+              ['Rates', market === 'SG' ? 'Compare rates' : 'Loan explorer'],
               ['Sources', 'Our sources'],
             ].map(([key, label]) => (
               <a
@@ -357,10 +418,16 @@ export default function App() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <span className="local-pill hidden sm:flex">
-              <span />
-              Your browser. Your data.
-            </span>
+            <label className="market-picker">
+              <span className="sr-only">Country / market</span>
+              <select value={market} onChange={(e) => chooseMarket(e.target.value)}>
+                {markets.map((m) => (
+                  <option key={m.code} value={m.code}>
+                    {m.code} · {m.name}
+                  </option>
+                ))}
+              </select>
+            </label>
             <Button
               variant="ghost"
               size="icon"
@@ -376,10 +443,12 @@ export default function App() {
         {tab === 'Home' && (
           <Home
             slug={route.startsWith('#/read/') ? route.slice(7) : undefined}
+            market={market}
             now={new Date(clock)}
           />
         )}
-        {tab !== 'Home' && (
+        {market === 'JP' && tab !== 'Home' && <JapanTools tab={tab} now={new Date(clock)} />}
+        {market === 'SG' && tab !== 'Home' && (
           <>
             <section className="hero">
               <div>
@@ -532,7 +601,7 @@ export default function App() {
             </div>
           </>
         )}
-        {tab === 'Rates' && (
+        {market === 'SG' && tab === 'Rates' && (
           <div className="workspace">
             <section className="min-w-0">
               <div className="section-heading">
@@ -891,7 +960,7 @@ export default function App() {
             </aside>
           </div>
         )}
-        {tab === 'Sources' && (
+        {market === 'SG' && tab === 'Sources' && (
           <section className="sources-view">
             <div className="section-heading">
               <div>
@@ -1083,7 +1152,7 @@ export default function App() {
             </div>
           </section>
         )}
-        {tab === 'History' && (
+        {market === 'SG' && tab === 'History' && (
           <section>
             <div className="section-heading">
               <div>
@@ -1132,7 +1201,7 @@ export default function App() {
         )}
         <footer>
           <span className="flex items-center gap-2">
-            <House size={16} /> ratepro <span className="text-muted-foreground">/ Singapore</span>
+            <House size={16} /> ratepro <span className="text-muted-foreground">/ {info.name}</span>
           </span>
           <p>
             Independent public information, not a lender or financial adviser. Confirm current rates
@@ -1140,7 +1209,7 @@ export default function App() {
           </p>
         </footer>
       </main>
-      {comparison.length > 0 && (
+      {market === 'SG' && comparison.length > 0 && (
         <div className="compare-dock">
           <span>
             <Check size={16} />

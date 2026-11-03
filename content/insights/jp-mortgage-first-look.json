@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-mortgage-first-look",
+  "category": "market",
+  "title": "Japan home loans: start with the rate structure",
+  "summary": "An initial reading map for Japan: what stays fixed, what can reset, and which conditions deserve a closer look.",
+  "reportDate": "2026-11-03",
+  "edition": "baseline",
+  "eventKey": "jp-mortgage-first-look",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "Distinguish variable, initial fixed-period and full-term fixed borrowing.",
+      "sourceIds": ["mufg"]
+    },
+    {
+      "text": "Read the repayment rules alongside the rate.",
+      "sourceIds": ["mufg"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Three structures, different exposure",
+      "kind": "fact",
+      "text": "MUFG describes variable rates, a selected fixed period followed by a new choice, and full-term fixed borrowing. These structures carry different exposure to later rate changes.",
+      "sourceIds": ["mufg"]
+    },
+    {
+      "heading": "A payment rule is not a rate cap",
+      "kind": "fact",
+      "text": "At MUFG, variable-rate equal-payment loans use five-year payment reviews and a 125% limit on the revised payment. Equal-principal loans do not. Interest can still rise; unpaid interest may be deferred. These are product-specific rules, not a promise about every Japanese loan.",
+      "sourceIds": ["mufg"]
+    },
+    {
+      "heading": "Our starting point",
+      "kind": "analysis",
+      "text": "This is a baseline explainer, not a forecast or a report of a new policy decision. Compare reset mechanics, total fees and borrower conditions before comparing headline percentages.",
+      "sourceIds": ["mufg"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "mufg",
+      "publisher": "MUFG Bank",
+      "title": "Choosing a mortgage interest-rate type",
+      "url": "https://www.bk.mufg.jp/kariru/jutaku/nyumon/nyumon/kinri_type.html",
+      "checkedAt": "2026-11-03T04:42:06Z",
+      "documentDate": null
+    }
+  ],
+  "package": null
+}
