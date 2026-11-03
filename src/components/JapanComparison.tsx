@@ -11,6 +11,7 @@ import {
 } from './ui/dialog';
 import { jpFreshness } from '../lib/japan-rates';
 import { japanComparisonWarnings, type JpComparisonItem } from '../lib/japan-comparison';
+import { RateStructure } from './MortgageVisuals';
 
 export const japanObservedDate = (value: string) =>
   new Intl.DateTimeFormat('en-GB', {
@@ -137,64 +138,98 @@ export function JapanComparison({
           <DialogHeader>
             <DialogTitle>Compare Japan loan terms</DialogTitle>
             <DialogDescription>
-              Side-by-side published observations in JPY. Rates alone do not establish total
-              borrowing cost or eligibility. Missing details are marked “To verify”.
+              The headline, the structure, then the details. Missing information is marked “To
+              verify”.
             </DialogDescription>
           </DialogHeader>
           {warnings.length > 0 && (
             <div className="jp-comparison-notice" role="note" aria-label="Comparison differences">
-              <strong>Check these differences</strong>
-              {warnings.map((warning) => (
-                <p key={warning}>{warning}</p>
-              ))}
+              <div className="comparison-flags">
+                {warnings.map((warning) => (
+                  <span key={warning}>{warning.split(':')[0]}</span>
+                ))}
+              </div>
+              <p>Rates with different conditions cannot establish which loan is cheaper.</p>
+              <details className="visual-disclosure">
+                <summary>Why these differ</summary>
+                {warnings.map((warning) => (
+                  <p key={warning}>{warning}</p>
+                ))}
+              </details>
             </div>
           )}
-          <p className="calc-footnote">
-            Scroll the table sideways on smaller screens to see all selected terms.
-          </p>
-          <div
-            className="comparison-scroll jp-comparison-scroll"
-            role="region"
-            aria-label="Japan loan terms comparison"
-            tabIndex={0}
-          >
-            <table>
-              <caption className="sr-only">Selected Japan loan terms; no price ranking</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Term</th>
-                  {items.map(({ source, rate }) => (
-                    <th scope="col" key={rate.id}>
-                      {source.name}
-                      <small lang="ja">{rate.label}</small>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="jp-remove"
-                        aria-label={`Remove ${source.name} ${rate.label}`}
-                        onClick={() => {
-                          if (items.length === 2) setOpen(false);
-                          onRemove(rate.id);
-                        }}
-                      >
-                        <X size={12} aria-hidden="true" /> Remove
-                      </Button>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map(({ label, cell }) => (
-                  <tr key={label}>
-                    <th scope="row">{label}</th>
-                    {items.map((item) => (
-                      <td key={item.rate.id}>{cell(item)}</td>
+          <div className="comparison-visual-cards">
+            {items.map(({ source, rate, observation }) => (
+              <article className="comparison-visual-card" key={rate.id}>
+                <div className="eyebrow">{source.name}</div>
+                <div className="visual-rate-number">
+                  {rate.annualRate.toFixed(3)}
+                  <small>%</small>
+                </div>
+                <span className="visual-rate-basis">{source.basis}</span>
+                <h3>
+                  {rate.kind}
+                  {rate.kind !== 'Variable' && <> · {rate.term}</>}
+                </h3>
+                <RateStructure kind={rate.kind} />
+                <p className="visual-schematic-note">Structure only · not a rate forecast</p>
+                <div className="comparison-card-meta">
+                  <span>{rate.purpose}</span>
+                  <span>{observation.publicationMonth}</span>
+                </div>
+                <small className="comparison-freshness">{jpFreshness(observation, now)}</small>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="jp-remove"
+                  aria-label={`Remove ${source.name} ${rate.label}`}
+                  onClick={() => {
+                    if (items.length === 2) setOpen(false);
+                    onRemove(rate.id);
+                  }}
+                >
+                  <X size={12} aria-hidden="true" /> Remove
+                </Button>
+              </article>
+            ))}
+          </div>
+          <details className="comparison-full-terms">
+            <summary>Full terms, fees & sources</summary>
+            <p className="calc-footnote">
+              Scroll the table sideways on smaller screens to see all selected terms.
+            </p>
+            <div
+              className="comparison-scroll jp-comparison-scroll"
+              role="region"
+              aria-label="Japan loan terms comparison"
+              tabIndex={0}
+            >
+              <table>
+                <caption className="sr-only">Selected Japan loan terms; no price ranking</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Term</th>
+                    {items.map(({ source, rate }) => (
+                      <th scope="col" key={rate.id}>
+                        {source.name}
+                        <small lang="ja">{rate.label}</small>
+                      </th>
                     ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {rows.map(({ label, cell }) => (
+                    <tr key={label}>
+                      <th scope="row">{label}</th>
+                      {items.map((item) => (
+                        <td key={item.rate.id}>{cell(item)}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </details>
         </DialogContent>
       </Dialog>
       <Button

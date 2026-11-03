@@ -56,6 +56,7 @@ try {
     );
   await page.goto(base);
   await page.getByRole('heading', { name: /A little context/ }).waitFor();
+  await page.getByLabel('A clearer path to your next home').waitFor();
   await fits();
   assert.equal(await page.locator('h1').count(), 1);
   await page.screenshot({
@@ -173,6 +174,24 @@ try {
     new RegExp(expectedRate('Purchase').replace('.', '\\.')),
   );
   await page.getByLabel('Japan borrowing purpose').selectOption('Refinance');
+  await page.getByRole('button', { name: 'Variable rates', exact: true }).click();
+  assert.equal(await page.locator('.jp-bank-card').first().getByRole('checkbox').count(), 1);
+  await page.locator('.jp-bank-card').first().getByRole('checkbox').check();
+  await page.getByRole('button', { name: 'Table', exact: true }).click();
+  await page.getByRole('region', { name: 'MUFG Bank rate table', exact: true }).waitFor();
+  assert.equal(
+    await page.locator('.jp-bank-card input:checked').count(),
+    1,
+    'View changes preserve selection',
+  );
+  await page.getByRole('button', { name: 'Cards', exact: true }).click();
+  assert.equal(await page.locator('.jp-bank-card input:checked').count(), 1);
+  await page.getByRole('button', { name: 'Show all types', exact: true }).click();
+  assert.equal(
+    await page.locator('.jp-bank-card input:checked').count(),
+    0,
+    'Rate-type filters clear selection',
+  );
   assert.ok(
     (await page.locator('.jp-bank-card').first().innerText()).includes(expectedRate('Refinance')),
   );
@@ -194,6 +213,17 @@ try {
   await page.getByRole('button', { name: 'Compare terms', exact: true }).click();
   const jpDialog = page.getByRole('dialog', { name: 'Compare Japan loan terms' });
   await jpDialog.waitFor();
+  assert.equal(await jpDialog.locator('.comparison-visual-card').count(), 3);
+  assert.equal(
+    await jpDialog.getByRole('link', { name: /official rates/ }).count(),
+    0,
+    'Full terms start collapsed',
+  );
+  await page.screenshot({ path: 'test-results/homepage/japan-comparison-cards-mobile.png' });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: 'test-results/homepage/japan-comparison-cards-desktop.png' });
+  await page.setViewportSize({ width: 320, height: 740 });
+  await jpDialog.getByText('Full terms, fees & sources', { exact: true }).click();
   assert.match(await jpDialog.innerText(), /Different rate bases/);
   assert.match(await jpDialog.innerText(), /Different rate types or fixed periods/);
   assert.match(await jpDialog.innerText(), /To verify/);
@@ -266,10 +296,19 @@ try {
   assert.equal(await page.locator('.jp-bank-card input:checked').count(), 0);
   await page.setViewportSize({ width: 320, height: 740 });
   await page.getByLabel('Your assumed annual rate (%)').fill('2');
+  await page.getByRole('img', { name: /Constant-rate illustration: principal/ }).waitFor();
+  await page.screenshot({
+    path: 'test-results/homepage/japan-repayment-ring-mobile.png',
+    fullPage: true,
+  });
   assert.match(await page.locator('.payment strong').innerText(), /[¥￥]/);
   assert.equal(await page.locator('.offer-card').count(), 0);
   assert.equal(await page.getByRole('button', { name: 'Refresh rates', exact: true }).count(), 0);
   await page.getByLabel('Your assumed annual rate (%)').fill('');
+  assert.equal(
+    await page.getByRole('img', { name: /Constant-rate illustration: principal/ }).count(),
+    0,
+  );
   assert.equal(await page.locator('.payment strong').innerText(), '—');
   await page.getByLabel('Your assumed annual rate (%)').fill('0');
   assert.match(await page.locator('.payment strong').innerText(), /71,429/);
