@@ -2,11 +2,16 @@ import { useEffect, useState } from 'react';
 import published from '../../public/data/rates-jp.json';
 import { JP_SOURCES, JpFeedSchema, jpFreshness, type JpFeed } from '../lib/japan-rates';
 import { fetchText } from '../lib/sync';
+import { JapanComparison, japanObservedDate } from './JapanComparison';
+import { japanComparisonItems, JP_COMPARISON_LIMIT, type JpPurpose } from '../lib/japan-comparison';
 
 export function JapanRates({ now, sourcesOnly = false }: { now: Date; sourcesOnly?: boolean }) {
   const [feed, setFeed] = useState<JpFeed>(() => JpFeedSchema.parse(published));
   const [error, setError] = useState(false);
-  const [purpose, setPurpose] = useState<'Purchase' | 'Refinance'>('Purchase');
+  const [purpose, setPurpose] = useState<JpPurpose>('Purchase');
+  const [selected, setSelected] = useState<string[]>([]);
+  const comparison = japanComparisonItems(feed, selected, purpose);
+  const selectedIds = comparison.map(({ rate }) => rate.id);
   useEffect(() => {
     let active = true;
     fetchText('/data/rates-jp.json')
@@ -24,12 +29,7 @@ export function JapanRates({ now, sourcesOnly = false }: { now: Date; sourcesOnl
       active = false;
     };
   }, []);
-  const date = (value: string) =>
-    new Intl.DateTimeFormat('en-GB', {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-      timeZone: 'Asia/Tokyo',
-    }).format(new Date(value)) + ' JST';
+  const date = japanObservedDate;
   return (
     <section className="jp-bank-rates" aria-label="Automated Japan bank observations">
       <div className="eyebrow">OFFICIAL BANK OBSERVATIONS</div>
@@ -56,12 +56,22 @@ export function JapanRates({ now, sourcesOnly = false }: { now: Date; sourcesOnl
             aria-label="Japan borrowing purpose"
             className="jp-purpose"
             value={purpose}
-            onChange={(e) => setPurpose(e.target.value as typeof purpose)}
+            onChange={(e) => {
+              setPurpose(e.target.value as JpPurpose);
+              setSelected([]);
+            }}
           >
             <option>Purchase</option>
             <option>Refinance</option>
           </select>
         </label>
+      )}
+      {!sourcesOnly && (
+        <p id="jp-comparison-help" className="calc-footnote">
+          Select 2–3 rows to compare terms. Changing borrowing purpose clears the selection.
+          {comparison.length === JP_COMPARISON_LIMIT &&
+            ' Selection full: remove a row to choose another.'}
+        </p>
       )}
       {JP_SOURCES.map((source) => {
         const observation = feed.observations.find((o) => o.sourceId === source.id);
@@ -113,6 +123,7 @@ export function JapanRates({ now, sourcesOnly = false }: { now: Date; sourcesOnl
                     </caption>
                     <thead>
                       <tr>
+                        <th scope="col">Compare</th>
                         <th scope="col">Rate type / period</th>
                         <th scope="col">Annual rate</th>
                         {source.id === 'jp-mufg' && <th scope="col">Reference rate</th>}
@@ -123,6 +134,27 @@ export function JapanRates({ now, sourcesOnly = false }: { now: Date; sourcesOnl
                         .filter((r) => r.purpose === purpose)
                         .map((r) => (
                           <tr key={r.id}>
+                            <td>
+                              <label className="compare-check jp-compare-check">
+                                <input
+                                  type="checkbox"
+                                  aria-label={`Compare ${source.name} ${r.label} ${r.purpose}`}
+                                  aria-describedby="jp-comparison-help"
+                                  checked={selectedIds.includes(r.id)}
+                                  disabled={
+                                    comparison.length >= JP_COMPARISON_LIMIT &&
+                                    !selectedIds.includes(r.id)
+                                  }
+                                  onChange={(e) =>
+                                    setSelected(
+                                      e.target.checked
+                                        ? [...selectedIds, r.id].slice(0, JP_COMPARISON_LIMIT)
+                                        : selectedIds.filter((id) => id !== r.id),
+                                    )
+                                  }
+                                />
+                              </label>
+                            </td>
                             <th scope="row">
                               {r.kind}
                               {r.kind !== 'Variable' && <> · {r.term}</>}
@@ -170,6 +202,14 @@ export function JapanRates({ now, sourcesOnly = false }: { now: Date; sourcesOnl
           </article>
         );
       })}
+      {!sourcesOnly && (
+        <JapanComparison
+          items={comparison}
+          now={now}
+          onRemove={(id) => setSelected(selectedIds.filter((selectedId) => selectedId !== id))}
+          onClear={() => setSelected([])}
+        />
+      )}
     </section>
   );
 }
