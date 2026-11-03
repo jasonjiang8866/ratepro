@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "slug": "2026-11-market-initial-observation",
+  "category": "market",
+  "title": "November starting point: unchanged MAS settings, a mixed housing market",
+  "summary": "Initial observation, not a list of new November announcements: October policy and Q3 housing data, with a bank-rewards lead still awaiting complete terms.",
+  "reportDate": "2026-11-03",
+  "edition": "baseline",
+  "eventKey": "market-initial-observation-2026-11",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "MAS left its exchange-rate policy-band settings unchanged on 14 October.",
+      "sourceIds": [
+        "mas"
+      ]
+    },
+    {
+      "text": "Q3 private-home prices rose 1.4% quarter-on-quarter; HDB resale prices fell 0.1%.",
+      "sourceIds": [
+        "ura",
+        "singstat"
+      ]
+    },
+    {
+      "text": "A DBS rewards page is a research lead; complete qualifying and recovery terms still need verification.",
+      "sourceIds": [
+        "dbs"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Scope and dates",
+      "kind": "analysis",
+      "text": "Written on 3 November 2026 in Singapore, this initial observation adds policy and housing context to RatePro's existing HDB-quarter and SORA explainers. The events below predate this report. Source checks record when the publications were read; they are not offer launch dates. No single effective period applies to this mixed-topic report.",
+      "sourceIds": [
+        "mas",
+        "ura"
+      ]
+    },
+    {
+      "heading": "MAS decision: exchange-rate settings, not a mortgage quote",
+      "kind": "fact",
+      "text": "On 14 October 2026, MAS maintained the appreciation rate, width and centre of its S$NEER policy band. MAS expected core inflation to ease more clearly from mid-2027, while describing inflation risks as tilted upwards. These are MAS's conditional outlook statements, not RatePro forecasts.",
+      "sourceIds": [
+        "mas"
+      ]
+    },
+    {
+      "heading": "Housing: distinguish the segments",
+      "kind": "fact",
+      "text": "URA's 23 October release reports private residential prices rising 1.4% in Q3 2026, after 0.5% in Q2. SingStat's news entry dated 23 October reports HDB resale prices falling 0.1% and resale volume rising 19.5% quarter-on-quarter. The reference period is July–September; these are not November transactions. HDB's linked release did not provide readable body content in this check, so the HDB figures here are attributed to SingStat.",
+      "sourceIds": [
+        "ura",
+        "singstat"
+      ]
+    },
+    {
+      "heading": "Funding context: do not substitute a deposit formula for bank funding costs",
+      "kind": "analysis",
+      "text": "CPF's page, updated 22 September, reports a 0.32% average of specified bank deposit rates for May–July 2026 in its Q4 OA calculation. This narrow, historical input is not a measurement of banks' current marginal funding cost. The existing HDB-quarter article already covers the resulting OA/HDB rates. No current SORA fixing, funding-cost trend or new mortgage pricing is established here. Neither an unchanged MAS stance nor a US rate move implies an immediate matching change in Singapore mortgage rates.",
+      "sourceIds": [
+        "cpf",
+        "mas"
+      ]
+    },
+    {
+      "heading": "Bank rewards: a lead, not a confirmed package",
+      "kind": "fact",
+      "text": "DBS's dedicated rewards page describes benefits for completed-home purchases and refinancing, with a 31 December 2026 headline deadline. It separates private-property/EC and HDB refinancing tiers. Complete campaign terms, exclusions, payout timing and clawback conditions were not verified in this review. The page supplies no verified full mortgage-rate schedule here. Its publication/update date is not stated. No confirmed promotion record or reward entitlement is created from this lead.",
+      "sourceIds": [
+        "dbs"
+      ]
+    },
+    {
+      "heading": "What this means for a comparison",
+      "kind": "analysis",
+      "text": "The housing figures describe different segments and do not establish the value of an individual home or its approved loan amount. For any live offer, obtain the dated rate schedule, benchmark tenor and reset dates, loan-size and property eligibility, lock-in, fees, reward conditions and recovery clauses together. Current funding costs and future rate direction remain unresolved; this baseline makes no personalised borrowing recommendation.",
+      "sourceIds": [
+        "ura",
+        "dbs"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "mas",
+      "publisher": "Monetary Authority of Singapore",
+      "title": "MAS Monetary Policy Statement - October 2026",
+      "url": "https://www.mas.gov.sg/news/monetary-policy-statements/2026/mas-monetary-policy-statement-14oct26",
+      "checkedAt": "2026-11-03T02:01:11Z",
+      "documentDate": "2026-10-14"
+    },
+    {
+      "id": "ura",
+      "publisher": "Urban Redevelopment Authority",
+      "title": "Release of 3rd Quarter 2026 real estate statistics",
+      "url": "https://www.ura.gov.sg/news/media/pr26-73/",
+      "checkedAt": "2026-11-03T02:01:11Z",
+      "documentDate": "2026-10-23"
+    },
+    {
+      "id": "singstat",
+      "publisher": "Singapore Department of Statistics",
+      "title": "Property Price Indices — Latest News & Data",
+      "url": "https://www.singstat.gov.sg/find-data/explore-data-themes/economy-prices/property-price-indices/latest-news-data",
+      "checkedAt": "2026-11-03T02:01:11Z",
+      "documentDate": null
+    },
+    {
+      "id": "cpf",
+      "publisher": "CPF Board",
+      "title": "How are CPF interest rates determined?",
+      "url": "https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined",
+      "checkedAt": "2026-11-03T02:01:11Z",
+      "documentDate": "2026-09-22"
+    },
+    {
+      "id": "dbs",
+      "publisher": "DBS",
+      "title": "DBS Home Loan Exclusive Rewards",
+      "url": "https://www.dbs.com.sg/personal/loans/promotion/home-loan-promo",
+      "checkedAt": "2026-11-03T02:02:21Z",
+      "documentDate": null
+    }
+  ],
+  "package": null
+}
