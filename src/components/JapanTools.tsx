@@ -5,6 +5,7 @@ import { articleHref, marketMoney } from '../lib/markets';
 import { editorialStatus } from '../lib/editorial';
 import { payment } from '../lib/data';
 import { Input } from './ui/input';
+import { LoanAmountInput } from './LoanAmountInput';
 
 export function JapanTools({ tab, now }: { tab: string; now: Date }) {
   const records = articles.filter((a) => a.market === 'JP');
@@ -128,14 +129,7 @@ export function JapanTools({ tab, now }: { tab: string; now: Date }) {
           <label htmlFor="jp-principal" className="field-label">
             Loan amount (JPY)
           </label>
-          <Input
-            id="jp-principal"
-            type="number"
-            min="1"
-            max="1000000000"
-            value={principal}
-            onChange={(e) => setPrincipal(e.target.value)}
-          />
+          <LoanAmountInput id="jp-principal" value={principal} onValueChange={setPrincipal} />
           <label htmlFor="jp-years" className="field-label">
             Tenure (years)
           </label>
