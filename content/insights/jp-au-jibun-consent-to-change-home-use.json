@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-au-jibun-consent-to-change-home-use",
+  "category": "market",
+  "title": "Renting out a mortgaged home? au Jibun Bank clarifies how to obtain consent",
+  "summary": "For loans taken out from 14 January 2025, revised terms recognise bank-specified electronic consent before a borrower changes how any part of the home is used.",
+  "reportDate": "2026-11-04",
+  "edition": "update",
+  "eventKey": "jp-au-jibun-2026-11-02-mortgage-consent",
+  "supersedes": null,
+  "effectiveFrom": "2026-11-02",
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "Prior consent was already required. The change concerns how the bank can give it.",
+      "sourceIds": [
+        "comparison"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Which agreement applies?",
+      "kind": "fact",
+      "text": "The bank announced the amendment on 2 November 2026 and put it into effect the same day. Its notice links six comparisons by original borrowing date. The details below cover loans taken out on or after 14 January 2025.",
+      "sourceIds": [
+        "notice",
+        "comparison"
+      ]
+    },
+    {
+      "heading": "What changed in Article 12?",
+      "kind": "fact",
+      "text": "Clause 2(9) covers using all or part of the mortgaged property for purposes other than housing the borrower or their family, including rental, investment or business use. Previously it specified prior written consent. It now expressly includes electronic records and methods designated by the bank. Unauthorised use can allow the bank to demand repayment of the full debt.",
+      "sourceIds": [
+        "comparison"
+      ]
+    },
+    {
+      "heading": "Before letting out a room",
+      "kind": "analysis",
+      "text": "Check the comparison for your borrowing date. Ask the bank which channel it accepts and retain its approval before changing the use. Sending a message alone does not establish that the bank agreed.",
+      "sourceIds": [
+        "notice",
+        "comparison"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "notice",
+      "publisher": "au Jibun Bank",
+      "title": "住宅ローン規約を一部変更しました。",
+      "url": "https://www.jibunbank.co.jp/announcement/2026/1102_02.html",
+      "documentDate": "2026-11-02",
+      "checkedAt": "2026-11-04T02:05:46Z"
+    },
+    {
+      "id": "comparison",
+      "publisher": "au Jibun Bank",
+      "title": "新旧対比表（2025年1月14日以降にお借入れのお客さま）",
+      "url": "https://www.jibunbank.co.jp/announcement/2026/pdf/1102_02/20261102_01.pdf",
+      "documentDate": "2026-11-02",
+      "checkedAt": "2026-11-04T02:05:46Z"
+    }
+  ],
+  "package": null
+}
