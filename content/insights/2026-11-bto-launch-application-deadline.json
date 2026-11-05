@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "market": "SG",
+  "slug": "2026-11-bto-launch-application-deadline",
+  "category": "market",
+  "title": "November BTO opens with 7,964 flats; applications close on 11 November",
+  "summary": "HDB lists seven projects and a deadline of 11 November at 11:59pm Singapore time. Selection is by computer ballot.",
+  "reportDate": "2026-11-05",
+  "edition": "update",
+  "eventKey": "sg-2026-11-bto-launch",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": "2026-11-11",
+  "takeaways": [
+    {
+      "text": "The November exercise offers 7,964 flats across seven projects. Applications close on 11 November at 11:59pm Singapore time.",
+      "sourceIds": [
+        "launch"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "The published launch",
+      "kind": "fact",
+      "text": "HDB’s announcement is dated 4 November 2026. Its sales-launch page lists waiting times of less than four years and says applicants will be selected by computer ballot.",
+      "sourceIds": [
+        "announcement",
+        "launch"
+      ]
+    },
+    {
+      "heading": "Time to review the budget",
+      "kind": "analysis",
+      "text": "The application deadline is a useful checkpoint for reviewing purchase costs and financing eligibility. A ballot application does not establish an approved loan amount or a mortgage rate. Confirm those separately before budgeting around a particular home.",
+      "sourceIds": [
+        "launch"
+      ]
+    },
+    {
+      "heading": "Evidence and scope",
+      "kind": "fact",
+      "text": "The sales-launch page was readable in this review. The announcement returned its title and publication date only. Detailed eligibility, grants, project prices and financing conditions remain outside this brief. The sales page does not state a publication or update date.",
+      "sourceIds": [
+        "announcement",
+        "launch"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "announcement",
+      "publisher": "Housing & Development Board",
+      "title": "HDB Launches 7,964 Flats Across Seven Projects in November 2026 BTO Sales Exercise",
+      "url": "https://www.hdb.gov.sg/hdb-pulse/news/2026/hdb-launches-7964-flats-across-seven-projects-in-nov-2026-bto-sales-exercise",
+      "checkedAt": "2026-11-05T01:57:23Z",
+      "documentDate": "2026-11-04"
+    },
+    {
+      "id": "launch",
+      "publisher": "Housing & Development Board",
+      "title": "November 2026 BTO Sales Exercise",
+      "url": "https://www.hdb.gov.sg/sales-launch",
+      "checkedAt": "2026-11-05T01:57:23Z",
+      "documentDate": null
+    }
+  ],
+  "package": null
+}
