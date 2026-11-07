@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { MARKET_CODES, marketDay } from './markets';
+import { MARKET_CODES, marketDay, type MarketCode } from './markets';
 
 const text = z.string().trim().min(1).max(3000);
 const id = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
@@ -119,11 +119,32 @@ export function validateArticles(raw: unknown[], now = new Date()): Article[] {
     (a, b) => b.reportDate.localeCompare(a.reportDate) || a.slug.localeCompare(b.slug),
   );
 }
-export function editorialStatus(a: Article, now = new Date()): string {
+export function editorialPeriod(a: Article, now = new Date()): 'ended' | 'upcoming' | 'current' {
   const today = marketDay(now, a.market);
   const end = [a.effectiveUntil, a.package?.expiry].filter((v): v is string => !!v).sort()[0];
-  if (end && today > end) return 'Period ended';
-  if (a.effectiveFrom && today < a.effectiveFrom) return 'Upcoming period';
+  if (end && today > end) return 'ended';
+  if (a.effectiveFrom && today < a.effectiveFrom) return 'upcoming';
+  // No stated end means no known expiry, not confirmed ongoing availability.
+  return 'current';
+}
+export function selectFeaturedArticle(
+  articles: readonly Article[],
+  market: MarketCode,
+  now = new Date(),
+): Article | undefined {
+  const records = articles.filter((a) => a.market === market);
+  const superseded = new Set(records.map((a) => a.supersedes));
+  return records
+    .filter(
+      (a) =>
+        a.category === 'market' && !superseded.has(a.slug) && editorialPeriod(a, now) === 'current',
+    )
+    .sort((a, b) => b.reportDate.localeCompare(a.reportDate) || a.slug.localeCompare(b.slug))[0];
+}
+export function editorialStatus(a: Article, now = new Date()): string {
+  const period = editorialPeriod(a, now);
+  if (period === 'ended') return 'Period ended';
+  if (period === 'upcoming') return 'Upcoming period';
   const lastCheck = Math.min(...a.sources.map((s) => Date.parse(s.checkedAt)));
   if (now.getTime() - lastCheck > 7 * 86400000) return 'Recheck needed';
   return a.edition === 'baseline'

@@ -11,7 +11,13 @@ import {
 } from 'lucide-react';
 import { articles as allArticles } from '../lib/content';
 import { articleHref, marketInfo, type MarketCode } from '../lib/markets';
-import { categories, editorialStatus, readingMinutes, type Article } from '../lib/editorial';
+import {
+  categories,
+  editorialStatus,
+  readingMinutes,
+  selectFeaturedArticle,
+  type Article,
+} from '../lib/editorial';
 import './home.css';
 import { HomeIllustration, StoryIllustration } from './MortgageVisuals';
 
@@ -187,7 +193,7 @@ export function Home({ slug, now, market }: { slug?: string; now: Date; market: 
     );
   }
   const isSuperseded = (a: Article) => articles.some((item) => item.supersedes === a.slug);
-  const featured = articles.find((a) => a.category === 'market' && !isSuperseded(a));
+  const featured = selectFeaturedArticle(articles, market, now);
   const packages = articles.filter((a) => a.category === 'package' && !isSuperseded(a)).slice(0, 3);
   const archive = articles.filter((a) => category === 'all' || a.category === category);
   return (
@@ -258,8 +264,8 @@ export function Home({ slug, now, market }: { slug?: string; now: Date; market: 
         </section>
       ) : (
         <section className="journal-empty">
-          <h2>The first briefing is on its way.</h2>
-          <p>Reports appear here after source review. You can explore the rate directory now.</p>
+          <h2>No current briefing is available.</h2>
+          <p>Browse past reports in the reading room below or explore the rate directory.</p>
         </section>
       )}
       <section className="package-watch">
