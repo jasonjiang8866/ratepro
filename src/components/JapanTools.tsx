@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { ArrowUpRight, ArrowRight } from 'lucide-react';
 import { articles } from '../lib/content';
-import { articleHref, marketMoney } from '../lib/markets';
+import { articleHref } from '../lib/markets';
 import { editorialStatus } from '../lib/editorial';
 import { payment } from '../lib/data';
-import { Input } from './ui/input';
-import { LoanAmountInput } from './LoanAmountInput';
+import { ScenarioCalculator } from './ScenarioCalculator';
 import { JapanRates } from './JapanRates';
 
 export function JapanTools({ tab, now }: { tab: string; now: Date }) {
@@ -28,8 +27,6 @@ export function JapanTools({ tab, now }: { tab: string; now: Date }) {
     Number(rate) >= 0 &&
     Number(rate) <= 30;
   const monthly = valid ? payment(Number(principal), Number(rate), Number(years)) : null;
-  const totalInterest =
-    monthly === null ? null : Math.max(0, monthly * Number(years) * 12 - Number(principal));
   if (tab === 'Sources') {
     const sources = [...new Map(records.flatMap((a) => a.sources).map((s) => [s.url, s])).values()];
     return (
@@ -130,92 +127,16 @@ export function JapanTools({ tab, now }: { tab: string; now: Date }) {
               ))}
           </div>
         </div>
-        <aside className="watch-card jp-calculator">
-          <div className="eyebrow">YOUR SCENARIO · JPY</div>
-          <h2>Make the numbers real.</h2>
-          <label htmlFor="jp-principal" className="field-label">
-            Loan amount (JPY)
-          </label>
-          <LoanAmountInput id="jp-principal" value={principal} onValueChange={setPrincipal} />
-          <label htmlFor="jp-years" className="field-label">
-            Tenure (years)
-          </label>
-          <Input
-            id="jp-years"
-            type="number"
-            min="1"
-            max="50"
-            value={years}
-            onChange={(e) => setYears(e.target.value)}
-          />
-          <label htmlFor="jp-rate" className="field-label">
-            Your assumed annual rate (%)
-          </label>
-          <Input
-            id="jp-rate"
-            type="number"
-            min="0"
-            max="30"
-            step="0.01"
-            placeholder="Enter a scenario rate"
-            value={rate}
-            onChange={(e) => setRate(e.target.value)}
-          />
-          <div className="payment" aria-live="polite">
-            <span>Estimated monthly payment · JPY</span>
-            <strong>{monthly !== null ? marketMoney(monthly, 'JP') : '—'}</strong>
-          </div>
-          {totalInterest !== null && (
-            <div className="repayment-visual">
-              <div
-                className="repayment-ring"
-                role="img"
-                aria-label={`Constant-rate illustration: principal ${marketMoney(Number(principal), 'JP')}, total interest ${marketMoney(totalInterest, 'JP')}`}
-                style={{
-                  background: `conic-gradient(var(--primary) ${(Number(principal) / (Number(principal) + totalInterest)) * 100}%, var(--visual-sun) 0)`,
-                }}
-              >
-                <span>
-                  {years}
-                  <small>years</small>
-                </span>
-              </div>
-              <dl>
-                <div>
-                  <dt>
-                    <i />
-                    Principal
-                  </dt>
-                  <dd>{marketMoney(Number(principal), 'JP')}</dd>
-                </div>
-                <div>
-                  <dt>
-                    <i />
-                    Total interest
-                  </dt>
-                  <dd>{marketMoney(totalInterest, 'JP')}</dd>
-                </div>
-              </dl>
-            </div>
-          )}
-          <p className="calc-footnote">
-            Illustration assumes your entered rate stays constant for the entire loan.
-          </p>
-          <details className="visual-disclosure">
-            <summary>Assumptions & exclusions</summary>
-            <p className="calc-footnote">
-              A constant-rate, equal-payment illustration only. Excludes fees, insurance, tax
-              relief, bonus repayments and rate resets. It does not model staged Flat35 discounts or
-              any five-year / 125% payment rule. Tenure and borrowing eligibility depend on the
-              lender.
-            </p>
-          </details>
-          {!valid && (
-            <p className="text-sm">
-              Enter a loan up to ¥1 billion, 1–50 years and an assumed rate of 0–30%.
-            </p>
-          )}
-        </aside>
+        <ScenarioCalculator
+          market="JP"
+          principal={principal}
+          years={years}
+          rate={rate}
+          monthly={monthly}
+          setPrincipal={setPrincipal}
+          setYears={setYears}
+          setRate={setRate}
+        />
       </div>
     </section>
   );

@@ -569,38 +569,11 @@
 .sidebar {
   padding-top: 2px;
 }
-.calculator {
-  background: var(--card);
-  border: 1px solid var(--border);
-  box-shadow: none;
-  padding: 0;
-  gap: 0;
-}
-.calculator .eyebrow {
-  font-size: 8px;
-  letter-spacing: 1px;
-  color: var(--muted);
-}
-.calculator h2 {
-  font-family: Georgia, serif;
-  font-size: 23px;
-  letter-spacing: -0.5px;
-  margin: 13px 0 5px;
-}
-.calculator p {
-  font-size: 11px;
-  color: var(--muted);
-}
 .field-label {
   display: block;
   font-size: 10px;
   margin: 20px 0 7px;
   color: var(--muted);
-}
-.calculator input {
-  font-size: 12px;
-  box-shadow: none;
-  background: var(--background);
 }
 .payment {
   background: var(--hero);
@@ -625,10 +598,6 @@
   letter-spacing: 0;
   font-weight: 400;
   margin-left: 5px;
-}
-.calculator p.calc-footnote {
-  font-size: 9px;
-  line-height: 1.9;
 }
 .how-it-works {
   margin: 23px 0;
@@ -954,6 +923,13 @@ footer > p {
   }
 }
 @media (max-width: 440px) {
+  .section-nav {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .section-nav > div:last-child {
+    margin-left: auto;
+  }
   .hero h1 {
     font-size: 34px;
     letter-spacing: -1.3px;
