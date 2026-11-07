@@ -99,6 +99,48 @@ try {
     JSON.parse(readFileSync('public/data/rates.json', 'utf8')).offers.length,
   );
   await page.getByRole('heading', { name: 'Make the numbers real.' }).waitFor();
+  // SG uses the same scenario card and ring as JP, with its own currency and limits.
+  const sgCalculator = page.getByRole('region', { name: 'SGD repayment calculator' });
+  const sgRing = sgCalculator.getByRole('img', { name: /Constant-rate illustration/ });
+  assert.equal(await page.getByLabel('Loan amount (S$)', { exact: true }).inputValue(), '500,000');
+  assert.match(await sgCalculator.locator('.payment strong').innerText(), /2,268/);
+  assert.match(
+    await sgRing.getAttribute('aria-label'),
+    /principal \$500,000, total interest \$180,504/,
+  );
+  assert.equal(await sgRing.locator('span').innerText(), '25\nyears');
+  assert.match(await sgCalculator.locator('.payment').innerText(), /SGD/);
+  await sgCalculator.locator('summary').click();
+  assert.match(await sgCalculator.locator('details').innerText(), /CPF effects/);
+  assert.doesNotMatch(await sgCalculator.locator('details').innerText(), /Flat35/);
+  await sgCalculator.locator('summary').click();
+  await sgCalculator.screenshot({ path: 'test-results/homepage/sg-calculator-desktop-light.png' });
+  await page.setViewportSize({ width: 320, height: 740 });
+  await fits();
+  await sgCalculator.screenshot({ path: 'test-results/homepage/sg-calculator-mobile-light.png' });
+  await page.getByRole('button', { name: 'Use dark theme', exact: true }).click();
+  await sgCalculator.screenshot({ path: 'test-results/homepage/sg-calculator-mobile-dark.png' });
+  await fits();
+  await page.getByRole('button', { name: 'Use light theme', exact: true }).click();
+  await page.getByLabel('Your assumed annual rate (%)').fill('0');
+  assert.match(await sgCalculator.locator('.payment strong').innerText(), /1,667/);
+  assert.match(await sgRing.getAttribute('aria-label'), /total interest \$0$/);
+  assert.match(await sgRing.getAttribute('style'), /100%/);
+  for (const [label, invalid, restore] of [
+    ['Your assumed annual rate (%)', '', '2.6'],
+    ['Tenure (years)', '36', '25'],
+    ['Loan amount (S$)', '0', '500000'],
+  ]) {
+    await page.getByLabel(label, { exact: true }).fill(invalid);
+    assert.equal(await sgRing.count(), 0, 'Invalid scenarios must not retain a stale ring');
+    assert.equal(await sgCalculator.locator('.payment strong').innerText(), '—');
+    await page.getByLabel(label, { exact: true }).fill(restore);
+    await sgRing.waitFor();
+  }
+  await page.getByLabel('Loan amount (S$)', { exact: true }).fill('750000');
+  assert.match(await sgRing.getAttribute('aria-label'), /principal \$750,000/);
+  await page.getByLabel('Loan amount (S$)', { exact: true }).fill('500000');
+  await page.setViewportSize({ width: 1440, height: 1000 });
   await page.getByRole('link', { name: 'Our sources', exact: true }).click();
   await page.getByRole('heading', { name: 'Follow the information back.' }).waitFor();
   await page.getByRole('link', { name: 'RatePro home', exact: true }).click();

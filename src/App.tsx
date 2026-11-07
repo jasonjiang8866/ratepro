@@ -24,7 +24,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { LoanAmountInput } from '@/components/LoanAmountInput';
+import { ScenarioCalculator } from '@/components/ScenarioCalculator';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Dialog,
@@ -885,61 +885,16 @@ function MarketApp({
               </p>
             </section>
             <aside className="sidebar">
-              <Card className="calculator">
-                <CardContent className="p-6">
-                  <div className="eyebrow">PLAN THE MONTHLY PAYMENT</div>
-                  <h2>Make the numbers real.</h2>
-                  <p>A simple repayment estimate.</p>
-                  <label className="field-label" htmlFor="loan">
-                    Loan amount (S$)
-                  </label>
-                  <LoanAmountInput id="loan" value={principal} onValueChange={setPrincipal} />
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="field-label" htmlFor="tenure">
-                        Tenure (years)
-                      </label>
-                      <Input
-                        id="tenure"
-                        type="number"
-                        min="1"
-                        max="35"
-                        value={years}
-                        onChange={(e) => setYears(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label className="field-label" htmlFor="rate">
-                        Annual rate (%)
-                      </label>
-                      <Input
-                        id="rate"
-                        type="number"
-                        min="0"
-                        max="30"
-                        step="0.01"
-                        value={calcRate}
-                        onChange={(e) => setCalcRate(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="payment">
-                    <span>Estimated monthly payment</span>
-                    <strong>
-                      {validCalc && monthly !== null ? money(monthly) : '—'}
-                      <small>/ month</small>
-                    </strong>
-                  </div>
-                  {!validCalc && (
-                    <p role="alert">Enter a positive loan, 1–35 years and a rate of 0–30%.</p>
-                  )}
-                  <p className="calc-footnote">
-                    Assumes a fully drawn, amortising loan and a constant rate for the whole tenure.
-                    Excludes fees, CPF effects and eligibility checks. Not a progressive-payment
-                    estimate for construction loans.
-                  </p>
-                </CardContent>
-              </Card>
+              <ScenarioCalculator
+                market="SG"
+                principal={principal}
+                years={years}
+                rate={calcRate}
+                monthly={validCalc ? monthly : null}
+                setPrincipal={setPrincipal}
+                setYears={setYears}
+                setRate={setCalcRate}
+              />
               <div className="how-it-works">
                 <CircleHelp size={19} />
                 <h3>What happens on refresh?</h3>
