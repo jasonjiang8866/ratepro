@@ -52,7 +52,19 @@ try {
     assert.equal(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
       true,
-      'No horizontal overflow',
+      `No horizontal overflow: ${JSON.stringify(
+        await page.evaluate(() =>
+          [...document.querySelectorAll('body *')]
+            .filter((el) => el.getBoundingClientRect().right > innerWidth + 1)
+            .map((el) => ({
+              tag: el.tagName,
+              className: el.className,
+              width: el.getBoundingClientRect().width,
+              right: el.getBoundingClientRect().right,
+            }))
+            .slice(0, 15),
+        ),
+      )}`,
     );
   await page.goto(base);
   await page.getByRole('heading', { name: /A little context/ }).waitFor();
@@ -116,8 +128,8 @@ try {
   await sgCalculator.locator('summary').click();
   await sgCalculator.screenshot({ path: 'test-results/homepage/sg-calculator-desktop-light.png' });
   await page.setViewportSize({ width: 320, height: 740 });
-  await fits();
   await sgCalculator.screenshot({ path: 'test-results/homepage/sg-calculator-mobile-light.png' });
+  await fits();
   await page.getByRole('button', { name: 'Use dark theme', exact: true }).click();
   await sgCalculator.screenshot({ path: 'test-results/homepage/sg-calculator-mobile-dark.png' });
   await fits();
