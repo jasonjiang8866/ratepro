@@ -923,6 +923,13 @@ footer > p {
   }
 }
 @media (max-width: 440px) {
+  .section-nav {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .section-nav > div:last-child {
+    margin-left: auto;
+  }
   .hero h1 {
     font-size: 34px;
     letter-spacing: -1.3px;
