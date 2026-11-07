@@ -30,7 +30,11 @@ export function ScenarioCalculator({
       ? { principal: 'loan', years: 'tenure', rate: 'rate' }
       : { principal: 'jp-principal', years: 'jp-years', rate: 'jp-rate' };
   const totalInterest =
-    monthly === null ? null : Math.max(0, monthly * Number(years) * 12 - Number(principal));
+    monthly === null
+      ? null
+      : Number(rate) === 0
+        ? 0
+        : Math.max(0, monthly * Number(years) * 12 - Number(principal));
   return (
     <section
       className="watch-card scenario-calculator"
