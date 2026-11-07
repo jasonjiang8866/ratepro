@@ -24,8 +24,17 @@ The scheduled task created Draft PR #6 on 3 November 2026, verifying the SG rese
 and an accurate failure description in the task conversation. Do not claim that
 files were committed. Once a content PR is reviewed and merged, the existing
 Cloudflare Git integration builds the site. The homepage displays the latest
-market report and up to three most recent package records, including explicit
+eligible market report and up to three most recent package records, including explicit
 age/expiry warnings; all reports remain accessible in the reading room.
+
+The briefing selects the newest market report within the selected country whose
+stated period has started and has not ended, excluding superseded reports. Ties
+use the slug in ascending order, as in the reading room. End dates are inclusive
+in that country's time zone. A missing end date does not invent an expiry;
+baseline and recheck warnings remain visible. If no eligible report exists, the
+briefing shows an empty state instead of promoting an expired or upcoming report.
+Expired, upcoming and superseded reports retain their original reading-room
+entries, source metadata and reader URLs. Package-watchlist selection is unchanged.
 
 ## JSON format (version 1)
 
