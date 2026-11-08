@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-netbk-web-pre-screening-closed",
+  "category": "market",
+  "title": "DOCOMO SMTB Net Bank: WEB course closed to new pre-screening applications",
+  "summary": "The bank confirms a 30 October closure. Applicants who submitted before the cutoff can continue processing through the WEB course.",
+  "reportDate": "2026-11-08",
+  "edition": "update",
+  "eventKey": "jp-netbk-web-application-closure-2026-10-30",
+  "supersedes": null,
+  "effectiveFrom": "2026-10-30",
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "Check application-channel availability before relying on a displayed mortgage rate.",
+      "sourceIds": ["support"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "What the bank confirms",
+      "kind": "fact",
+      "text": "The WEB course support page says new pre-screening applications ended on 30 October 2026. Applicants who submitted before the cutoff may continue through that course.",
+      "sourceIds": ["support"]
+    },
+    {
+      "heading": "What to confirm next",
+      "kind": "analysis",
+      "text": "Existing applicants should confirm their remaining deadlines with the bank. This notice does not establish closure of every mortgage channel or changed terms for existing borrowers.",
+      "sourceIds": ["support"]
+    },
+    {
+      "heading": "Dates and limits",
+      "kind": "fact",
+      "text": "This is a retrospective verification on 8 November, not a same-day announcement. The event date is 30 October, Japan time. The page states no publication/update date or exact cutoff time. Rates, eligibility, fees and rewards are not established here.",
+      "sourceIds": ["support"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "support",
+      "publisher": "DOCOMO SMTB Net Bank",
+      "title": "WEB申込コースお客さまサポート",
+      "url": "https://www.netbk.co.jp/contents/lineup/home-loan/web/support/",
+      "checkedAt": "2026-11-08T02:05:09Z",
+      "documentDate": null
+    }
+  ],
+  "package": null
+}
