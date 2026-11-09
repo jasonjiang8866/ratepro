@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "market": "SG",
+  "slug": "sg-weekly-2026-11-09",
+  "category": "market",
+  "title": "Singapore week in review: BTO applications and the financing checks that remain",
+  "summary": "2–8 November: HDB's BTO launch is the week's verified housing event. Existing CPF/HDB rates and bank illustrations provide context, with no newly confirmed promotion.",
+  "reportDate": "2026-11-09",
+  "edition": "weekly",
+  "eventKey": "sg-weekly-2026-11-02-2026-11-08",
+  "supersedes": null,
+  "effectiveFrom": "2026-11-02",
+  "effectiveUntil": "2026-11-08",
+  "takeaways": [
+    {
+      "text": "November BTO applications close on 11 November at 11:59pm Singapore time; allocation is by ballot.",
+      "sourceIds": ["hdb-sales"]
+    },
+    {
+      "text": "The Q4 HDB mortgage rate remains a dated 2.60% reference, not a new rate announcement this week.",
+      "sourceIds": ["cpf"]
+    },
+    {
+      "text": "A SORA spread and a reward headline do not establish a complete borrowing cost.",
+      "sourceIds": ["uob", "dbs"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "The week's housing event",
+      "kind": "fact",
+      "text": "HDB's announcement is dated 4 November. Its sales page lists 7,964 BTO flats across seven projects, with waiting times below four years, and an application deadline of 11 November 2026 at 11:59pm Singapore time. Allocation is by computer ballot rather than application order. Only the release title/date and the separate sales-page details were readable; no additional eligibility changes are inferred.",
+      "sourceIds": ["hdb-release", "hdb-sales"]
+    },
+    {
+      "heading": "Policy and housing context predates this week",
+      "kind": "fact",
+      "text": "MAS's 14 October statement retained the S$NEER band's appreciation rate, width and centre. CPF's page, updated 22 September, specifies OA interest of 2.50% and the HDB mortgage rate of 2.60% p.a. for 1 October–31 December. SingStat's 23 October summaries report Q3 private residential prices up 1.4% and HDB resale prices down 0.1% quarter on quarter. These are earlier releases, not 2–8 November changes.",
+      "sourceIds": ["mas-policy", "cpf", "housing"]
+    },
+    {
+      "heading": "Bank watch: published structure, incomplete quote",
+      "kind": "fact",
+      "text": "UOB still displays an indicative limited-tranche schedule of 3-month compounded SORA plus 0.70% p.a. in years 1–2, 0.80% in year 3 and 1.00% thereafter. It states a two-year lock-in and SGD250,000 minimum for new direct-to-bank customers buying completed residential property or refinancing from another bank/HDB. Benefits require a Letter of Offer; maximum loan, tranche deadline and complete charges, subsidy and clawback terms are not established here. DBS's reward page states 31 December 2026, but its complete qualifying conditions remain unverified in this review. Neither is a newly confirmed promotion.",
+      "sourceIds": ["uob", "dbs"]
+    },
+    {
+      "heading": "What to verify before comparing loans",
+      "kind": "analysis",
+      "text": "Separate the flat-application deadline from financing approval and disbursement. For bank comparisons, obtain the applicable benchmark fixing, reset dates, every stage's spread or fixed rate, fees, penalties and reward conditions. SORA measures overnight interbank SGD borrowing; it is not an individual's mortgage rate. A US rate move does not establish a simultaneous change in a Singapore mortgage contract. CPF's historical bank-deposit input is not a measurement of this week's bank funding costs.",
+      "sourceIds": ["hdb-sales", "uob", "sora", "cpf"]
+    },
+    {
+      "heading": "Coverage and evidence limits",
+      "kind": "fact",
+      "text": "This retrospective covers 2–8 November in Asia/Singapore and was written on 9 November. The period end describes the week, not offer expiry. Sources were actually re-read on 9 November; earlier records retain their original checks. The MAS interest-rate table returned an invalid-period message, so no current SORA fixing, weekly rate trend or all-in floating quote is reported. Undated pages retain null document dates. No verified new funding-cost series or complete fixed-rate promotional terms were established.",
+      "sourceIds": ["mas-rates", "sora", "uob", "dbs"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "hdb-release",
+      "publisher": "Housing & Development Board",
+      "title": "HDB Launches 7,964 Flats Across Seven Projects in November 2026 BTO Sales Exercise",
+      "url": "https://www.hdb.gov.sg/hdb-pulse/news/2026/hdb-launches-7964-flats-across-seven-projects-in-nov-2026-bto-sales-exercise",
+      "checkedAt": "2026-11-09T02:00:15Z",
+      "documentDate": "2026-11-04"
+    },
+    {
+      "id": "hdb-sales",
+      "publisher": "Housing & Development Board",
+      "title": "November 2026 BTO Sales Exercise",
+      "url": "https://www.hdb.gov.sg/sales-launch",
+      "checkedAt": "2026-11-09T02:00:04Z",
+      "documentDate": null
+    },
+    {
+      "id": "cpf",
+      "publisher": "CPF Board",
+      "title": "How are CPF interest rates determined?",
+      "url": "https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined",
+      "checkedAt": "2026-11-09T02:00:24Z",
+      "documentDate": "2026-09-22"
+    },
+    {
+      "id": "mas-policy",
+      "publisher": "Monetary Authority of Singapore",
+      "title": "MAS Monetary Policy Statement – 14 October 2026",
+      "url": "https://www.mas.gov.sg/news/monetary-policy-statements/2026/mas-monetary-policy-statement-14oct26",
+      "checkedAt": "2026-11-09T02:00:33Z",
+      "documentDate": "2026-10-14"
+    },
+    {
+      "id": "housing",
+      "publisher": "Singapore Department of Statistics",
+      "title": "Property Price Indices: latest news and data",
+      "url": "https://www.singstat.gov.sg/find-data/explore-data-themes/economy-prices/property-price-indices/latest-news-data",
+      "checkedAt": "2026-11-09T02:00:58Z",
+      "documentDate": null
+    },
+    {
+      "id": "sora",
+      "publisher": "Monetary Authority of Singapore",
+      "title": "SORA Interest Rate Benchmark",
+      "url": "https://www.mas.gov.sg/monetary-policy/sora",
+      "checkedAt": "2026-11-09T02:00:15Z",
+      "documentDate": null
+    },
+    {
+      "id": "mas-rates",
+      "publisher": "Monetary Authority of Singapore",
+      "title": "Domestic Interest Rates — table retrieval limitation",
+      "url": "https://eservices.mas.gov.sg/Statistics/dir/DomesticInterestRates.aspx",
+      "checkedAt": "2026-11-09T02:00:15Z",
+      "documentDate": null
+    },
+    {
+      "id": "uob",
+      "publisher": "UOB",
+      "title": "SORA Home Loan Package",
+      "url": "https://www.uob.com.sg/personal/borrow/property-loans/about-sora.page",
+      "checkedAt": "2026-11-09T02:00:24Z",
+      "documentDate": null
+    },
+    {
+      "id": "dbs",
+      "publisher": "DBS",
+      "title": "DBS Home Loan Exclusive Rewards",
+      "url": "https://www.dbs.com.sg/personal/loans/promotion/home-loan-promo",
+      "checkedAt": "2026-11-09T02:00:24Z",
+      "documentDate": null
+    }
+  ],
+  "package": null
+}

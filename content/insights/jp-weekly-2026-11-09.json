@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-weekly-2026-11-09",
+  "category": "market",
+  "title": "Japan week in review: rate-reset timing and consent to change home use",
+  "summary": "2–8 November: Mizuho's conditional reset notice and au Jibun Bank's contract amendment matter more than comparing headline rates alone. No new promotion is confirmed.",
+  "reportDate": "2026-11-09",
+  "edition": "weekly",
+  "eventKey": "jp-weekly-2026-11-02-2026-11-08",
+  "supersedes": null,
+  "effectiveFrom": "2026-11-02",
+  "effectiveUntil": "2026-11-08",
+  "takeaways": [
+    {
+      "text": "Mizuho's displayed starting variable rate must be read with its later-reset qualification.",
+      "sourceIds": ["mizuho"]
+    },
+    {
+      "text": "au Jibun Bank's 2 November amendment changes how prior consent may be given; it does not waive consent for non-residential use.",
+      "sourceIds": ["au-notice", "au-terms"]
+    },
+    {
+      "text": "November Flat35 illustrations remain conditional monthly context, not a new offer for every borrower.",
+      "sourceIds": ["flat35"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "2 November: Mizuho's reset qualification",
+      "kind": "fact",
+      "text": "Mizuho says borrowing by 31 March 2027 at its displayed variable rate from 1.275% p.a. leads to a rate from 1.525% for July 2027 repayments, reflecting its 2 November 2026 short-prime revision. Further short-prime revisions by 1 April 2027 would also be reflected. Discounts depend on application details and underwriting. This is a conditional notice, not a full-term rate promise or a universal JPY loan quote.",
+      "sourceIds": ["mizuho"]
+    },
+    {
+      "heading": "2 November: au Jibun Bank's consent amendment",
+      "kind": "fact",
+      "text": "The bank announced and implemented revised mortgage terms on 2 November. For borrowing from 14 January 2025 onward, the Article 12 comparison adds electronic records and bank-designated electronic methods to the prior-consent wording for using mortgaged property for investment, business or rental purposes. Prior written consent was already required. The clause permits the bank to demand immediate repayment when its conditions are breached; it does not grant blanket permission to rent out a home.",
+      "sourceIds": ["au-notice", "au-terms"]
+    },
+    {
+      "heading": "Earlier macro and monthly context",
+      "kind": "fact",
+      "text": "The BOJ decision index's latest listed policy decision is dated 30 October, outside this reporting week. JHF's November Flat35 example shows 2.81% p.a. for the first five years and 3.81% thereafter, using four discount points, LTV of 90% or less and new JHF group credit life insurance. These are the most common offered rates under the stated example, not a universal quote. The full-term fixed product fixes the repayment schedule at funding; a time-limited discount can still produce stages.",
+      "sourceIds": ["boj", "flat35"]
+    },
+    {
+      "heading": "Practical implications and unresolved eligibility",
+      "kind": "analysis",
+      "text": "For variable borrowing, confirm when the contract's rate and payment change. For an initial fixed period, check the post-period pricing; for full-term fixed borrowing, check the entire discount schedule and funding month. Before changing property use, confirm the correct contract vintage and obtain the bank's required consent. This weekly review does not establish individual JPY loan limits, term, nationality/permanent-residence eligibility, LTV, insurance, fees/guarantee charges, rewards, early-repayment costs or five-year/125% payment rules for each bank. These remain unknown here. A BOJ policy decision is not a bank mortgage quote or evidence that all contracts reset together.",
+      "sourceIds": ["mizuho", "au-terms", "flat35", "boj"]
+    },
+    {
+      "heading": "Coverage and date meanings",
+      "kind": "fact",
+      "text": "This retrospective covers 2–8 November in Asia/Tokyo and was written on 9 November. Its coverage end is not an offer deadline. Mizuho's rate panel is labelled 1 November and its page footer 2 November; documentDate stores the latter as an as-of date, not a proven first-publication date. JHF states a November illustration, without a page publication date. The BOJ index has no overall update date. Actual source checks below are UTC. No new confirmed promotion or claim of automated bank-rate collection is made.",
+      "sourceIds": ["mizuho", "flat35", "boj"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "mizuho",
+      "publisher": "Mizuho Bank",
+      "title": "住宅ローン：変動金利の注意事項",
+      "url": "https://www.mizuhobank.co.jp/loan_housing/index.html",
+      "checkedAt": "2026-11-09T02:00:24Z",
+      "documentDate": "2026-11-02"
+    },
+    {
+      "id": "au-notice",
+      "publisher": "au Jibun Bank",
+      "title": "住宅ローン規約を一部変更しました。",
+      "url": "https://www.jibunbank.co.jp/announcement/2026/1102_02.html",
+      "checkedAt": "2026-11-09T02:00:04Z",
+      "documentDate": "2026-11-02"
+    },
+    {
+      "id": "au-terms",
+      "publisher": "au Jibun Bank",
+      "title": "新旧対比表：2025年1月14日以降にお借入れのお客さま",
+      "url": "https://www.jibunbank.co.jp/announcement/2026/pdf/1102_02/20261102_01.pdf",
+      "checkedAt": "2026-11-09T02:00:58Z",
+      "documentDate": "2026-11-02"
+    },
+    {
+      "id": "boj",
+      "publisher": "Bank of Japan",
+      "title": "金融市場調節方針に関する公表文 2026年",
+      "url": "https://www.boj.or.jp/mopo/mpmdeci/state_2026/index.htm",
+      "checkedAt": "2026-11-09T02:00:15Z",
+      "documentDate": null
+    },
+    {
+      "id": "flat35",
+      "publisher": "Japan Housing Finance Agency",
+      "title": "長期固定金利住宅ローン【フラット35】：2026年11月の最頻金利",
+      "url": "https://www.flat35.com/?vm=r",
+      "checkedAt": "2026-11-09T02:00:24Z",
+      "documentDate": null
+    }
+  ],
+  "package": null
+}
