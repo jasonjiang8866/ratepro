@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-mizuho-november-variable-reset-notice",
+  "category": "market",
+  "title": "Mizuho flags a later reset behind its November variable-rate headline",
+  "summary": "Mizuho links its 2 November short-prime revision to a conditional July 2027 mortgage reset. The starting rate is not a full-term promise.",
+  "reportDate": "2026-11-08",
+  "edition": "update",
+  "eventKey": "jp-mizuho-short-prime-2026-11-02-reset-notice",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "Read the bank's future-reset note alongside its advertised starting rate.",
+      "sourceIds": ["mortgage"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "The dated qualification",
+      "kind": "fact",
+      "text": "Mizuho says borrowing by 31 March 2027 at its displayed variable rate from 1.275% p.a. leads to a rate from 1.525% for July 2027 repayments, reflecting the 2 November 2026 short-prime revision. Further short-prime revisions by 1 April 2027 would also be reflected. Discounts depend on application details and underwriting; these are conditional published figures, not guaranteed quotes.",
+      "sourceIds": ["mortgage"]
+    },
+    {
+      "heading": "Interest resets and payment reviews differ",
+      "kind": "fact",
+      "text": "Mizuho's explainer describes April/October rate reviews for existing borrowing, reflected in July/January repayments. Its five-year and 125% payment rules apply to equal-payment variable loans. They do not cap interest rates: interest can take a larger share of an unchanged payment, and unpaid interest remaining at maturity must be repaid together.",
+      "sourceIds": ["mechanics"]
+    },
+    {
+      "heading": "What this means for a budget",
+      "kind": "analysis",
+      "text": "Ask for the applicable reset date, discount and repayment schedule for your own contract. Do not extend a starting percentage across the whole loan or apply this bank's rules to every Japanese lender. This reviewed research creates no confirmed promotion or all-in JPY borrowing-cost comparison; loan limits, LTV, residency, property use, insurance, fees and early-repayment conditions remain unverified here.",
+      "sourceIds": ["mortgage", "mechanics"]
+    },
+    {
+      "heading": "Source dates and scope",
+      "kind": "fact",
+      "text": "Checked and written on 8 November, this records an earlier notice. The mortgage page labels its rate panel 1 November and its footer 2 November 2026; the latter is stored as documentDate, not a proven first-publication date. The mechanics page is dated 3 September. No single offer-validity period is established.",
+      "sourceIds": ["mortgage", "mechanics"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "mortgage",
+      "publisher": "Mizuho Bank",
+      "title": "住宅ローン：変動金利の注意事項",
+      "url": "https://www.mizuhobank.co.jp/loan_housing/index.html",
+      "checkedAt": "2026-11-08T02:09:59Z",
+      "documentDate": "2026-11-02"
+    },
+    {
+      "id": "mechanics",
+      "publisher": "Mizuho Bank",
+      "title": "変動金利方式の仕組み",
+      "url": "https://www.mizuhobank.co.jp/loan_housing/housingloancost/structure.html",
+      "checkedAt": "2026-11-08T02:09:59Z",
+      "documentDate": "2026-09-03"
+    }
+  ],
+  "package": null
+}
