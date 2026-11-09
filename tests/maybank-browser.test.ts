@@ -5,6 +5,7 @@ import { nodePage } from '../scripts/collect';
 import {
   inspectMaybankBrowser,
   browserNetworkError,
+  maybankBrowserLaunchOptions,
   MAYBANK_URL,
   parseMaybankBrowser,
 } from '../scripts/maybank-browser';
@@ -56,8 +57,8 @@ describe.skipIf(process.env.RUN_BROWSER_TESTS !== '1')(
   'Maybank isolated Chromium integration',
   () => {
     // Every network request is intercepted: these tests never contact a bank.
-    async function run(setup: (context: BrowserContext) => Promise<void>) {
-      const browser = await chromium.launch();
+    async function run(setup: (context: BrowserContext) => Promise<void>, http1 = false) {
+      const browser = await chromium.launch(maybankBrowserLaunchOptions(http1));
       try {
         const context = await browser.newContext();
         await context.route('**/*', (route) => route.abort());
@@ -70,19 +71,22 @@ describe.skipIf(process.env.RUN_BROWSER_TESTS !== '1')(
         await browser.close();
       }
     }
-    it('waits for JS-rendered tables, ignores hidden stale tables, and preserves the field mapping', async () => {
-      const result = await run(async (context) => {
-        await context.route(MAYBANK_URL, (route) =>
-          route.fulfill({
-            contentType: 'text/html',
-            body: `<div hidden>${fixture}</div><main></main><script>setTimeout(() => { document.querySelector('main').innerHTML = ${JSON.stringify(fixture)}; }, 100)</script>`,
-          }),
-        );
-      });
-      expect(result.report.status).toBe('validated-candidate');
-      expect(result.report.offers).toHaveLength(4);
-      expect(result.evidence?.tables).toHaveLength(4);
-    });
+    it.each([false, true])(
+      'waits for JS-rendered tables and ignores hidden stale tables (HTTP/2 disabled: %s)',
+      async (http1) => {
+        const result = await run(async (context) => {
+          await context.route(MAYBANK_URL, (route) =>
+            route.fulfill({
+              contentType: 'text/html',
+              body: `<div hidden>${fixture}</div><main></main><script>setTimeout(() => { document.querySelector('main').innerHTML = ${JSON.stringify(fixture)}; }, 100)</script>`,
+            }),
+          );
+        }, http1);
+        expect(result.report.status).toBe('validated-candidate');
+        expect(result.report.offers).toHaveLength(4);
+        expect(result.evidence?.tables).toHaveLength(4);
+      },
+    );
     it.each([
       [403, {}, fixture],
       [429, {}, fixture],

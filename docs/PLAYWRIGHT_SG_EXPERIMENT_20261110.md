@@ -85,3 +85,35 @@ default 5-second limit. Its three Node/tsx subprocesses take over 10 seconds in
 this local environment. Only that test's limit is now 20 seconds, preserving all
 assertions; no production timeout or collection policy changes. The SG/JP UI
 workflow passed. HDB, stable and expanded source jobs passed; Maybank remained red.
+
+Measured first-run job wall times (excluding queue): Maybank browser 41 seconds,
+CPF browser 46 seconds; Chromium installation accounted for 22 and 20 seconds
+respectively. The CPF live read took about 6 seconds. These are elapsed times,
+not a billing estimate. The experiment adds no browser installation to the daily
+collector or frontend production build.
+
+## Corrected diagnosis and one protocol comparison
+
+At `6f4e5c5034e1330f3295b04492a33f505dc2a021`,
+[Maybank job 129312852841](https://github.com/jasonjiang8866/ratepro/actions/runs/42661181582/job/129312852841)
+recorded **`net::ERR_HTTP2_PROTOCOL_ERROR`**, starting
+`2026-11-09T17:09:24.414Z`, with no received HTTP response. No parser ran and both
+feeds were unchanged. Its Chromium install was substantially slower than the
+first job, but completed inside the five-minute job budget. CPF again passed;
+all 17 browser-related tests, 165 ordinary tests/build, and SG/JP UI checks passed.
+
+One separate `--http1` probe now tests Chromium's documented `--disable-http2`
+switch, matching the existing curl HTTP/1.1 policy. The
+[Chromium source](https://chromium.googlesource.com/chromium/src/+/HEAD/components/network_session_configurator/common/network_switch_list.h)
+defines this protocol switch. This is not a TLS certificate bypass or a custom
+identity. No denial was received on the default path. Each invocation still
+makes one navigation and stops on denial/challenge; there is no automatic
+protocol fallback or request retry. Reports include the actual browser arguments
+and separate output directories. The default failed probe is now dispatch-only
+(`probe_maybank_default: true`).
+
+Research jobs now install only the headless shell used by their default launch,
+using [Playwright's supported `--only-shell` option](https://playwright.dev/docs/browsers#chromium-headless-shell).
+This skips an unused headed-browser download, not a different browser identity.
+The local shell-only download also returned an invalid ZIP; all browser success
+claims therefore still refer to Actions, not this local environment.

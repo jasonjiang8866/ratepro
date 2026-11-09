@@ -8,6 +8,9 @@ import { sourceFor } from '../src/lib/schema';
 import { renderedPage, sha256 } from './cpf-browser';
 
 export const MAYBANK_URL = sourceFor('maybank').url;
+export const maybankBrowserLaunchOptions = (http1 = false) => ({
+  args: http1 ? ['--disable-http2'] : [],
+});
 export const browserNetworkError = (message: string) => message.match(/net::ERR_[A-Z0-9_]+/)?.[0];
 export const challengeText = (text: string) =>
   /verify (?:that )?you are human|checking your browser|just a moment|access denied|request (?:was )?blocked|security verification|complete the security check/i.test(
@@ -151,7 +154,7 @@ export async function inspectMaybankBrowser(
   return { report, evidence };
 }
 
-export async function probeMaybankBrowser(out = 'research-output/maybank-browser') {
+export async function probeMaybankBrowser(out = 'research-output/maybank-browser', http1 = false) {
   await mkdir(out, { recursive: true });
   const snapshots = ['public/data/rates.json', 'public/data/rates-jp.json'];
   const before = await Promise.all(snapshots.map(async (path) => sha256(await readFile(path))));
@@ -159,11 +162,21 @@ export async function probeMaybankBrowser(out = 'research-output/maybank-browser
   let report: Record<string, unknown> = { status: 'failed', url: MAYBANK_URL, startedAt };
   let browser;
   try {
-    browser = await chromium.launch();
+    browser = await chromium.launch(maybankBrowserLaunchOptions(http1));
     const context = await browser.newContext();
     const page = await context.newPage();
     const result = await inspectMaybankBrowser(page);
-    report = { ...result.report, browserVersion: browser.version() };
+    report = {
+      ...result.report,
+      browserVersion: browser.version(),
+      browserArgs: maybankBrowserLaunchOptions(http1).args,
+      protocolMode: http1 ? 'HTTP/2 disabled; HTTP/1.1 comparison' : 'browser default',
+    };
+    if (http1)
+      report.policy = String(report.policy).replace(
+        'Fresh default headless Chromium.',
+        'Fresh headless Chromium with only --disable-http2 added; default identity and certificate verification.',
+      );
     if (result.evidence) {
       const content = JSON.stringify(result.evidence, null, 2) + '\n';
       if (Buffer.byteLength(content) > MAX_BYTES) throw Error('Serialized evidence exceeds limit');
@@ -190,4 +203,7 @@ export async function probeMaybankBrowser(out = 'research-output/maybank-browser
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url))
-  await probeMaybankBrowser();
+  await probeMaybankBrowser(
+    process.argv.includes('--http1') ? 'research-output/maybank-browser-http1' : undefined,
+    process.argv.includes('--http1'),
+  );

@@ -83,5 +83,24 @@
   "limitations": [
     "First Maybank networkError was truncated by a diagnostic regex excluding digits. It is only a prefix, not the complete Chromium error code. A corrected probe follows.",
     "CPF remains an experimental candidate; no production feed or source changed."
-  ]
+  ],
+  "correctedDefaultProbe": {
+    "commit": "6f4e5c5034e1330f3295b04492a33f505dc2a021",
+    "jobUrl": "https://github.com/jasonjiang8866/ratepro/actions/runs/42661181582/job/129312852841",
+    "report": {
+      "url": "https://www.maybank2u.com.sg/en/rates/rates-sora.page",
+      "startedAt": "2026-11-09T17:09:24.414Z",
+      "status": "failed",
+      "policy": "Fresh default headless Chromium. One navigation, no retry, custom UA, proxy, credentials, stored session or challenge handling. Research only.",
+      "phase": "navigation",
+      "reason": "Navigation did not complete",
+      "errorType": "Error",
+      "networkError": "net::ERR_HTTP2_PROTOCOL_ERROR",
+      "finishedAt": "2026-11-09T17:09:24.943Z",
+      "responses": [],
+      "browserVersion": "156.0.8078.4",
+      "snapshotUnchanged": true,
+      "note": "Research only. No collector/source change or published observation. Missing publication/effective dates remain absent."
+    }
+  }
 }
