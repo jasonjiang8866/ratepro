@@ -1,0 +1,232 @@
+{
+  "experimentCommit": "417f7a84e8e84cdccee7cc25b0b0a2d6307f1d60",
+  "runUrl": "https://github.com/jasonjiang8866/ratepro/actions/runs/42660640707",
+  "maybank": {
+    "url": "https://www.maybank2u.com.sg/en/rates/rates-sora.page",
+    "startedAt": "2026-11-09T17:02:44.879Z",
+    "status": "failed",
+    "policy": "Fresh default headless Chromium. One navigation, no retry, custom UA, proxy, credentials, stored session or challenge handling. Research only.",
+    "phase": "navigation",
+    "reason": "Navigation did not complete",
+    "errorType": "Error",
+    "networkError": "net::ERR_HTTP",
+    "finishedAt": "2026-11-09T17:02:45.025Z",
+    "responses": [],
+    "browserVersion": "156.0.8078.4",
+    "snapshotUnchanged": true,
+    "note": "Research only. No collector/source change or published observation. Missing publication/effective dates remain absent."
+  },
+  "cpf": {
+    "url": "https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined",
+    "startedAt": "2026-11-09T17:02:43.999Z",
+    "status": "validated-candidate",
+    "policy": "Fresh default headless Chromium; no custom UA, proxy, credentials, stored cookies, retries or challenge handling. No production write.",
+    "observedAt": "2026-11-09T17:02:49.208Z",
+    "evidenceSha256": "6d78fbe803ae989beacb35a48d6849c8297dbc1e110922dd98679eccd02fff66",
+    "offer": {
+      "id": "hdb-concessionary",
+      "sourceId": "hdb",
+      "bank": "HDB",
+      "name": "HDB concessionary loan",
+      "property": "HDB",
+      "purpose": [
+        "Purchase"
+      ],
+      "construction": "Any",
+      "kind": "Concessionary",
+      "stages": [
+        {
+          "label": "Current quarter",
+          "rate": 2.6,
+          "formula": "CPF-OA + 0.10%"
+        }
+      ],
+      "lockYears": null,
+      "minLoan": null,
+      "evidenceSourceId": "cpf-board",
+      "terms": "For eligible HDB buyers. Rate is reviewed quarterly and is not fixed for the full tenure. Confirm HFE eligibility and terms with HDB.",
+      "observedAt": "2026-11-09T17:02:49.208Z",
+      "effectiveUntil": "2026-12-31",
+      "effectiveFrom": "2026-10-01",
+      "method": "browser"
+    },
+    "note": "Research candidate only. Not an enabled collector or published observation.",
+    "finishedAt": "2026-11-09T17:02:49.378Z",
+    "responses": [
+      {
+        "url": "https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined",
+        "status": 200,
+        "challenge": false
+      }
+    ],
+    "snapshotUnchanged": true
+  },
+  "curl": {
+    "url": "https://www.maybank2u.com.sg/en/rates/rates-sora.page",
+    "startedAt": "2026-11-09T17:02:19.000Z",
+    "finishedAt": "2026-11-09T17:02:49.019Z",
+    "exitCode": 28,
+    "snapshotUnchanged": true,
+    "timing": {
+      "time_namelookup": 0.129257,
+      "time_connect": 0.152876,
+      "time_appconnect": 0.285286,
+      "time_starttransfer": 0,
+      "time_total": 30.002925,
+      "size_download": 0,
+      "http_code": 0,
+      "lastMilestone": "TLS completed; no first response byte recorded"
+    },
+    "policy": "One ordinary curl HTTP/1.1 request matching the existing collector. No retry, redirect, custom UA, proxy or TLS changes.",
+    "note": "Milestones locate the observed stall, not its cause. No rate extraction or snapshot write."
+  },
+  "limitations": [
+    "First Maybank networkError was truncated by a diagnostic regex excluding digits. It is only a prefix, not the complete Chromium error code. A corrected probe follows.",
+    "CPF remains an experimental candidate; no production feed or source changed."
+  ],
+  "correctedDefaultProbe": {
+    "commit": "6f4e5c5034e1330f3295b04492a33f505dc2a021",
+    "jobUrl": "https://github.com/jasonjiang8866/ratepro/actions/runs/42661181582/job/129312852841",
+    "report": {
+      "url": "https://www.maybank2u.com.sg/en/rates/rates-sora.page",
+      "startedAt": "2026-11-09T17:09:24.414Z",
+      "status": "failed",
+      "policy": "Fresh default headless Chromium. One navigation, no retry, custom UA, proxy, credentials, stored session or challenge handling. Research only.",
+      "phase": "navigation",
+      "reason": "Navigation did not complete",
+      "errorType": "Error",
+      "networkError": "net::ERR_HTTP2_PROTOCOL_ERROR",
+      "finishedAt": "2026-11-09T17:09:24.943Z",
+      "responses": [],
+      "browserVersion": "156.0.8078.4",
+      "snapshotUnchanged": true,
+      "note": "Research only. No collector/source change or published observation. Missing publication/effective dates remain absent."
+    }
+  },
+  "http1Comparison": {
+    "commit": "9ccb9591fb576449d970757aadc641a5c7d12ab3",
+    "jobUrl": "https://github.com/jasonjiang8866/ratepro/actions/runs/42662283037/job/129316666017",
+    "report": {
+      "url": "https://www.maybank2u.com.sg/en/rates/rates-sora.page",
+      "startedAt": "2026-11-09T17:12:56.959Z",
+      "status": "failed",
+      "policy": "Fresh headless Chromium with only --disable-http2 added; default identity and certificate verification. One navigation, no retry, custom UA, proxy, credentials, stored session or challenge handling. Research only.",
+      "phase": "navigation",
+      "reason": "Navigation did not complete",
+      "errorType": "TimeoutError",
+      "finishedAt": "2026-11-09T17:13:26.997Z",
+      "responses": [],
+      "browserVersion": "156.0.8078.4",
+      "browserArgs": [
+        "--disable-http2"
+      ],
+      "protocolMode": "HTTP/2 disabled; HTTP/1.1 comparison",
+      "snapshotUnchanged": true,
+      "note": "Research only. No collector/source change or published observation. Missing publication/effective dates remain absent."
+    }
+  },
+  "latestCpfControl": {
+    "commit": "9ccb9591fb576449d970757aadc641a5c7d12ab3",
+    "jobUrl": "https://github.com/jasonjiang8866/ratepro/actions/runs/42662283037/job/129316666730",
+    "report": {
+      "url": "https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined",
+      "startedAt": "2026-11-09T17:12:42.114Z",
+      "status": "validated-candidate",
+      "policy": "Fresh default headless Chromium; no custom UA, proxy, credentials, stored cookies, retries or challenge handling. No production write.",
+      "observedAt": "2026-11-09T17:12:48.354Z",
+      "evidenceSha256": "6d78fbe803ae989beacb35a48d6849c8297dbc1e110922dd98679eccd02fff66",
+      "offer": {
+        "id": "hdb-concessionary",
+        "sourceId": "hdb",
+        "bank": "HDB",
+        "name": "HDB concessionary loan",
+        "property": "HDB",
+        "purpose": [
+          "Purchase"
+        ],
+        "construction": "Any",
+        "kind": "Concessionary",
+        "stages": [
+          {
+            "label": "Current quarter",
+            "rate": 2.6,
+            "formula": "CPF-OA + 0.10%"
+          }
+        ],
+        "lockYears": null,
+        "minLoan": null,
+        "evidenceSourceId": "cpf-board",
+        "terms": "For eligible HDB buyers. Rate is reviewed quarterly and is not fixed for the full tenure. Confirm HFE eligibility and terms with HDB.",
+        "observedAt": "2026-11-09T17:12:48.354Z",
+        "effectiveUntil": "2026-12-31",
+        "effectiveFrom": "2026-10-01",
+        "method": "browser"
+      },
+      "note": "Research candidate only. Not an enabled collector or published observation.",
+      "finishedAt": "2026-11-09T17:12:48.489Z",
+      "responses": [
+        {
+          "url": "https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined",
+          "status": 200,
+          "challenge": false
+        }
+      ],
+      "snapshotUnchanged": true
+    }
+  },
+  "firstRunJobTimings": [
+    {
+      "name": "maybank-browser",
+      "seconds": 41,
+      "steps": [
+        {
+          "name": "Run npx playwright install --with-deps chromium",
+          "seconds": 22,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:browser",
+          "seconds": 6,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run research:maybank-browser",
+          "seconds": 2,
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "name": "cpf-browser",
+      "seconds": 46,
+      "steps": [
+        {
+          "name": "Run npx playwright install --with-deps chromium",
+          "seconds": 20,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:browser",
+          "seconds": 6,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run research:cpf",
+          "seconds": 6,
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "maybank-timing",
+      "seconds": 47,
+      "steps": [
+        {
+          "name": "Run npm run research:maybank",
+          "seconds": 31,
+          "conclusion": "failure"
+        }
+      ]
+    }
+  ]
+}

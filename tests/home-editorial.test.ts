@@ -177,7 +177,9 @@ describe('homepage archive and reader regression', () => {
   });
 
   it('keeps JP briefing and archive identical across the SG BTO expiry', () => {
-    const jpFeatured = corpus.find((a) => a.market === 'JP' && a.category === 'market')!;
+    // Isolate SG expiry from later editorial additions with their own JP expiry.
+    content.articles = [bto, japan];
+    const jpFeatured = japan;
     for (const now of [new Date('2026-11-11T15:59:59Z'), after]) {
       const $ = render(now, 'JP');
       expect($('.briefing h2 a').attr('href')).toBe(articleHref(jpFeatured));
@@ -185,7 +187,7 @@ describe('homepage archive and reader regression', () => {
         $('.story-row h3 a')
           .map((_, el) => $(el).attr('href'))
           .get(),
-      ).toEqual(corpus.filter((a) => a.market === 'JP').map(articleHref));
+      ).toEqual([articleHref(japan)]);
       expect($('.journal').text()).not.toMatch(/BTO|HDB|SORA/);
     }
     expect(render(after, 'JP', bto.slug)('h1').text()).toBe('We couldn’t find that report.');

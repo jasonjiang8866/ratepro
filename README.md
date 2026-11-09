@@ -22,10 +22,26 @@ bundling. See [the editorial contract](docs/editorial-policy.md) for scheduled-t
 permissions, JSON examples, date semantics, deduplication and draft-PR review.
 Editorial checks never renew rate observation timestamps or modify the rate feed.
 
+## SG collection recovery — 10 November 2026
+
+See [the current engineering investigation](docs/SG_RECOVERY_20261110.md) for
+per-source evidence and validation limits. HDB now tries its primary page, then
+CPF / AskGov, then a separately published CPF quarterly announcement. The dated
+announcement is eligible only through 31 December 2026 (Singapore time); its
+2027 title refers to SMRA policy, not the HDB mortgage period. Both earlier
+failures remain visible. Successful extraction records the actual evidence URL,
+publication date and quarter. Failure preserves the previous observation.
+Older v1 feeds remain readable; exports using the new optional `cpf-release`
+provenance / `fallbackFailures` require this updated application.
+
 ## Retrieval recovery tools (draft)
 
 Read-only CPF browser and Maybank timing experiments are separate from the daily
-collector. Official HTML/PDF files can be prepared as candidates, reviewed and
+collector. The [SG Playwright experiment](docs/PLAYWRIGHT_SG_EXPERIMENT_20261110.md)
+also tests Maybank with a fresh default Chromium session, without changing
+published observations or bypassing access challenges. Run `npm run test:browser`
+for isolated browser tests and `npm run research:maybank-browser` for one live probe.
+Official HTML/PDF files can be prepared as candidates, reviewed and
 staged for a separate data PR using `npm run review:file`. See
 [the review workflow](docs/REVIEW.md) and [live retrieval evidence](docs/RETRIEVAL.md).
 These tools do not publish data; the existing production snapshot remains unchanged.
@@ -58,7 +74,7 @@ The scheduled collector requires GitHub Actions to be enabled and repository rul
 | Source             | Supported observations              | Coverage                                                                                          |
 | ------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------- |
 | DBS HDB / Green    | CPF-OA and FHR6 stage schedules     | Two public products                                                                               |
-| HDB                | Concessionary quarter               | HDB primary page, then official CPF / AskGov quarter; previous observation retained if both fail  |
+| HDB                | Concessionary quarter               | HDB primary, CPF / AskGov, then dated CPF announcement; retain prior observation if all fail  |
 | Maybank            | 2-year / 3-year fixed, 1M / 3M SORA | Four reviewed completed-property snapshots; automatic retrieval currently times out; BUC excluded |
 | Standard Chartered | Published 3M SORA schedule          | Formula only; source effective date is displayed separately                                       |
 | UOB                | Published completed-property SORA   | New direct-to-bank customers; fixed-rate enquiries remain quote-only                              |
@@ -76,12 +92,13 @@ floating thereafter formula. `effectiveFrom` is the bank's stated terms date;
 `observedAt` is when the page was successfully read. Neither is the feed download
 time. A current observation does not imply a newly launched or available offer.
 
-HDB uses the primary page when valid, then the official CPF / AskGov fallback.
+HDB uses the primary page when valid, then the official CPF / AskGov fallback,
+then the dated CPF announcement described above.
 The fallback requires an explicit current quarter and a published HDB rate, with
 the matching CPF OA rate and administration spread checked for consistency.
 It preserves `hdb-concessionary` as the single product ID and records
 `evidenceSourceId: cpf-askgov`; its card links to the actual evidence page. Primary
-failure and fallback outcome remain separate in Sources. If both fail, the last
+failure and fallback outcome remain separate in Sources. If all applicable endpoints fail, the last
 observation (including an original `method: reviewed` snapshot) is retained unchanged. No synthetic
 bank offers or benchmark-as-mortgage-rate shortcuts are used. Existing numeric-only
 exports/caches remain valid; new exports include nullable SORA rates and require
@@ -111,7 +128,7 @@ probe of the independent CPF article. AskGov returns a Cloudflare challenge on t
 runner; the CPF article returns HTTP 200 with an empty JavaScript app shell.
 That candidate is not enabled for collection
 and cannot turn HDB health green. See [access research and next steps](docs/RETRIEVAL.md).
-PR #4 remains a draft: successful tests or previews do not establish live recovery.
+The research record below is historical; successful tests or previews do not establish live recovery.
 
 The Citi collector needs `pdftotext` (`sudo apt-get install poppler-utils` on Ubuntu/Debian,
 `brew install poppler` on macOS). GitHub collection jobs install it; Cloudflare

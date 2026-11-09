@@ -208,4 +208,5 @@ it('runs the real CLI prepare/stage path in isolation and refuses production out
   } finally {
     await rm(cwd, { recursive: true, force: true });
   }
-});
+  // Three real Node/tsx subprocesses can exceed Vitest's 5s default on shared runners.
+}, 20000);

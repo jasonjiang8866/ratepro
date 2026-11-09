@@ -58,6 +58,8 @@ import {
   freshnessWarning,
   evidenceFor,
   HDB_FALLBACK,
+  CPF_RELEASE,
+  fallbackFor,
   type Cache,
   type Offer,
 } from '@/lib/schema';
@@ -804,6 +806,11 @@ function MarketApp({
                           </p>
                         </div>
                       )}
+                      {o.evidenceSourceId === 'cpf-release' && o.documentDate && (
+                        <p className="text-sm mt-3">
+                          Official announcement published {date(o.documentDate)}.
+                        </p>
+                      )}
                       {o.effectiveFrom && (
                         <p className="text-sm mt-3">
                           Source terms effective from {date(o.effectiveFrom)}. Confirm current
@@ -974,7 +981,7 @@ function MarketApp({
                         Published collector:{' '}
                         {status?.status === 'ok'
                           ? status.fallbackSourceId
-                            ? 'Successful via CPF / AskGov fallback'
+                            ? `Successful via ${fallbackFor(status.fallbackSourceId).name}`
                             : 'Successful'
                           : status
                             ? 'Unavailable · previous observations retained'
@@ -997,6 +1004,21 @@ function MarketApp({
                           >
                             Official fallback: CPF / AskGov <ArrowUpRight size={14} />
                           </a>
+                          <a
+                            className="source-link"
+                            href={CPF_RELEASE.url}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Official dated fallback: CPF quarterly announcement{' '}
+                            <ArrowUpRight size={14} />
+                          </a>
+                          {status?.fallbackFailures?.map((failure) => (
+                            <p key={failure.sourceId}>
+                              CPF / AskGov failed: {failure.message} · {failure.attempts}{' '}
+                              attempt(s).
+                            </p>
+                          ))}
                           <p>
                             Collector only. Requires an explicit quarter covering the observation
                             date.
@@ -1041,8 +1063,9 @@ function MarketApp({
                       )}
                       {s.id === 'maybank' && (
                         <p className="text-sm mt-3">
-                          Experimental automatic collection. Reviewed snapshots remain available
-                          when retrieval fails.
+                          {status?.status === 'error'
+                            ? 'Manual recheck required. Verify the current official package table; retained observations keep their original review dates.'
+                            : 'Experimental automatic collection. Reviewed snapshots remain available when retrieval fails.'}
                         </p>
                       )}
                     </div>

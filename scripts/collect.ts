@@ -2,13 +2,22 @@ import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { readFile, writeFile, rename } from 'node:fs/promises';
 import { load } from 'cheerio';
-import { FeedSchema, SOURCES, HDB_FALLBACK, type Feed, type SourceStatus } from '../src/lib/schema';
+import {
+  FeedSchema,
+  SOURCES,
+  HDB_FALLBACK,
+  CPF_RELEASE,
+  fallbackFor,
+  type Feed,
+  type SourceStatus,
+} from '../src/lib/schema';
 import { parsers, type Page } from '../src/lib/parsers';
 import { RetrievalError } from '../src/lib/sync';
 import { retrieve } from './retrieval';
 import { parseCiti, pdfText } from './citi';
 import { curlFetch } from './curl-fetch';
 import { parseHdbAskGov } from './hdb-askgov';
+import { cpfReleaseCurrent, parseCpfRelease } from './cpf-release';
 
 function failure(error: unknown, attempts: number, phase: 'parse' | 'document') {
   return {
@@ -53,6 +62,7 @@ export async function collect(
     let phase: 'parse' | 'document' = 'parse';
     let primaryFailure: SourceStatus['primaryFailure'];
     let fallbackSourceId: SourceStatus['fallbackSourceId'];
+    let fallbackFailures: SourceStatus['fallbackFailures'];
     try {
       let parsed;
       try {
@@ -79,16 +89,35 @@ export async function collect(
         fallbackSourceId = HDB_FALLBACK.id;
         attempts = 1;
         phase = 'parse';
-        const bytes = await retrieve(
-          HDB_FALLBACK.url,
-          fetcher,
-          HDB_FALLBACK.collectionTimeoutMs,
-          (n) => {
-            attempts = n;
-          },
-          pause,
-        );
-        parsed = parseHdbAskGov(nodePage(new TextDecoder().decode(bytes)), at);
+        try {
+          const bytes = await retrieve(
+            HDB_FALLBACK.url,
+            fetcher,
+            HDB_FALLBACK.collectionTimeoutMs,
+            (n) => {
+              attempts = n;
+            },
+            pause,
+          );
+          parsed = parseHdbAskGov(nodePage(new TextDecoder().decode(bytes)), at);
+        } catch (fallbackError) {
+          if (!cpfReleaseCurrent(at)) throw fallbackError;
+          fallbackFailures = [
+            { sourceId: HDB_FALLBACK.id, ...failure(fallbackError, attempts, phase) },
+          ];
+          fallbackSourceId = CPF_RELEASE.id;
+          attempts = 1;
+          const bytes = await retrieve(
+            CPF_RELEASE.url,
+            fetcher,
+            CPF_RELEASE.collectionTimeoutMs,
+            (n) => {
+              attempts = n;
+            },
+            pause,
+          );
+          parsed = parseCpfRelease(new TextDecoder().decode(bytes), at);
+        }
       }
       for (const offer of parsed) offers.set(offer.id, offer);
       statuses.push({
@@ -97,10 +126,11 @@ export async function collect(
         successAt: at,
         status: 'ok',
         message: fallbackSourceId
-          ? 'Collected from official CPF / AskGov fallback; HDB primary page unavailable.'
+          ? `Collected from official ${fallbackFor(fallbackSourceId).name}; HDB primary page unavailable.`
           : 'Collected from official public page',
         attempts,
         fallbackSourceId,
+        fallbackFailures,
         primaryFailure,
       });
     } catch (e) {
@@ -111,9 +141,10 @@ export async function collect(
         status: 'error',
         ...failure(e, attempts, phase),
         fallbackSourceId,
+        fallbackFailures,
         primaryFailure,
         message:
-          `Collection failed${fallbackSourceId ? ' (CPF / AskGov fallback)' : ''}; last observation retained. ${e instanceof Error ? e.message : 'Unknown error'}`.slice(
+          `Collection failed${fallbackSourceId ? ` (${fallbackFor(fallbackSourceId).name})` : ''}; last observation retained. ${e instanceof Error ? e.message : 'Unknown error'}`.slice(
             0,
             300,
           ),

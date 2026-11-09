@@ -1,16 +1,69 @@
 name: Read-only retrieval research
 on:
   workflow_dispatch:
+    inputs:
+      probe_maybank_default:
+        description: 'Repeat the failed default Chromium Maybank probe (one navigation)'
+        type: boolean
+        default: false
+      probe_maybank_http1:
+        description: 'Repeat the Chromium HTTP/1.1 comparison (one navigation)'
+        type: boolean
+        default: false
   pull_request:
     paths:
       - '.github/workflows/retrieval-research.yml'
       - 'scripts/cpf-browser.ts'
       - 'scripts/maybank-diagnostics.ts'
+      - 'scripts/maybank-browser.ts'
       - 'scripts/hdb-askgov.ts'
       - 'tests/retrieval-research.test.ts'
+      - 'tests/maybank-browser.test.ts'
 permissions:
   contents: read
 jobs:
+  maybank-browser:
+    if: github.event_name == 'workflow_dispatch' && inputs.probe_maybank_default
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps --only-shell chromium
+      - run: npm run test:browser
+      - run: npm run research:maybank-browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maybank-browser-research
+          path: research-output/maybank-browser/
+          if-no-files-found: error
+          retention-days: 7
+  maybank-browser-http1:
+    if: github.event_name == 'workflow_dispatch' && inputs.probe_maybank_http1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps --only-shell chromium
+      - run: npm run test:browser
+      - run: npm run research:maybank-browser -- --http1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maybank-browser-http1-research
+          path: research-output/maybank-browser-http1/
+          if-no-files-found: error
+          retention-days: 7
   cpf-browser:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -21,7 +74,7 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps --only-shell chromium
       - run: npm run test:browser
       - run: npm run research:cpf
       - uses: actions/upload-artifact@v4

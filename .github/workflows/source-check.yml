@@ -1,6 +1,11 @@
 name: Official source integration check
 on:
   workflow_dispatch:
+    inputs:
+      probe_maybank_country:
+        description: 'Repeat the rejected public country-page candidate (read-only, one request)'
+        type: boolean
+        default: false
   pull_request:
     paths:
       - '.github/workflows/source-check.yml'
@@ -47,4 +52,45 @@ jobs:
           name: official-source-observations-${{ matrix.group }}
           path: source-check.json
           if-no-files-found: warn
+          retention-days: 7
+
+  maybank-diagnostics:
+    name: Maybank transport evidence
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run research:maybank
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maybank-transport-evidence
+          path: research-output/maybank/report.json
+          if-no-files-found: error
+          retention-days: 7
+
+  maybank-country-candidate:
+    if: github.event_name == 'workflow_dispatch' && inputs.probe_maybank_country
+    name: Maybank public country-page candidate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node --import tsx scripts/maybank-diagnostics.ts --country-candidate
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maybank-country-candidate
+          path: research-output/maybank-country/report.json
+          if-no-files-found: error
           retention-days: 7
