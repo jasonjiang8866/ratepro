@@ -68,3 +68,23 @@ jobs:
           path: research-output/maybank/report.json
           if-no-files-found: error
           retention-days: 7
+
+  maybank-country-candidate:
+    name: Maybank public country-page candidate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node --import tsx scripts/maybank-diagnostics.ts --country-candidate
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maybank-country-candidate
+          path: research-output/maybank-country/report.json
+          if-no-files-found: error
+          retention-days: 7
