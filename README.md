@@ -22,6 +22,18 @@ bundling. See [the editorial contract](docs/editorial-policy.md) for scheduled-t
 permissions, JSON examples, date semantics, deduplication and draft-PR review.
 Editorial checks never renew rate observation timestamps or modify the rate feed.
 
+## SG collection recovery — 10 November 2026
+
+See [the current engineering investigation](docs/SG_RECOVERY_20261110.md) for
+per-source evidence and validation limits. HDB now tries its primary page, then
+CPF / AskGov, then a separately published CPF quarterly announcement. The dated
+announcement is eligible only through 31 December 2026 (Singapore time); its
+2027 title refers to SMRA policy, not the HDB mortgage period. Both earlier
+failures remain visible. Successful extraction records the actual evidence URL,
+publication date and quarter. Failure preserves the previous observation.
+Older v1 feeds remain readable; exports using the new optional `cpf-release`
+provenance / `fallbackFailures` require this updated application.
+
 ## Retrieval recovery tools (draft)
 
 Read-only CPF browser and Maybank timing experiments are separate from the daily
@@ -111,7 +123,7 @@ probe of the independent CPF article. AskGov returns a Cloudflare challenge on t
 runner; the CPF article returns HTTP 200 with an empty JavaScript app shell.
 That candidate is not enabled for collection
 and cannot turn HDB health green. See [access research and next steps](docs/RETRIEVAL.md).
-PR #4 remains a draft: successful tests or previews do not establish live recovery.
+The research record below is historical; successful tests or previews do not establish live recovery.
 
 The Citi collector needs `pdftotext` (`sudo apt-get install poppler-utils` on Ubuntu/Debian,
 `brew install poppler` on macOS). GitHub collection jobs install it; Cloudflare

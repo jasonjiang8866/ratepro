@@ -68,7 +68,7 @@ export const OfferSchema = z
     minRelationshipBalance: z.number().min(0).max(100000000).optional(),
     rateFloor: z.number().min(0).max(30).optional(),
     documentDate: day.optional(),
-    evidenceSourceId: z.enum(['cpf-askgov', 'cpf-board']).optional(),
+    evidenceSourceId: z.enum(['cpf-askgov', 'cpf-board', 'cpf-release']).optional(),
     terms: z.string().min(1).max(2000),
     observedAt: date,
     effectiveUntil: day.optional(),
@@ -109,13 +109,17 @@ export const SourceStatusSchema = z
     failureKind: FailureKind.optional(),
     httpStatus: z.number().int().min(100).max(599).optional(),
     attempts: z.number().int().min(1).max(2).optional(),
-    fallbackSourceId: z.literal('cpf-askgov').optional(),
+    fallbackSourceId: z.enum(['cpf-askgov', 'cpf-release']).optional(),
+    fallbackFailures: z
+      .array(SourceFailureSchema.extend({ sourceId: z.literal('cpf-askgov') }).strict())
+      .max(1)
+      .optional(),
     primaryFailure: SourceFailureSchema.optional(),
   })
   .strict()
   .superRefine((status, ctx) => {
     if (
-      (status.fallbackSourceId || status.primaryFailure) &&
+      (status.fallbackSourceId || status.primaryFailure || status.fallbackFailures) &&
       (status.sourceId !== 'hdb' || !status.fallbackSourceId || !status.primaryFailure)
     )
       ctx.addIssue({
@@ -227,6 +231,20 @@ export const HDB_FALLBACK = {
   url: 'https://ask.gov.sg/cpf/questions/cm2s5b54c005r12kzrep7aayw',
   collectionTimeoutMs: 30000,
 } as const;
+export const CPF_RELEASE = {
+  id: 'cpf-release',
+  name: 'CPF Board · Quarterly announcement',
+  url: 'https://www.cpf.gov.sg/member/infohub/news/news-releases/government-extends-4-per-cent-interest-rate-floor-on-special-medisave-and-retirement-account-monies-until-31-december-2027',
+  title:
+    'Government extends 4% interest rate floor on Special, MediSave and Retirement Account monies until 31 December 2027',
+  documentDate: '2026-09-22',
+  effectiveFrom: '2026-10-01',
+  effectiveUntil: '2026-12-31',
+  collectionTimeoutMs: 12000,
+} as const;
+export function fallbackFor(id: SourceStatus['fallbackSourceId']) {
+  return id === CPF_RELEASE.id ? CPF_RELEASE : HDB_FALLBACK;
+}
 export const CPF_BOARD = {
   id: 'cpf-board',
   name: 'CPF Board · HDB quarterly rate',
@@ -235,6 +253,7 @@ export const CPF_BOARD = {
 export function evidenceFor(offer: Offer) {
   if (offer.evidenceSourceId === HDB_FALLBACK.id) return HDB_FALLBACK;
   if (offer.evidenceSourceId === CPF_BOARD.id) return CPF_BOARD;
+  if (offer.evidenceSourceId === CPF_RELEASE.id) return CPF_RELEASE;
   return sourceFor(offer.sourceId);
 }
 export function emptyCache(): Cache {

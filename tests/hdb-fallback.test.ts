@@ -124,19 +124,19 @@ describe('HDB primary → official fallback → retained observation', () => {
       primaryFailure: { failureKind: 'parse', attempts: 1 },
     });
   });
-  it('retains every prior value and date when both endpoints are denied', async () => {
+  it('retains every prior value and date when all endpoints are denied', async () => {
     const fetcher = vi
       .fn()
       .mockImplementation(async () => new Response('Forbidden', { status: 403 }));
     const result = await collect(previous, fetcher, at, ['hdb'], pause);
-    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(fetcher).toHaveBeenCalledTimes(3);
     expect(result.offers).toEqual(previous.offers);
     expect(result.sources[0]).toMatchObject({
       status: 'error',
       failureKind: 'http',
       httpStatus: 403,
       attempts: 1,
-      fallbackSourceId: 'cpf-askgov',
+      fallbackSourceId: 'cpf-release',
       primaryFailure: { httpStatus: 403 },
     });
   });

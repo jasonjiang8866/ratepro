@@ -48,3 +48,23 @@ jobs:
           path: source-check.json
           if-no-files-found: warn
           retention-days: 7
+
+  maybank-diagnostics:
+    name: Maybank transport evidence
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run research:maybank
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maybank-transport-evidence
+          path: research-output/maybank/report.json
+          if-no-files-found: error
+          retention-days: 7
