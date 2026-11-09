@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { nodePage } from '../scripts/collect';
 import {
   inspectMaybankBrowser,
+  browserNetworkError,
   MAYBANK_URL,
   parseMaybankBrowser,
 } from '../scripts/maybank-browser';
@@ -12,6 +13,14 @@ const fixture = readFileSync(new URL('fixtures/maybank.html', import.meta.url), 
 const at = '2026-11-09T17:00:00.000Z';
 
 describe('Maybank browser research validation', () => {
+  it('preserves digits in protocol error codes without exporting raw browser logs', () => {
+    expect(
+      browserNetworkError(
+        'page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://example.com?token=private',
+      ),
+    ).toBe('net::ERR_HTTP2_PROTOCOL_ERROR');
+    expect(browserNetworkError('Timeout 30000ms exceeded.')).toBeUndefined();
+  });
   it('retains four complete schedules with browser provenance and no invented dates', () => {
     const offers = parseMaybankBrowser(nodePage(fixture), MAYBANK_URL, 200, at);
     expect(offers).toHaveLength(4);

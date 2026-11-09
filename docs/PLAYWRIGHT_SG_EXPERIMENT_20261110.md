@@ -62,3 +62,26 @@ the ordinary test suite and build can run locally, and the read-only Actions
 job is the actual Chromium verification path. Runner results will be recorded
 below after completion; neither successful fixtures nor browser startup alone
 count as collection recovery.
+
+## First real Actions result
+
+At `417f7a84e8e84cdccee7cc25b0b0a2d6307f1d60`,
+[read-only run 42660640707](https://github.com/jasonjiang8866/ratepro/actions/runs/42660640707)
+installed Chromium 156.0.8078.4 and passed all 16 browser-related tests (including
+11 actual mocked-network Chromium cases). Maybank navigation failed before any
+HTTP response at `2026-11-09T17:02:44.879Z`; no rates were extracted and both
+feed files were unchanged. The first diagnostic regex truncated error codes
+containing digits, so its `net::ERR_HTTP` is only a prefix, not a complete error
+classification. This is fixed and regression-tested before the second probe.
+
+CPF rendered successfully at `2026-11-09T17:02:49.208Z`, confirming the explicit
+2.60% HDB quarter 2026-10-01 through 2026-12-31. The independent curl probe still
+timed out after TLS (0.285286s) with zero response bytes over 30.002925s.
+[Durable bounded evidence](playwright-sg-evidence-20261110.json) distinguishes
+these results; no WAF or geographic root cause is inferred.
+
+The first frontend workflow failed an existing real CLI integration test at the
+default 5-second limit. Its three Node/tsx subprocesses take over 10 seconds in
+this local environment. Only that test's limit is now 20 seconds, preserving all
+assertions; no production timeout or collection policy changes. The SG/JP UI
+workflow passed. HDB, stable and expanded source jobs passed; Maybank remained red.

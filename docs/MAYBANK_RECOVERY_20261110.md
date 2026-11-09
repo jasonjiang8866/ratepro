@@ -23,7 +23,9 @@ GET without retry, redirect following, credentials, custom UA, TLS changes or a
 different network path. A 403/429 is a failure; no browser is tried after it.
 
 The rate tables are present in HTML. There is no evidence that JavaScript rendering
-is necessary, so a browser dependency is not added as a speculative timeout fix.
+is necessary. This curl investigation did not enable a browser collector. A subsequent,
+explicitly requested [Playwright experiment](PLAYWRIGHT_SG_EXPERIMENT_20261110.md)
+tests the default browser transport separately, using the existing dependency.
 
 ## Implemented validation
 

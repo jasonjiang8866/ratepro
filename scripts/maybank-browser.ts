@@ -8,6 +8,7 @@ import { sourceFor } from '../src/lib/schema';
 import { renderedPage, sha256 } from './cpf-browser';
 
 export const MAYBANK_URL = sourceFor('maybank').url;
+export const browserNetworkError = (message: string) => message.match(/net::ERR_[A-Z0-9_]+/)?.[0];
 export const challengeText = (text: string) =>
   /verify (?:that )?you are human|checking your browser|just a moment|access denied|request (?:was )?blocked|security verification|complete the security check/i.test(
     text,
@@ -135,7 +136,7 @@ export async function inspectMaybankBrowser(
     if (error instanceof Error) {
       report.errorType = error.name;
       // Do not emit raw browser logs, headers, IPs, cookies or arbitrary URL parameters.
-      report.networkError = error.message.match(/net::ERR_[A-Z_]+/)?.[0];
+      report.networkError = browserNetworkError(error.message);
     }
     if (stop) evidence = undefined;
   } finally {

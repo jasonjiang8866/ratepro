@@ -37,7 +37,11 @@ provenance / `fallbackFailures` require this updated application.
 ## Retrieval recovery tools (draft)
 
 Read-only CPF browser and Maybank timing experiments are separate from the daily
-collector. Official HTML/PDF files can be prepared as candidates, reviewed and
+collector. The [SG Playwright experiment](docs/PLAYWRIGHT_SG_EXPERIMENT_20261110.md)
+also tests Maybank with a fresh default Chromium session, without changing
+published observations or bypassing access challenges. Run `npm run test:browser`
+for isolated browser tests and `npm run research:maybank-browser` for one live probe.
+Official HTML/PDF files can be prepared as candidates, reviewed and
 staged for a separate data PR using `npm run review:file`. See
 [the review workflow](docs/REVIEW.md) and [live retrieval evidence](docs/RETRIEVAL.md).
 These tools do not publish data; the existing production snapshot remains unchanged.
