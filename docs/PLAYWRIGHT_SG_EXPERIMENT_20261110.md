@@ -1,0 +1,64 @@
+# SG Playwright collection experiment — 10 November 2026 (Singapore)
+
+This read-only experiment continues Draft PR #19 from
+`882102c2d4320f104a07cbfe78e37f901eaa96cd`. Main was rechecked at
+`b673ac33623c14212435417c6baf48228e0d9ad9`; no competing open PR was present.
+
+## Question and scope
+
+Does a normal Playwright/Chromium navigation on GitHub Actions read the existing
+[Maybank package page](https://www.maybank2u.com.sg/en/rates/rates-sora.page),
+where ordinary curl repeatedly completed TLS but received no response bytes?
+The HTML already contains the tables when accessible; this is a transport/client
+experiment, not a presumption that Maybank requires JavaScript rendering.
+
+The existing [CPF Board article](https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined)
+experiment is the rendering control. It previously passed in
+[job 129298552445](https://github.com/jasonjiang8866/ratepro/actions/runs/42657143430/job/129298552445)
+at `2026-11-09T16:41:06.512Z`, extracting the explicit HDB quarterly rate,
+2026-10-01 through 2026-12-31, via rendered open shadow DOM.
+That remains browser research, separate from the daily HTTP CPF-release fallback.
+HDB and AskGov already returned explicit 403/challenge evidence; this experiment
+does not try a browser to circumvent those denials.
+
+## Implementation and boundaries
+
+- `npm run research:maybank-browser`: one default headless Chromium navigation
+  with a fresh nonpersistent context, 30-second navigation and 10-second DOM
+  readiness budgets, a 60-second overall browser limit, no request retries.
+- No custom user agent, stealth flags, proxy, credential/session import, CAPTCHA
+  interaction, TLS changes, internal endpoint guessing or request replay.
+  Page-owned public assets load normally. Denials (401/403/429), challenge headers,
+  recognizable challenge resources/text and unexpected navigation stop extraction.
+- Reuse the existing strict four-package parser. Fixed/floating stages, 1M/3M
+  SORA spreads, lock-ins, minimums and applicability must all validate. Browser
+  candidates have `method: browser`; absent publication/effective dates stay absent.
+  A complete indicative table does not confirm unpublished discounts or approval.
+- The shared rendered DOM reader excludes hidden tables, rows, cells and hidden
+  descendant text, preventing hidden stale rates from satisfying the parser.
+- Reports distinguish navigation failure, received HTTP status, rendering/field
+  validation and validated candidates. UTC ISO times and bounded normalized DOM
+  evidence hashes are recorded. No raw headers, cookies, IPs or request bodies.
+- Only ignored `research-output/` files are written; both SG and JP feed hashes
+  must remain equal. No schema/UI/collector-source change or new freshness claim.
+
+`Read-only retrieval research` adds an independent Maybank browser job, using
+the already pinned Playwright dependency, read-only permissions and seven-day
+artifacts. It runs on relevant PR changes or manual dispatch and has no deploy
+or commit step. Chromium installation dominates setup cost; a source probe is
+bounded to one minute. A successful one-off read is not proof of long-term
+reliability and does not enable a daily browser collector.
+
+## Validation
+
+`npm run test:browser` includes mocked-network Chromium cases for delayed JS
+tables, hidden stale/missing fields, HTTP denial, a 200 challenge, redirect,
+quote-only/app-shell responses and network failure. These tests do not contact
+banks. Real-source reads are separate workflow steps.
+
+Local browser installation failed because the supplied Chromium download was
+not a valid ZIP. Consequently no local browser test/live success is claimed;
+the ordinary test suite and build can run locally, and the read-only Actions
+job is the actual Chromium verification path. Runner results will be recorded
+below after completion; neither successful fixtures nor browser startup alone
+count as collection recovery.

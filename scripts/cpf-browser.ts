@@ -34,17 +34,23 @@ export async function renderedPage(page: BrowserPage): Promise<Page> {
   // (for example __name) that do not exist in the browser execution context.
   return page.evaluate<Page>(String.raw`(() => {
     const tables = [];
+    function visible(element) {
+      for (let current = element; current; current = current.parentElement) {
+        const style = getComputedStyle(current);
+        if (current.hidden || style.display === 'none' || style.visibility === 'hidden') return false;
+      }
+      return true;
+    }
     function text(node) {
       if (node.nodeType === Node.TEXT_NODE) return node.textContent ?? '';
       if (node instanceof Element) {
         if (['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEMPLATE'].includes(node.tagName)) return '';
-        const style = getComputedStyle(node);
-        if (style.display === 'none' || style.visibility === 'hidden') return '';
+        if (!visible(node)) return '';
         if (node instanceof HTMLSlotElement)
           return node.assignedNodes({ flatten: true }).map(text).join(' ');
         if (node.tagName === 'TABLE') {
-          tables.push(Array.from(node.querySelectorAll('tr'), row =>
-            Array.from(row.querySelectorAll('th,td'), cell => cell.textContent?.replace(/\s+/g, ' ').trim() ?? '')));
+          tables.push(Array.from(node.querySelectorAll('tr')).filter(visible).map(row =>
+            Array.from(row.querySelectorAll('th,td')).filter(visible).map(cell => text(cell).replace(/\s+/g, ' ').trim())));
         }
         if (node.shadowRoot) return text(node.shadowRoot);
       }

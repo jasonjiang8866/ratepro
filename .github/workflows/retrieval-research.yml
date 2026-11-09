@@ -6,11 +6,33 @@ on:
       - '.github/workflows/retrieval-research.yml'
       - 'scripts/cpf-browser.ts'
       - 'scripts/maybank-diagnostics.ts'
+      - 'scripts/maybank-browser.ts'
       - 'scripts/hdb-askgov.ts'
       - 'tests/retrieval-research.test.ts'
+      - 'tests/maybank-browser.test.ts'
 permissions:
   contents: read
 jobs:
+  maybank-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - run: npm run research:maybank-browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maybank-browser-research
+          path: research-output/maybank-browser/
+          if-no-files-found: error
+          retention-days: 7
   cpf-browser:
     runs-on: ubuntu-24.04
     timeout-minutes: 5

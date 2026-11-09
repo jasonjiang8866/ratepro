@@ -20,7 +20,8 @@
     "test:ui": "node scripts/check-ui.mjs",
     "research:cpf": "node --import tsx scripts/cpf-browser.ts",
     "research:maybank": "node --import tsx scripts/maybank-diagnostics.ts",
-    "test:browser": "RUN_BROWSER_TESTS=1 vitest run tests/retrieval-research.test.ts",
+    "research:maybank-browser": "node --import tsx scripts/maybank-browser.ts",
+    "test:browser": "RUN_BROWSER_TESTS=1 vitest run tests/retrieval-research.test.ts tests/maybank-browser.test.ts",
     "review:file": "node --import tsx scripts/review-file.ts",
     "collect:jp": "node --import tsx scripts/collect-japan.ts",
     "verify:jp": "node --import tsx scripts/collect-japan.ts --check"
