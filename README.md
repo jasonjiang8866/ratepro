@@ -70,7 +70,7 @@ The scheduled collector requires GitHub Actions to be enabled and repository rul
 | Source             | Supported observations              | Coverage                                                                                          |
 | ------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------- |
 | DBS HDB / Green    | CPF-OA and FHR6 stage schedules     | Two public products                                                                               |
-| HDB                | Concessionary quarter               | HDB primary page, then official CPF / AskGov quarter; previous observation retained if both fail  |
+| HDB                | Concessionary quarter               | HDB primary, CPF / AskGov, then dated CPF announcement; retain prior observation if all fail  |
 | Maybank            | 2-year / 3-year fixed, 1M / 3M SORA | Four reviewed completed-property snapshots; automatic retrieval currently times out; BUC excluded |
 | Standard Chartered | Published 3M SORA schedule          | Formula only; source effective date is displayed separately                                       |
 | UOB                | Published completed-property SORA   | New direct-to-bank customers; fixed-rate enquiries remain quote-only                              |
@@ -88,12 +88,13 @@ floating thereafter formula. `effectiveFrom` is the bank's stated terms date;
 `observedAt` is when the page was successfully read. Neither is the feed download
 time. A current observation does not imply a newly launched or available offer.
 
-HDB uses the primary page when valid, then the official CPF / AskGov fallback.
+HDB uses the primary page when valid, then the official CPF / AskGov fallback,
+then the dated CPF announcement described above.
 The fallback requires an explicit current quarter and a published HDB rate, with
 the matching CPF OA rate and administration spread checked for consistency.
 It preserves `hdb-concessionary` as the single product ID and records
 `evidenceSourceId: cpf-askgov`; its card links to the actual evidence page. Primary
-failure and fallback outcome remain separate in Sources. If both fail, the last
+failure and fallback outcome remain separate in Sources. If all applicable endpoints fail, the last
 observation (including an original `method: reviewed` snapshot) is retained unchanged. No synthetic
 bank offers or benchmark-as-mortgage-rate shortcuts are used. Existing numeric-only
 exports/caches remain valid; new exports include nullable SORA rates and require

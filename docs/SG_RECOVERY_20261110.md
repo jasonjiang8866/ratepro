@@ -78,7 +78,52 @@ wrong publisher/date, expired/future quarter, fallback switching, non-retried
 TypeScript and all existing editorial content. The browser-only research test
 remains opt-in and is not claimed by the unit suite.
 
-GitHub source-health results and final counts will be recorded below after the
-Draft PR runs. No production refresh workflow is dispatched and no deployment
+GitHub source-health results and final counts are recorded below. No production refresh workflow is dispatched and no deployment
 is performed. PR source checks have read-only repository permissions. Partial
 success and unresolved source failures must remain distinct in the final report.
+
+## Verified GitHub results
+
+Implementation SHA: `11c150b6cfe2b445f1469dbbffe67692149daf88`.
+[Draft PR #19](https://github.com/jasonjiang8866/ratepro/pull/19).
+Machine-readable, bounded evidence is retained in
+[sg-recovery-evidence-20261110.json](sg-recovery-evidence-20261110.json).
+
+| Validation | Observed outcome |
+| --- | --- |
+| [Frontend checks](https://github.com/jasonjiang8866/ratepro/actions/runs/42654083651) | 150 tests passed; 1 opt-in browser research test skipped; content/TypeScript/Vite build passed with default CI test timeout |
+| [Homepage UI](https://github.com/jasonjiang8866/ratepro/actions/runs/42654083762) | Existing SG/JP Playwright regression passed |
+| [HDB real collector](https://github.com/jasonjiang8866/ratepro/actions/runs/42654083728/job/129287787865) | Passed; HDB 403, AskGov 403 with `cf-mitigated: challenge`, CPF announcement 200 and strict parsing succeeded |
+| Stable group | DBS HDB, DBS Green and SC all parsed successfully in one attempt |
+| Expanded group | UOB and Citi parsed successfully in one attempt |
+| [Maybank collector](https://github.com/jasonjiang8866/ratepro/actions/runs/42654083728/job/129287788002) | Failed after two bounded timeouts; prior data retained |
+| [Maybank timing](https://github.com/jasonjiang8866/ratepro/actions/runs/42654083728/job/129287787627) | DNS 0.082509s; connection 0.090155s; TLS 0.103023s; no first byte; timeout 30.002789s, HTTP code 0, downloaded bytes 0 |
+| Published data / production deployment | Neither changed nor triggered by this work |
+
+HDB's validation artifact now contains `method: collector`, `evidenceSourceId:
+cpf-release`, HDB 2.60%, quarter 2026-10-01–2026-12-31 and publication date
+2026-09-22. Its observation time is `2026-11-09T16:22:37.561Z` (10 November
+00:22 Singapore), replacing the reviewed 30 October observation **inside the
+validation artifact only**. Other offers are unchanged in the HDB group.
+The separate CPF service article still returned an empty JS shell; its HTTP 200
+is not counted as successful mortgage collection. No browser dependency was
+added to the daily collector.
+
+The whole source workflow correctly remains red because Maybank is unresolved.
+Its timing establishes a stall after TLS, not a WAF rule, geography restriction,
+DNS failure or a parser defect. No reliable independent Maybank automated
+fallback was verified. Keep its four old observations marked reviewed/stale;
+restoration needs a successful same-policy Actions read or a verified official
+export/publication covering those exact products, stages and conditions.
+
+Local validation also passed 150 tests with 1 skipped using
+`npm test -- --maxWorkers=2 --testTimeout=15000`. The existing review-file CLI
+integration test exceeded its default 5s timeout under local contention; it
+passed without timeout changes on GitHub. Both local builds passed. The existing
+Vite >500kB chunk warning remains outside this batch.
+
+Remaining risks: this is one real runner success for a dated announcement, not
+long-term availability evidence. Inspect the next authorized scheduled collection
+after merge; replace the dated fallback before the next quarter only after
+verifying a new official document. This PR deliberately carries no refreshed
+production feed and makes no production recovery or deployment claim.

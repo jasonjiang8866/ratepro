@@ -1,0 +1,219 @@
+{
+  "retentionChecks": {
+    "hdbPriorObservedAt": "2026-10-30T01:50:00.000Z",
+    "hdbNewObservedAt": "2026-11-09T16:22:37.561Z",
+    "hdbOtherOffersUnchanged": true,
+    "maybankOffersUnchanged": true,
+    "maybankStatus": {
+      "sourceId": "maybank",
+      "attemptedAt": "2026-11-09T16:22:34.380Z",
+      "status": "error",
+      "message": "Collection failed; last observation retained. Request timed out",
+      "failureKind": "timeout",
+      "attempts": 2
+    }
+  },
+  "implementationSha": "11c150b6cfe2b445f1469dbbffe67692149daf88",
+  "runUrl": "https://github.com/jasonjiang8866/ratepro/actions/runs/42654083728",
+  "hdb": {
+    "jobId": 129287787865,
+    "diagnostics": {
+      "node": "v22.23.4",
+      "platform": "linux",
+      "arch": "x64",
+      "runner": "GitHub Actions",
+      "requestPolicy": "Default Node fetch; credentials omitted; no-cache; redirects rejected; no custom UA, cookies or proxy changes",
+      "evidence": [
+        {
+          "url": "https://www.hdb.gov.sg/managing-my-home/finances/loan-matters/interest-rate",
+          "attemptedAt": "2026-11-09T16:22:37.562Z",
+          "elapsedMs": 188,
+          "status": 403,
+          "headers": {
+            "server": "AmazonS3",
+            "content-type": "text/html",
+            "content-length": "4760",
+            "date": "Mon, 09 Nov 2026 09:01:07 GMT",
+            "via": "1.1 6d608495c704c3391c897a110e88cffa.cloudfront.net (CloudFront)",
+            "x-cache": "Error from cloudfront",
+            "x-amz-cf-id": "kY0-IGyciVKrZZpx5vz_20nICl-EEb91IbXv-z60IdhUSfA6v0KcDw==",
+            "x-amz-cf-pop": "ORD58-P13"
+          },
+          "errorSample": {
+            "bytes": 4760,
+            "sha256": "9b312491771d4dadf29aaf73a065e019518c59543daa15e43d5eb941606b2078",
+            "markers": []
+          }
+        },
+        {
+          "url": "https://ask.gov.sg/cpf/questions/cm2s5b54c005r12kzrep7aayw",
+          "attemptedAt": "2026-11-09T16:22:37.751Z",
+          "elapsedMs": 189,
+          "status": 403,
+          "headers": {
+            "server": "cloudflare",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Mon, 09 Nov 2026 16:22:37 GMT",
+            "cf-ray": "a57e2846ea147236-ORD",
+            "cf-mitigated": "challenge"
+          },
+          "errorSample": {
+            "bytes": 5528,
+            "sha256": "3ecc7256ebdad3cff075adf2aa5654d9f24e88fd6f59abebbe632dff5f3d19fb",
+            "markers": []
+          }
+        },
+        {
+          "url": "https://www.cpf.gov.sg/member/infohub/news/news-releases/government-extends-4-per-cent-interest-rate-floor-on-special-medisave-and-retirement-account-monies-until-31-december-2027",
+          "attemptedAt": "2026-11-09T16:22:37.940Z",
+          "elapsedMs": 311,
+          "status": 200,
+          "headers": {
+            "server": "Apache",
+            "content-type": "text/html;charset=utf-8",
+            "content-length": "21370",
+            "date": "Mon, 09 Nov 2026 16:22:38 GMT"
+          }
+        },
+        {
+          "url": "https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined",
+          "attemptedAt": "2026-11-09T16:22:38.353Z",
+          "elapsedMs": 364,
+          "status": 200,
+          "headers": {
+            "content-type": "text/html; charset=utf-8",
+            "content-length": "14229",
+            "date": "Mon, 09 Nov 2026 16:22:38 GMT"
+          }
+        }
+      ],
+      "candidate": {
+        "url": "https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined",
+        "retrieval": "ok",
+        "bytes": 66526,
+        "sha256": "3830733a2b477bc22baf793a5ce77a7c6868e4907e9dd4ffad0c2abb00d1ea2c",
+        "bodyTextLength": 0,
+        "tableCount": 0,
+        "hasQuarterHeading": false,
+        "collection": "Not enabled or validated; HTTP success is not a rate observation"
+      },
+      "offersUnchanged": false,
+      "note": "Headers and denial markers are evidence, not proof of a WAF rule or IP policy. Candidate retrieval never updates the feed."
+    },
+    "status": {
+      "sourceId": "hdb",
+      "attemptedAt": "2026-11-09T16:22:37.561Z",
+      "successAt": "2026-11-09T16:22:37.561Z",
+      "status": "ok",
+      "message": "Collected from official CPF Board · Quarterly announcement; HDB primary page unavailable.",
+      "attempts": 1,
+      "fallbackSourceId": "cpf-release",
+      "fallbackFailures": [
+        {
+          "failureKind": "http",
+          "httpStatus": 403,
+          "attempts": 1,
+          "message": "HTTP 403",
+          "sourceId": "cpf-askgov"
+        }
+      ],
+      "primaryFailure": {
+        "failureKind": "http",
+        "httpStatus": 403,
+        "attempts": 1,
+        "message": "HTTP 403"
+      }
+    },
+    "offer": {
+      "id": "hdb-concessionary",
+      "sourceId": "hdb",
+      "bank": "HDB",
+      "name": "HDB concessionary loan",
+      "property": "HDB",
+      "purpose": [
+        "Purchase"
+      ],
+      "construction": "Any",
+      "kind": "Concessionary",
+      "stages": [
+        {
+          "label": "Current quarter",
+          "rate": 2.6,
+          "formula": "CPF-OA + 0.10%"
+        }
+      ],
+      "lockYears": null,
+      "minLoan": null,
+      "documentDate": "2026-09-22",
+      "evidenceSourceId": "cpf-release",
+      "terms": "For eligible HDB buyers. Rate is reviewed quarterly and is not fixed for the full tenure. Confirm HFE eligibility and terms with HDB.",
+      "observedAt": "2026-11-09T16:22:37.561Z",
+      "effectiveUntil": "2026-12-31",
+      "effectiveFrom": "2026-10-01",
+      "method": "collector"
+    }
+  },
+  "maybank": {
+    "jobId": 129287787627,
+    "diagnostics": {
+      "url": "https://www.maybank2u.com.sg/en/rates/rates-sora.page",
+      "startedAt": "2026-11-09T16:22:32.658Z",
+      "finishedAt": "2026-11-09T16:23:02.673Z",
+      "exitCode": 28,
+      "timing": {
+        "time_namelookup": 0.082509,
+        "time_connect": 0.090155,
+        "time_appconnect": 0.103023,
+        "time_starttransfer": 0,
+        "time_total": 30.002789,
+        "size_download": 0,
+        "http_code": 0,
+        "lastMilestone": "TLS completed; no first response byte recorded"
+      },
+      "policy": "One ordinary curl HTTP/1.1 request matching the existing collector. No retry, redirect, custom UA, proxy or TLS changes.",
+      "note": "Milestones locate the observed stall, not its cause. No rate extraction or snapshot write."
+    }
+  },
+  "otherSources": [
+    {
+      "sourceId": "dbs-hdb",
+      "attemptedAt": "2026-11-09T16:22:38.945Z",
+      "successAt": "2026-11-09T16:22:38.945Z",
+      "status": "ok",
+      "message": "Collected from official public page",
+      "attempts": 1
+    },
+    {
+      "sourceId": "dbs-green",
+      "attemptedAt": "2026-11-09T16:22:38.945Z",
+      "successAt": "2026-11-09T16:22:38.945Z",
+      "status": "ok",
+      "message": "Collected from official public page",
+      "attempts": 1
+    },
+    {
+      "sourceId": "sc-sora",
+      "attemptedAt": "2026-11-09T16:22:38.945Z",
+      "successAt": "2026-11-09T16:22:38.945Z",
+      "status": "ok",
+      "message": "Collected from official public page",
+      "attempts": 1
+    },
+    {
+      "sourceId": "uob-sora",
+      "attemptedAt": "2026-11-09T16:22:50.792Z",
+      "successAt": "2026-11-09T16:22:50.792Z",
+      "status": "ok",
+      "message": "Collected from official public page",
+      "attempts": 1
+    },
+    {
+      "sourceId": "citi",
+      "attemptedAt": "2026-11-09T16:22:50.792Z",
+      "successAt": "2026-11-09T16:22:50.792Z",
+      "status": "ok",
+      "message": "Collected from official public page",
+      "attempts": 1
+    }
+  ]
+}
