@@ -1,6 +1,11 @@
 name: Official source integration check
 on:
   workflow_dispatch:
+    inputs:
+      probe_maybank_country:
+        description: 'Repeat the rejected public country-page candidate (read-only, one request)'
+        type: boolean
+        default: false
   pull_request:
     paths:
       - '.github/workflows/source-check.yml'
@@ -70,6 +75,7 @@ jobs:
           retention-days: 7
 
   maybank-country-candidate:
+    if: github.event_name == 'workflow_dispatch' && inputs.probe_maybank_country
     name: Maybank public country-page candidate
     runs-on: ubuntu-24.04
     timeout-minutes: 3

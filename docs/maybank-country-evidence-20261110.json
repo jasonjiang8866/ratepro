@@ -1,0 +1,27 @@
+{
+  "implementationSha": "5a91e0e1a08b626d38da89705e258231d1268705",
+  "jobUrl": "https://github.com/jasonjiang8866/ratepro/actions/runs/42656651116/job/129296791825",
+  "report": {
+    "url": "https://www.maybank2u.com.sg/en/rates/rates-sora.page?country=en-sg",
+    "startedAt": "2026-11-09T16:37:41.630Z",
+    "finishedAt": "2026-11-09T16:38:11.649Z",
+    "exitCode": 28,
+    "snapshotUnchanged": true,
+    "candidate": {
+      "status": "rejected",
+      "reason": "Transport did not complete; no extraction"
+    },
+    "timing": {
+      "time_namelookup": 0.032235,
+      "time_connect": 0.039954,
+      "time_appconnect": 0.062037,
+      "time_starttransfer": 0,
+      "time_total": 30.003026,
+      "size_download": 0,
+      "http_code": 0,
+      "lastMilestone": "TLS completed; no first response byte recorded"
+    },
+    "policy": "One ordinary curl HTTP/1.1 request matching the existing collector. No retry, redirect, custom UA, proxy or TLS changes.",
+    "note": "Read-only candidate validation; no production source switch or snapshot write."
+  }
+}

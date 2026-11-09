@@ -1063,8 +1063,9 @@ function MarketApp({
                       )}
                       {s.id === 'maybank' && (
                         <p className="text-sm mt-3">
-                          Experimental automatic collection. Reviewed snapshots remain available
-                          when retrieval fails.
+                          {status?.status === 'error'
+                            ? 'Manual recheck required. Verify the current official package table; retained observations keep their original review dates.'
+                            : 'Experimental automatic collection. Reviewed snapshots remain available when retrieval fails.'}
                         </p>
                       )}
                     </div>

@@ -39,6 +39,48 @@ The read-only source workflow includes an independent candidate job. Both failed
 network access and failed parsing return a nonzero status. Success would establish
 only a candidate until an explicit collector integration is implemented and tested.
 
-Results will be recorded after the actual GitHub check. The published Maybank
+Actual GitHub results are recorded below. The published Maybank
 observations remain reviewed/stale; successful web search or local extraction is
 not evidence that the GitHub collector has recovered.
+
+
+## Verified result and decision
+
+At implementation `5a91e0e1a08b626d38da89705e258231d1268705`, the
+[country-page job](https://github.com/jasonjiang8866/ratepro/actions/runs/42656651116/job/129296791825)
+failed. Request time: `2026-11-09T16:37:41.630Z` (10 November 00:37 Singapore).
+DNS completed in 0.032235s, connection in 0.039954s and TLS in 0.062037s;
+no first response byte was received before the 30.003026s timeout. HTTP code was
+0, downloaded bytes 0, curl exit 28. Parsing did not run. Snapshot byte equality
+was verified. [Durable evidence](maybank-country-evidence-20261110.json).
+
+The local candidate read at `2026-11-09T16:35:53.160Z` returned HTTP 200 and
+passed all four existing package parsers. Its 42,300-byte body SHA-256 was
+`1e00d0348d02c8c7829435b3676dbf13fe52e856f00af3f994469b092eae5ec3`.
+This environment difference is observed, not a proven geographic/WAF root cause.
+The local result never refreshed the production feed or collector health.
+
+Decision: do not enable the query variant as a source or automatically retry it
+on each PR. The candidate job is now explicit opt-in on the read-only source
+workflow (`probe_maybank_country: true`); no production workflow changes are
+needed. A Maybank source error now displays **Manual recheck required**, with
+an explicit statement that original review dates are retained. The raw timeout
+category and original source link remain visible.
+
+To restore automation, require a real runner success of a permitted official
+publication with all four existing schedules, their exact SORA tenors/spreads,
+fixed-to-floating transitions, lock-ins, minimum loan/tenure and applicability.
+A bank-authorized export could qualify after provenance and parsing are verified.
+The currently found FAQ, board-rate page, renovation promotion, search result or
+local-only success does not qualify. No operator message has been sent.
+
+For a manual update, obtain the complete current official package page with its
+actual UTC capture time and use the existing [official-file review workflow](REVIEW.md).
+Keep `method: reviewed`; do not relabel a human review as a restored collector.
+No fresh manual rate observation is included in this engineering PR.
+
+Validation: 162 unit/integration tests passed with one opt-in browser research
+test skipped; local TypeScript/content/Vite build passed. The first GitHub
+[frontend check](https://github.com/jasonjiang8866/ratepro/actions/runs/42656651256)
+also passed. HDB, stable (DBS/SC) and expanded (UOB/Citi) live checks remained
+successful. Maybank's known transport failures remain red.
