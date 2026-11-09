@@ -117,3 +117,36 @@ using [Playwright's supported `--only-shell` option](https://playwright.dev/docs
 This skips an unused headed-browser download, not a different browser identity.
 The local shell-only download also returned an invalid ZIP; all browser success
 claims therefore still refer to Actions, not this local environment.
+
+## Final experiment result
+
+At `9ccb9591fb576449d970757aadc641a5c7d12ab3`,
+[HTTP/1.1 comparison job 129316666017](https://github.com/jasonjiang8866/ratepro/actions/runs/42662283037/job/129316666017)
+also failed: navigation began `2026-11-09T17:12:56.959Z` and ended with
+`TimeoutError` at `2026-11-09T17:13:26.997Z`, with no received HTTP response.
+The report records only `--disable-http2`, default identity/certificate checks
+and both snapshots unchanged. No fields were recovered and parsing never began.
+This is transport failure, not evidence that Maybank has no public quotations.
+The underlying network/server cause remains unproven.
+
+| Validation layer | Observed result |
+| --- | --- |
+| Ordinary suite and production build | [165 passed, 12 browser cases skipped in this suite; build passed](https://github.com/jasonjiang8866/ratepro/actions/runs/42662283038) |
+| Isolated browser suite | 18 passed in Actions, including 12 actual mocked-network Chromium cases; overlaps six ordinary tests |
+| CPF real browser read | [Passed](https://github.com/jasonjiang8866/ratepro/actions/runs/42662283037/job/129316666730) at `2026-11-09T17:12:48.354Z`; explicit 2.60% HDB rate and 2026 Q4, `method: browser` candidate only |
+| Maybank real browser read | Default HTTP/2 protocol error; HTTP/1.1 comparison timed out; zero recovered observations |
+| SG/JP UI regression | [Passed](https://github.com/jasonjiang8866/ratepro/actions/runs/42662283214) |
+| Published data / deployment | No changes or deployment; no freshness timestamps renewed |
+
+Decision: keep CPF as a feasible browser candidate for genuinely rendered content,
+with future collector integration requiring a separate fallback/state design and
+period validation. Keep Maybank manual/stale pending a reliably accessible official
+publication or bank-approved export for the same products. Do not add browsers
+to the daily refresh based on this experiment. Both Maybank browser probes are
+now dispatch-only, selected individually with `probe_maybank_default` or
+`probe_maybank_http1`, default false. Browser regression tests still run in the
+CPF research job. Failed real-source probes remain nonzero; no `continue-on-error`.
+
+The report JSON is durable in this PR. Larger CPF DOM/screenshot artifacts on
+run 42662283037 expire on 16 November 2026 UTC; artifact existence is verified,
+but no download/extraction of those archives is claimed in this phase.

@@ -6,6 +6,10 @@ on:
         description: 'Repeat the failed default Chromium Maybank probe (one navigation)'
         type: boolean
         default: false
+      probe_maybank_http1:
+        description: 'Repeat the Chromium HTTP/1.1 comparison (one navigation)'
+        type: boolean
+        default: false
   pull_request:
     paths:
       - '.github/workflows/retrieval-research.yml'
@@ -40,6 +44,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
   maybank-browser-http1:
+    if: github.event_name == 'workflow_dispatch' && inputs.probe_maybank_http1
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
