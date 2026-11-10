@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-boj-october-opinions-november-release",
+  "category": "market",
+  "title": "BOJ's newly released October opinions show differing views on the next rate move",
+  "summary": "Published on 10 November, the October meeting opinions discuss both further tightening and its cumulative effects. They are not a new mortgage-rate decision.",
+  "reportDate": "2026-11-10",
+  "edition": "update",
+  "eventKey": "jp-boj-2026-10-29-30-opinions-2026-11-10",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "The new publication describes the 29–30 October meeting, not a policy decision made on 10 November.",
+      "sourceIds": ["boj-opinions"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "New disclosure, earlier meeting",
+      "kind": "fact",
+      "text": "BOJ published the summary at 08:50 JST on 10 November. Participants submit summaries of their own views, which the governor edits by topic; the document is not a unanimous forecast.",
+      "sourceIds": ["boj-opinions"]
+    },
+    {
+      "heading": "Different assessments of tightening",
+      "kind": "fact",
+      "text": "Reported views support holding rates at that meeting to assess risks and cumulative tightening, while others favour further increases or a faster move toward neutral. One view warns of downside risks from additional tightening; another says the next increase could restrain housing investment. These are attributed meeting opinions, not observed changes in mortgage prices.",
+      "sourceIds": ["boj-opinions"]
+    },
+    {
+      "heading": "What borrowers should check",
+      "kind": "analysis",
+      "text": "Our interpretation: this disclosure supports checking repayment sensitivity, not predicting a particular rate path. BOJ policy rates do not equal bank mortgage rates. For a JPY variable loan, confirm the bank's benchmark, reset and payment dates; for an initial fixed period, confirm subsequent pricing; for full-term fixed borrowing, confirm the funding-month terms and any staged discounts.",
+      "sourceIds": ["boj-opinions", "mizuho"]
+    },
+    {
+      "heading": "Existing bank context and limits",
+      "kind": "fact",
+      "text": "Mizuho's existing notice still links borrowing by 31 March 2027 from 1.275% to a July 2027 repayment rate from 1.525%, subject to further short-prime changes and underwriting. This was already covered by RatePro and is not today's new offer. Individual eligibility, LTV, JPY loan limits, term, insurance, fees, early-repayment terms and payment-smoothing rules remain unverified here. No promotion is confirmed.",
+      "sourceIds": ["mizuho"]
+    },
+    {
+      "heading": "Dates and scope",
+      "kind": "fact",
+      "text": "Written on 10 November in Asia/Tokyo. The BOJ source date is its publication date; the event occurred on 29–30 October. Mizuho labels its rate panel 1 November and its footer 2 November; the latter is retained as an as-of date, not a proven publication date. UTC checks below record actual source reads. No offer validity period is inferred.",
+      "sourceIds": ["boj-opinions", "mizuho"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "boj-opinions",
+      "publisher": "Bank of Japan",
+      "title": "金融政策決定会合における主な意見（2026年10月29、30日開催分）",
+      "url": "https://www.boj.or.jp/mopo/mpmsche_minu/opinion_2026/opi261030.pdf",
+      "checkedAt": "2026-11-10T01:57:04Z",
+      "documentDate": "2026-11-10"
+    },
+    {
+      "id": "mizuho",
+      "publisher": "Mizuho Bank",
+      "title": "住宅ローン：変動金利の注意事項",
+      "url": "https://www.mizuhobank.co.jp/loan_housing/index.html",
+      "checkedAt": "2026-11-10T01:57:04Z",
+      "documentDate": "2026-11-02"
+    }
+  ],
+  "package": null
+}
