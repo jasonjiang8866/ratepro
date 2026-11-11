@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "market": "SG",
+  "slug": "sg-sc-referral-terms-december-2026",
+  "category": "market",
+  "title": "Standard Chartered previews December changes to mortgage referral eligibility",
+  "summary": "Revised referral terms take effect on 4 December. Check mortgage history and reward recovery conditions; this notice is not a new mortgage-rate quote.",
+  "reportDate": "2026-11-11",
+  "edition": "update",
+  "eventKey": "sg-sc-mortgage-mgm-terms-2026-12-04",
+  "supersedes": null,
+  "effectiveFrom": "2026-12-04",
+  "effectiveUntil": "2026-12-31",
+  "takeaways": [
+    {
+      "text": "The announced eligibility and reward-recovery amendments take effect on 4 December 2026.",
+      "sourceIds": ["notice"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Eligibility changes to check",
+      "kind": "fact",
+      "text": "The notice says referred applicants and all co-applicants must have no active mortgage account with the bank and no redemption of residential, commercial or equity loans in the preceding 12 months. Applicants must be at least 21 and apply during the promotion period. Confirm how the bank applies the redemption condition to your circumstances.",
+      "sourceIds": ["notice"]
+    },
+    {
+      "heading": "Rewards can be withheld or recovered",
+      "kind": "fact",
+      "text": "Revised clause 13 permits refusal or clawback for fraud, dishonesty, improper product use, breaches of terms or the banking agreement, product suspension or termination, or bad-faith conduct seeking an unfair advantage.",
+      "sourceIds": ["notice", "revised-terms"]
+    },
+    {
+      "heading": "Separate the deadlines",
+      "kind": "fact",
+      "text": "The revised PDF states a 4–31 December 2026 promotion period and requires approval plus acceptance of the Letter of Offer by 15 January 2027. These are separate deadlines. Rewards go to eligible existing personal-banking referrers; prior consent and disclosure requirements apply. The first-referrer rule and a ten-successful-referrals-per-month limit also apply. Staff and bridging loans are excluded.",
+      "sourceIds": ["revised-terms"]
+    },
+    {
+      "heading": "Practical reading",
+      "kind": "analysis",
+      "text": "Confirm the applicable version with the bank before relying on a referral reward. A referrer's payment does not establish a borrower subsidy, loan approval or cheaper mortgage. This report does not verify a rate schedule, SORA spread, lock-in, loan-size limits, fees or individual reward entitlement; no confirmed loan-package record is created.",
+      "sourceIds": ["notice", "revised-terms"]
+    },
+    {
+      "heading": "Dates and scope",
+      "kind": "fact",
+      "text": "Newly verified on 11 November, not claimed to have been announced today. Neither source states a publication/update date. The coverage dates reflect the revised PDF's promotion period, in Asia/Singapore; they do not extend the separate January acceptance deadline. UTC source checks are preserved below.",
+      "sourceIds": ["notice", "revised-terms"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "notice",
+      "publisher": "Standard Chartered Bank (Singapore) Limited",
+      "title": "Amendments to Home Loan Member-Get-Member Referral Promotion Terms & Conditions – Effective 4 December 2026",
+      "url": "https://www.sc.com/sg/important-information/amendments-to-mortgage-mgm-terms/",
+      "checkedAt": "2026-11-11T02:00:33Z",
+      "documentDate": null
+    },
+    {
+      "id": "revised-terms",
+      "publisher": "Standard Chartered Bank (Singapore) Limited",
+      "title": "Home Loan Member-Get-Member Referral Promotion Terms & Conditions — revised preview",
+      "url": "https://www.sc.com/content/dam/sc/sg/en/documents/sg-home-loan-mgm-referral-promo-tc.pdf",
+      "checkedAt": "2026-11-11T02:00:33Z",
+      "documentDate": null
+    }
+  ],
+  "package": null
+}
