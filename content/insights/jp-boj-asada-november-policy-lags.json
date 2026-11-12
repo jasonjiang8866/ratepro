@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-boj-asada-november-policy-lags",
+  "category": "market",
+  "title": "BOJ's Asada highlights delayed effects of earlier rate increases",
+  "summary": "A 12 November speech urges attention to household borrowing and the pace of tightening. It is a member's assessment, not a new mortgage-rate decision.",
+  "reportDate": "2026-11-12",
+  "edition": "update",
+  "eventKey": "jp-boj-asada-speech-2026-11-12",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "Earlier policy increases can affect household borrowing with a lag, Asada cautions.",
+      "sourceIds": ["speech"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "The new statement",
+      "kind": "fact",
+      "text": "In his 12 November Nagasaki speech, BOJ Policy Board member Toichiro Asada says policy effects can take a year or longer and calls for monitoring cumulative effects on household borrowing. He urges care over further tightening's pace, citing consumption that is not particularly strong.",
+      "sourceIds": ["speech"]
+    },
+    {
+      "heading": "Context, not a new decision",
+      "kind": "fact",
+      "text": "Asada says he opposed the June and September increases and supported the July and October holds. His speech also describes the BOJ outlook's conditional case for further increases. These are distinct positions, not a promised rate path.",
+      "sourceIds": ["speech"]
+    },
+    {
+      "heading": "Reading this as a borrower",
+      "kind": "analysis",
+      "text": "A policy-transmission lag is not your mortgage reset timetable. Confirm the lender's contract-specific rate and payment review dates; this speech establishes no bank quote or promotion.",
+      "sourceIds": ["speech"]
+    },
+    {
+      "heading": "Dates",
+      "kind": "fact",
+      "text": "The speech and publication are dated 12 November 2026 in Japan. The report was written that day; the actual UTC source check is recorded below. No offer-validity period applies.",
+      "sourceIds": ["speech"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "speech",
+      "publisher": "Bank of Japan",
+      "title": "浅田統一郎：わが国の経済・物価情勢と金融政策（長崎県金融経済懇談会、2026年11月12日）",
+      "url": "https://www.boj.or.jp/about/press/koen_2026/data/ko261112a1.pdf",
+      "checkedAt": "2026-11-12T02:06:08Z",
+      "documentDate": "2026-11-12"
+    }
+  ],
+  "package": null
+}
