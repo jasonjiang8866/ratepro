@@ -94,3 +94,29 @@ jobs:
           path: research-output/maybank-country/report.json
           if-no-files-found: error
           retention-days: 7
+
+
+  maybank-runner-comparison:
+    name: Maybank runner comparison (${{ matrix.runner }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04-arm, windows-latest]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Check same public URL with the existing bounded collector
+        run: npm run verify:sources -- experimental
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maybank-runner-${{ matrix.runner }}
+          path: source-check.json
+          if-no-files-found: warn
+          retention-days: 7

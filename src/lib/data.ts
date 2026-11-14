@@ -42,7 +42,7 @@ export function matchesProperty(offer: Offer, property: string) {
 }
 export function offerPayment(offer: Offer, principal: number, years: number) {
   const rate = offer.stages[0].rate;
-  return rate === null || offer.construction === 'Under construction'
+  return rate === null || ['Under construction', 'Confirm with lender'].includes(offer.construction)
     ? null
     : payment(principal, rate, years);
 }

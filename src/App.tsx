@@ -652,7 +652,12 @@ function MarketApp({
                     label="Property stage"
                     value={construction}
                     onChange={setConstruction}
-                    options={['All stages', 'Completed', 'Under construction']}
+                    options={[
+                      'All stages',
+                      'Completed',
+                      'Under construction',
+                      'Confirm with lender',
+                    ]}
                   />
                 </div>
               </div>
@@ -1271,9 +1276,11 @@ function MarketApp({
                                                       ? 'Not calculated: benchmark fixing required'
                                                       : o.construction === 'Under construction'
                                                         ? 'Progressive drawdown; check source'
-                                                        : validCalc && p !== null
-                                                          ? money(p)
-                                                          : 'Check calculator inputs'
+                                                        : o.construction === 'Confirm with lender'
+                                                          ? 'Confirm construction stage with lender'
+                                                          : validCalc && p !== null
+                                                            ? money(p)
+                                                            : 'Check calculator inputs'
                                                 : `${date(o.observedAt)}${isStale(o) ? ' · stale' : ''}`}
                             </td>
                           );

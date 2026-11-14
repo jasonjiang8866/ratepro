@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-14T01:25:19.734Z",
+  "generatedAt": "2026-11-14T12:05:20.907Z",
   "offers": [
     {
       "id": "hdb-concessionary",
@@ -450,7 +450,7 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
-      "observedAt": "2026-11-14T01:25:19.734Z",
+      "observedAt": "2026-11-14T12:05:20.907Z",
       "method": "collector"
     },
     {
@@ -514,7 +514,7 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
-      "observedAt": "2026-11-14T01:25:19.734Z",
+      "observedAt": "2026-11-14T12:05:20.907Z",
       "method": "collector"
     },
     {
@@ -576,7 +576,7 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
-      "observedAt": "2026-11-14T01:25:19.734Z",
+      "observedAt": "2026-11-14T12:05:20.907Z",
       "method": "collector"
     },
     {
@@ -639,7 +639,442 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
-      "observedAt": "2026-11-14T01:25:19.734Z",
+      "observedAt": "2026-11-14T12:05:20.907Z",
+      "method": "collector"
+    },
+    {
+      "id": "sbi-sora-2y",
+      "sourceId": "sbi",
+      "bank": "SBI",
+      "name": "3M SORA · 2-year lock-in",
+      "property": "HDB / Private",
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
+      "construction": "Completed",
+      "kind": "Floating",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": null,
+          "formula": "3M Compounded SORA + 0.50%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 0.5
+          }
+        },
+        {
+          "label": "Year 2",
+          "rate": null,
+          "formula": "3M Compounded SORA + 0.50%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 0.5
+          }
+        },
+        {
+          "label": "Year 3 onwards",
+          "rate": null,
+          "formula": "3M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 1
+          }
+        }
+      ],
+      "lockYears": 2,
+      "minLoan": 250000,
+      "terms": "Published indicative Singapore home-loan schedule; confirm current availability and borrower eligibility with SBI. Building-under-construction properties qualify only for the three-year lock-in floating package. SORA spreads are not all-in rates; no benchmark fixing is collected. Fees, subsidies, income requirements and final approval must be checked with the bank. No publication/effective date is stated.",
+      "observedAt": "2026-11-14T12:05:20.907Z",
+      "method": "collector"
+    },
+    {
+      "id": "sbi-sora-3y",
+      "sourceId": "sbi",
+      "bank": "SBI",
+      "name": "3M SORA · 3-year lock-in",
+      "property": "HDB / Private",
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
+      "construction": "Any",
+      "kind": "Floating",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": null,
+          "formula": "3M Compounded SORA + 0.75%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 0.75
+          }
+        },
+        {
+          "label": "Year 2",
+          "rate": null,
+          "formula": "3M Compounded SORA + 0.75%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 0.75
+          }
+        },
+        {
+          "label": "Year 3",
+          "rate": null,
+          "formula": "3M Compounded SORA + 0.75%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 0.75
+          }
+        },
+        {
+          "label": "Year 4 onwards",
+          "rate": null,
+          "formula": "3M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 1
+          }
+        }
+      ],
+      "lockYears": 3,
+      "minLoan": 250000,
+      "terms": "Published indicative Singapore home-loan schedule; confirm current availability and borrower eligibility with SBI. Building-under-construction properties qualify only for the three-year lock-in floating package. SORA spreads are not all-in rates; no benchmark fixing is collected. Fees, subsidies, income requirements and final approval must be checked with the bank. No publication/effective date is stated.",
+      "observedAt": "2026-11-14T12:05:20.907Z",
+      "method": "collector"
+    },
+    {
+      "id": "sbi-fixed-2y",
+      "sourceId": "sbi",
+      "bank": "SBI",
+      "name": "2-year fixed · completed property",
+      "property": "HDB / Private",
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
+      "construction": "Completed",
+      "kind": "Fixed",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": 2.25,
+          "formula": "Fixed"
+        },
+        {
+          "label": "Year 2",
+          "rate": 2.25,
+          "formula": "Fixed"
+        },
+        {
+          "label": "Year 3 onwards",
+          "rate": null,
+          "formula": "3M Compounded SORA + 0.65%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 0.65
+          }
+        }
+      ],
+      "lockYears": 2,
+      "minLoan": 400000,
+      "terms": "Published indicative Singapore home-loan schedule; confirm current availability and borrower eligibility with SBI. Building-under-construction properties qualify only for the three-year lock-in floating package. SORA spreads are not all-in rates; no benchmark fixing is collected. Fees, subsidies, income requirements and final approval must be checked with the bank. No publication/effective date is stated.",
+      "observedAt": "2026-11-14T12:05:20.907Z",
+      "method": "collector"
+    },
+    {
+      "id": "citi-citigold-fixed-2y-large",
+      "sourceId": "citi",
+      "bank": "Citi",
+      "name": "Citigold · 2-year fixed · upper loan band",
+      "property": "Confirm with lender",
+      "purpose": [
+        "Confirm with lender"
+      ],
+      "construction": "Confirm with lender",
+      "kind": "Fixed",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": 2.1,
+          "formula": "Fixed"
+        },
+        {
+          "label": "Year 2",
+          "rate": 2.1,
+          "formula": "Fixed"
+        },
+        {
+          "label": "Year 3",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.85%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.85
+          }
+        },
+        {
+          "label": "Year 4 onwards",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.85%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.85
+          }
+        }
+      ],
+      "lockYears": 2,
+      "minLoan": 1000000,
+      "customerTier": "Citigold",
+      "minRelationshipBalance": 250000,
+      "rateFloor": 0.85,
+      "documentDate": "2026-09-30",
+      "terms": "Limited-tranche two-year fixed schedule, then 1M Compounded SORA plus the published spread. Confirm property type, construction stage, purchase/refinance eligibility and availability with Citi; these are not specified in this table. Tier and loan-band conditions apply. The SORA floor applies to floating stages. Print date is not an effective date. Fees and subsidies are not extracted.",
+      "observedAt": "2026-11-14T12:05:20.907Z",
+      "method": "collector"
+    },
+    {
+      "id": "citi-citigold-fixed-2y-small",
+      "sourceId": "citi",
+      "bank": "Citi",
+      "name": "Citigold · 2-year fixed · lower loan band",
+      "property": "Confirm with lender",
+      "purpose": [
+        "Confirm with lender"
+      ],
+      "construction": "Confirm with lender",
+      "kind": "Fixed",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": 2,
+          "formula": "Fixed"
+        },
+        {
+          "label": "Year 2",
+          "rate": 2,
+          "formula": "Fixed"
+        },
+        {
+          "label": "Year 3",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.85%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.85
+          }
+        },
+        {
+          "label": "Year 4 onwards",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.85%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.85
+          }
+        }
+      ],
+      "lockYears": 2,
+      "minLoan": 100000,
+      "maxLoanExclusive": 1000000,
+      "customerTier": "Citigold",
+      "minRelationshipBalance": 250000,
+      "rateFloor": 0.85,
+      "documentDate": "2026-09-30",
+      "terms": "Limited-tranche two-year fixed schedule, then 1M Compounded SORA plus the published spread. Confirm property type, construction stage, purchase/refinance eligibility and availability with Citi; these are not specified in this table. Tier and loan-band conditions apply. The SORA floor applies to floating stages. Print date is not an effective date. Fees and subsidies are not extracted.",
+      "observedAt": "2026-11-14T12:05:20.907Z",
+      "method": "collector"
+    },
+    {
+      "id": "citi-citigold-sora-buc",
+      "sourceId": "citi",
+      "bank": "Citi",
+      "name": "Citigold · 1M SORA · building under construction",
+      "property": "Confirm with lender",
+      "purpose": [
+        "Confirm with lender"
+      ],
+      "construction": "Under construction",
+      "kind": "Floating",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        },
+        {
+          "label": "Year 2",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        },
+        {
+          "label": "Year 3",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        },
+        {
+          "label": "Year 4",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        },
+        {
+          "label": "Year 5 onwards",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        }
+      ],
+      "lockYears": 0,
+      "minLoan": 1500000,
+      "customerTier": "Citigold",
+      "minRelationshipBalance": 250000,
+      "rateFloor": 0.85,
+      "documentDate": "2026-09-30",
+      "terms": "Published building-under-construction package with no lock-in. Confirm HDB/private eligibility, purpose and availability with Citi. Citigold relationship and minimum loan apply. Progressive drawdowns are not modelled. SORA floor applies; print date is not an effective date. Fees and subsidies are not extracted.",
+      "observedAt": "2026-11-14T12:05:20.907Z",
+      "method": "collector"
+    },
+    {
+      "id": "citi-citibanking-fixed-2y-large",
+      "sourceId": "citi",
+      "bank": "Citi",
+      "name": "Citibanking · 2-year fixed · upper loan band",
+      "property": "Confirm with lender",
+      "purpose": [
+        "Confirm with lender"
+      ],
+      "construction": "Confirm with lender",
+      "kind": "Fixed",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": 2.15,
+          "formula": "Fixed"
+        },
+        {
+          "label": "Year 2",
+          "rate": 2.15,
+          "formula": "Fixed"
+        },
+        {
+          "label": "Year 3",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        },
+        {
+          "label": "Year 4 onwards",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        }
+      ],
+      "lockYears": 2,
+      "minLoan": 1000000,
+      "customerTier": "Citibanking",
+      "rateFloor": 0.85,
+      "documentDate": "2026-09-30",
+      "terms": "Limited-tranche two-year fixed schedule, then 1M Compounded SORA plus the published spread. Confirm property type, construction stage, purchase/refinance eligibility and availability with Citi; these are not specified in this table. Tier and loan-band conditions apply. The SORA floor applies to floating stages. Print date is not an effective date. Fees and subsidies are not extracted.",
+      "observedAt": "2026-11-14T12:05:20.907Z",
+      "method": "collector"
+    },
+    {
+      "id": "citi-citibanking-fixed-2y-small",
+      "sourceId": "citi",
+      "bank": "Citi",
+      "name": "Citibanking · 2-year fixed · lower loan band",
+      "property": "Confirm with lender",
+      "purpose": [
+        "Confirm with lender"
+      ],
+      "construction": "Confirm with lender",
+      "kind": "Fixed",
+      "stages": [
+        {
+          "label": "Year 1",
+          "rate": 2.25,
+          "formula": "Fixed"
+        },
+        {
+          "label": "Year 2",
+          "rate": 2.25,
+          "formula": "Fixed"
+        },
+        {
+          "label": "Year 3",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        },
+        {
+          "label": "Year 4 onwards",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        }
+      ],
+      "lockYears": 2,
+      "minLoan": 100000,
+      "maxLoanExclusive": 1000000,
+      "customerTier": "Citibanking",
+      "rateFloor": 0.85,
+      "documentDate": "2026-09-30",
+      "terms": "Limited-tranche two-year fixed schedule, then 1M Compounded SORA plus the published spread. Confirm property type, construction stage, purchase/refinance eligibility and availability with Citi; these are not specified in this table. Tier and loan-band conditions apply. The SORA floor applies to floating stages. Print date is not an effective date. Fees and subsidies are not extracted.",
+      "observedAt": "2026-11-14T12:05:20.907Z",
       "method": "collector"
     }
   ],
@@ -702,16 +1137,25 @@
     },
     {
       "sourceId": "uob-sora",
-      "attemptedAt": "2026-11-14T01:25:19.734Z",
+      "attemptedAt": "2026-11-14T12:05:20.907Z",
       "successAt": "2026-11-14T01:25:19.734Z",
+      "status": "error",
+      "message": "Collection failed; last observation retained. Request timed out",
+      "failureKind": "timeout",
+      "attempts": 2
+    },
+    {
+      "sourceId": "citi",
+      "attemptedAt": "2026-11-14T12:05:20.907Z",
+      "successAt": "2026-11-14T12:05:20.907Z",
       "status": "ok",
       "message": "Collected from official public page",
       "attempts": 1
     },
     {
-      "sourceId": "citi",
-      "attemptedAt": "2026-11-14T01:25:19.734Z",
-      "successAt": "2026-11-14T01:25:19.734Z",
+      "sourceId": "sbi",
+      "attemptedAt": "2026-11-14T12:05:20.907Z",
+      "successAt": "2026-11-14T12:05:20.907Z",
       "status": "ok",
       "message": "Collected from official public page",
       "attempts": 1

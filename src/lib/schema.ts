@@ -15,8 +15,9 @@ export const sourceIds = [
   'sc-sora',
   'uob-sora',
   'citi',
+  'sbi',
 ] as const;
-export const banks = ['DBS', 'HDB', 'Maybank', 'Standard Chartered', 'UOB', 'Citi'] as const;
+export const banks = ['DBS', 'HDB', 'Maybank', 'Standard Chartered', 'UOB', 'Citi', 'SBI'] as const;
 export const SourceId = z.enum(sourceIds);
 export function soraFormula(tenor: '1M' | '3M', spread: number) {
   const exact = spread === Number(spread.toFixed(2)) ? spread.toFixed(2) : String(spread);
@@ -58,7 +59,7 @@ export const OfferSchema = z
     name: z.string().min(1).max(120),
     property: z.enum(['HDB', 'Private', 'HDB / Private', 'Confirm with lender']),
     purpose: z.array(z.enum(['Purchase', 'Refinance', 'Confirm with lender'])).min(1),
-    construction: z.enum(['Completed', 'Under construction', 'Any']),
+    construction: z.enum(['Completed', 'Under construction', 'Any', 'Confirm with lender']),
     kind: z.enum(['Fixed', 'Floating', 'Concessionary']),
     stages: z.array(StageSchema).min(1).max(10),
     lockYears: z.number().int().min(0).max(30).nullable(),
@@ -190,6 +191,11 @@ export const SOURCES = [
     id: 'uob-sora',
     name: 'UOB · Published SORA package',
     url: 'https://www.uob.com.sg/personal/borrow/property-loans/about-sora.page',
+  },
+  {
+    id: 'sbi',
+    name: 'SBI Singapore · Published home loan packages',
+    url: 'https://sg.statebank/en/home-loans',
   },
   {
     id: 'citi',
