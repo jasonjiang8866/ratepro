@@ -99,8 +99,8 @@ Local full suite: 174 passed, 12 browser-only cases skipped. TypeScript and the
 production build passed. The existing bundle-size warning remains.
 The real `verify:sources -- expanded` run extracted SBI (3) and Citi (9); UOB timed
 out locally and retained its prior observation, so that integration run correctly
-exited nonzero. The staged snapshot includes all 21 products and records this
-UOB failure, with unattempted source statuses retained. GitHub runner results are
+exited nonzero. That local candidate recorded the UOB failure; the final staged snapshot instead
+uses the later successful GitHub observations described below. GitHub runner results are
 reported separately; local network results are not relabelled as runner success.
 
 Raw download SHA-256 values (temporary original files, not copied into fixtures):
@@ -108,3 +108,28 @@ Raw download SHA-256 values (temporary original files, not copied into fixtures)
 - Citi PDF: `bac957c44611374259cd4f6032c50dd7af1a93763461343ce88769305b1f05d9`
 - SBI HTML: `b43b64cfcf18dcb25213e65b9d47d11a47f11218ceee4ca351a69e627348173c`
 - Maybank HTML: `686e7b5281eeabf582064697dfedfec69001e7c308c15f9811463c5f0f4ff70b`
+
+
+## Actual GitHub results and final snapshot
+
+At `2fb40d16a5bb84857abdfd20fcd7093e8634cf51`:
+
+- [Frontend checks](https://github.com/jasonjiang8866/ratepro/actions/runs/43593408259) passed.
+- [SG/JP UI regression](https://github.com/jasonjiang8866/ratepro/actions/runs/43593408286) passed.
+- [Official sources run](https://github.com/jasonjiang8866/ratepro/actions/runs/43593408267): stable, expanded and HDB groups passed. UOB recovered on this runner; SBI extracted 3 and Citi 9 products.
+- Maybank x64, ARM and Windows each exhausted the existing two-attempt timeout policy. No runner recovered the four products. The ordinary x64 transport diagnostic also failed. These are failed live checks, not green tests.
+
+The final staged feed combines each successful source's actual Actions output and
+observation timestamp (12:09 UTC). Maybank's four products are refreshed from the
+successful local download at **11:59:37.734 UTC** using the unchanged strict parser,
+with `method: collector`. Its later Actions status remains **error**, and the status
+message explicitly distinguishes local extraction from failed automatic collection.
+This is a one-time evidence-backed data refresh, not a recurring recovery claim.
+All 21 products are present and recently observed; only seven of eight sources
+have a successful automatic check. No numeric values came from search snippets.
+
+ARM/Windows comparisons are now dispatch-only (`probe_maybank_runners`, default
+false) to avoid repeating an exhausted experiment on every PR. The original x64
+health check continues to expose the unresolved Maybank failure. A final UI check
+also exercises SBI filtering, BUC scope and the explicit unknown-construction
+filter so that `Any` is not mistaken for unknown eligibility.

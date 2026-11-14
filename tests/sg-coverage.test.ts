@@ -9,7 +9,7 @@ import { nodePage, collect, writeSnapshot } from '../scripts/collect';
 import { healthMarkdown, validateCollectedGroup } from '../scripts/source-health';
 import { FeedSchema } from '../src/lib/schema';
 import baseline from './fixtures/feed.json';
-import { offerPayment } from '../src/lib/data';
+import { offerPayment, matchesConstruction } from '../src/lib/data';
 const at = '2026-11-14T12:00:00.000Z';
 const sbi = readFileSync(new URL('./fixtures/sbi.html', import.meta.url), 'utf8');
 const citi = readFileSync(new URL('./fixtures/citi-layout.txt', import.meta.url), 'utf8');
@@ -68,6 +68,11 @@ describe('Citi fixed and construction schedules', () => {
     expect(fixed.map((o) => o.stages[2].benchmark?.spread)).toEqual([0.85, 0.85, 1, 1]);
     expect(fixed.every((o) => o.construction === 'Confirm with lender')).toBe(true);
     expect(offerPayment(fixed[0], 1000000, 25)).toBeNull();
+    expect(matchesConstruction(fixed[0], 'Completed')).toBe(false);
+    expect(matchesConstruction({ ...fixed[0], construction: 'Any' }, 'Confirm with lender')).toBe(
+      false,
+    );
+    expect(matchesConstruction({ ...fixed[0], construction: 'Any' }, 'Completed')).toBe(true);
     expect(fixed.map((o) => o.maxLoanExclusive)).toEqual([undefined, 1000000, undefined, 1000000]);
     const buc = offers.find((o) => o.id === 'citi-citigold-sora-buc')!;
     expect(buc).toMatchObject({

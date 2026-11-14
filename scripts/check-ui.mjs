@@ -110,6 +110,18 @@ try {
     await page.locator('.offer-card').count(),
     JSON.parse(readFileSync('public/data/rates.json', 'utf8')).offers.length,
   );
+  // Expanded SG sources and unknown construction eligibility stay distinct.
+  await page.getByLabel('Lender', { exact: true }).selectOption('SBI');
+  assert.equal(await page.locator('.offer-card').count(), 3);
+  await page.getByLabel('Property stage', { exact: true }).selectOption('Under construction');
+  assert.equal(await page.locator('.offer-card').count(), 1);
+  await page.getByLabel('Lender', { exact: true }).selectOption('All lenders');
+  await page.getByLabel('Property stage', { exact: true }).selectOption('Confirm with lender');
+  assert.equal(await page.locator('.offer-card').count(), 4);
+  assert.ok(
+    (await page.locator('.offer-card').allTextContents()).every((text) => text.includes('Citi')),
+  );
+  await page.getByLabel('Property stage', { exact: true }).selectOption('All stages');
   await page.getByRole('heading', { name: 'Make the numbers real.' }).waitFor();
   // SG uses the same scenario card and ring as JP, with its own currency and limits.
   const sgCalculator = page.getByRole('region', { name: 'SGD repayment calculator' });

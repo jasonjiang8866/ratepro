@@ -75,7 +75,7 @@ The scheduled collector requires GitHub Actions to be enabled and repository rul
 | ------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------- |
 | DBS HDB / Green    | CPF-OA and FHR6 stage schedules     | Two public products                                                                               |
 | HDB                | Concessionary quarter               | HDB primary, CPF / AskGov, then dated CPF announcement; retain prior observation if all fail  |
-| Maybank            | 2-year / 3-year fixed, 1M / 3M SORA | Four reviewed completed-property snapshots; automatic retrieval currently times out; BUC excluded |
+| Maybank            | 2-year / 3-year fixed, 1M / 3M SORA | Four completed-property schedules; latest local capture retained, GitHub runner times out; BUC excluded |
 | Standard Chartered | Published 3M SORA schedule          | Formula only; source effective date is displayed separately                                       |
 | UOB                | Published completed-property SORA   | New direct-to-bank customers; fixed-rate enquiries remain quote-only                              |
 | Citi               | Nine variable, fixed and BUC schedules   | Separate Citigold/Citibanking and loan bands; property/purpose eligibility needs confirmation     |

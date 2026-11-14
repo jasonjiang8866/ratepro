@@ -45,6 +45,7 @@ import {
   stageDisplay,
   compareInitialRates,
   matchesProperty,
+  matchesConstruction,
   offerPayment,
 } from '@/lib/data';
 import {
@@ -320,9 +321,7 @@ function MarketApp({
         matchesProperty(o, property) &&
         (kind === 'All rates' || o.kind === kind) &&
         (purpose === 'All purposes' || o.purpose.includes(purpose as 'Purchase' | 'Refinance')) &&
-        (construction === 'All stages' ||
-          o.construction === 'Any' ||
-          o.construction === construction) &&
+        matchesConstruction(o, construction) &&
         (bank === 'All lenders' || o.bank === bank) &&
         (!savedOnly || saved.includes(o.id)) &&
         `${o.bank} ${o.name} ${o.terms}`.toLowerCase().includes(query.toLowerCase()),

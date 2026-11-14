@@ -2,6 +2,10 @@ name: Official source integration check
 on:
   workflow_dispatch:
     inputs:
+      probe_maybank_runners:
+        description: 'Repeat bounded Maybank ARM/Windows runner comparison'
+        type: boolean
+        default: false
       probe_maybank_country:
         description: 'Repeat the rejected public country-page candidate (read-only, one request)'
         type: boolean
@@ -97,6 +101,7 @@ jobs:
 
 
   maybank-runner-comparison:
+    if: github.event_name == 'workflow_dispatch' && inputs.probe_maybank_runners
     name: Maybank runner comparison (${{ matrix.runner }})
     strategy:
       fail-fast: false
