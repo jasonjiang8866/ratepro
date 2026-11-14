@@ -72,30 +72,19 @@ This is an actual automatic HTTP capture, so observations use `method: collector
 It is not a human review. The existing `review:file` workflow remains the route
 for a separately obtained official file and real human attestation.
 
-## This PR's data update
+## Separate data update and remaining blocker
 
-The real `--apply` command succeeded at **2026-11-14T15:15:57.318Z**
-(23:15 Singapore), with four complete schedules and original body SHA-256
-`a29b8174ebb56951cff3239c3f6c8f1fd18b86327af587698c1d05fe9954d816`.
-The preceding read at 15:13:17Z also parsed all four schedules. Page bytes differed,
-but the extracted terms/rates did not; hashes are specific to each actual response.
+The standalone job has now completed a real official-page capture and submitted
+[data PR #25](https://github.com/jasonjiang8866/ratepro/pull/25), with original HTML
+and full before/after evidence. PR #24 now contains tooling and transport findings;
+it no longer includes a competing snapshot update. The original local capture
+at 2026-11-14T15:15:57.318Z demonstrated the same four complete schedules.
 
-[Capture evidence and before/after records](maybank-capture-evidence-20261114.json)
-bind the original main snapshot and resulting candidate. Only the four Maybank
-observation times and feed generation time changed semantically. Other 17 products,
-all collection health records, missing effective/publication dates and SORA
-formulas remain unchanged. JSON whitespace follows the collector's serializer.
-The raw page stays in the local evidence bundle, not the published feed.
-
-**This does not restore GitHub's daily Maybank collection.** Scheduled status stays
-failed and future failed runs retain the original successful observation dates.
-Fresh rates and a failing scheduled collector are separate facts.
-
-For unattended recovery, this command still needs a persistent permitted execution
-environment that can reach the public page, or a bank-supported publication/export
-with the same complete schedules. No such additional host/feed is configured by
-this PR. FAQs without numerical schedules, reference/board rates, snippets and
-third-party broker quotes do not qualify as replacements.
+**GitHub's daily Maybank collection is still unavailable.** Fresh external captures
+preserve scheduled failure status; subsequent failed runs retain their observation
+dates. The [standalone job](../collectors/maybank/README.md) prepares or submits a
+draft data PR and does not merge, deploy or install a scheduler. Its persistent
+execution environment still needs real access and credential verification.
 
 ## Validation
 

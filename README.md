@@ -53,6 +53,11 @@ checkout after that live validation. It preserves every other product and the
 scheduled collector's failure status; it does not commit, push or deploy.
 See [the verified capture workflow and remaining GitHub blocker](docs/MAYBANK_CAPTURE_20261114.md).
 
+`npm run job:maybank` prepares a fresh capture against the latest GitHub main;
+`--submit` creates a draft data PR with original HTML and full evidence. A portable
+container is available for a trusted execution environment. It preserves scheduled
+failure status and never merges or deploys. See [standalone Maybank job](collectors/maybank/README.md).
+
 ## What it does
 
 - Source-backed rate schedules, minimum loan and commitment information, with official links and per-observation timestamps.
