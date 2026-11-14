@@ -46,6 +46,13 @@ staged for a separate data PR using `npm run review:file`. See
 [the review workflow](docs/REVIEW.md) and [live retrieval evidence](docs/RETRIEVAL.md).
 These tools do not publish data; the existing production snapshot remains unchanged.
 
+For Maybank, `npm run capture:maybank` now performs one fresh official-page read
+and saves a complete four-product candidate with original bytes and before/after
+evidence. `npm run capture:maybank -- --apply` can atomically update the local
+checkout after that live validation. It preserves every other product and the
+scheduled collector's failure status; it does not commit, push or deploy.
+See [the verified capture workflow and remaining GitHub blocker](docs/MAYBANK_CAPTURE_20261114.md).
+
 ## What it does
 
 - Source-backed rate schedules, minimum loan and commitment information, with official links and per-observation timestamps.

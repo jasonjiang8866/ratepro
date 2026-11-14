@@ -22,13 +22,13 @@ export function transportArguments(mode: string) {
     ];
   throw Error('Unknown Maybank transport mode');
 }
-export async function probeTransport(mode: string) {
+export async function requestMaybank(mode: string) {
   const args = transportArguments(mode);
   const path = await mkdtemp(join(tmpdir(), 'ratepro-maybank-'));
-  const before = await readFile('public/data/rates.json');
   const url = sourceFor('maybank').url;
   const startedAt = new Date().toISOString();
   let report;
+  let validatedBody: Buffer | undefined;
   try {
     const response = await new Promise<{ code: string | number; output: string }>((done) => {
       execFile(
@@ -70,11 +70,11 @@ export async function probeTransport(mode: string) {
         offers = validateMaybankCandidate(body, timing.http_code, finishedAt);
         bytes = body.length;
         sha256 = createHash('sha256').update(body).digest('hex');
+        validatedBody = body;
       } catch (error) {
         parseError = error instanceof Error ? error.message : 'Parse failed';
       }
     }
-    const snapshotUnchanged = before.equals(await readFile('public/data/rates.json'));
     report = {
       url,
       mode,
@@ -87,23 +87,32 @@ export async function probeTransport(mode: string) {
       timing,
       bytes,
       sha256,
-      outcome: offers?.length === 4 && snapshotUnchanged ? 'validated' : 'failed',
+      outcome: offers?.length === 4 ? ('validated' as const) : ('failed' as const),
       offers,
       parseError,
-      snapshotUnchanged,
       policy:
         'One public GET; identified mode declares RatePro truthfully. No credentials, browser impersonation, proxy override, redirect following or certificate bypass. Full four-product parsing required.',
     };
   } finally {
     await rm(path, { recursive: true, force: true });
   }
+  return { report, body: validatedBody };
+}
+
+export async function probeTransport(mode: string) {
+  const before = await readFile('public/data/rates.json');
+  const result = await requestMaybank(mode);
+  const report = {
+    ...result.report,
+    snapshotUnchanged: before.equals(await readFile('public/data/rates.json')),
+  };
   await mkdir('research-output/maybank-transport', { recursive: true });
   await writeFile(
     'research-output/maybank-transport/report.json',
     JSON.stringify(report, null, 2) + '\n',
   );
   console.log(`MAYBANK_TRANSPORT_JSON=${JSON.stringify(report)}`);
-  if (report.outcome !== 'validated') process.exitCode = 1;
+  if (report.outcome !== 'validated' || !report.snapshotUnchanged) process.exitCode = 1;
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url))
   await probeTransport(process.argv[2] ?? 'default');

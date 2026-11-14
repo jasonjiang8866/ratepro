@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-14T12:09:49.178Z",
+  "generatedAt": "2026-11-14T15:15:57.348Z",
   "offers": [
     {
       "id": "hdb-concessionary",
@@ -8,7 +8,9 @@
       "bank": "HDB",
       "name": "HDB concessionary loan",
       "property": "HDB",
-      "purpose": ["Purchase"],
+      "purpose": [
+        "Purchase"
+      ],
       "construction": "Any",
       "kind": "Concessionary",
       "stages": [
@@ -34,7 +36,10 @@
       "bank": "DBS",
       "name": "3-Year CPF-OA HDB Loan",
       "property": "HDB",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Completed",
       "kind": "Floating",
       "stages": [
@@ -66,7 +71,9 @@
       "bank": "DBS",
       "name": "Green Home Loan · FHR6",
       "property": "Private",
-      "purpose": ["Purchase"],
+      "purpose": [
+        "Purchase"
+      ],
       "construction": "Under construction",
       "kind": "Floating",
       "stages": [
@@ -93,7 +100,10 @@
       "bank": "Standard Chartered",
       "name": "3M SORA · published package",
       "property": "HDB / Private",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Any",
       "kind": "Floating",
       "stages": [
@@ -151,7 +161,10 @@
       "bank": "Maybank",
       "name": "2-year fixed · completed property",
       "property": "HDB / Private",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Completed",
       "kind": "Fixed",
       "stages": [
@@ -179,7 +192,7 @@
       "lockYears": 2,
       "minLoan": 100000,
       "terms": "Published indicative package for completed Singapore residential property; confirm property eligibility with Maybank. Minimum tenure 5 years. SORA stages show the bank spread, not an all-in rate; the applicable fixing depends on drawdown or reset date. Fees, subsidies and approval require confirmation.",
-      "observedAt": "2026-11-14T11:59:37.734Z",
+      "observedAt": "2026-11-14T15:15:57.318Z",
       "method": "collector"
     },
     {
@@ -188,7 +201,10 @@
       "bank": "Maybank",
       "name": "3-year fixed · completed property",
       "property": "HDB / Private",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Completed",
       "kind": "Fixed",
       "stages": [
@@ -221,7 +237,7 @@
       "lockYears": 3,
       "minLoan": 100000,
       "terms": "Published indicative package for completed Singapore residential property; confirm property eligibility with Maybank. Minimum tenure 5 years. SORA stages show the bank spread, not an all-in rate; the applicable fixing depends on drawdown or reset date. Fees, subsidies and approval require confirmation.",
-      "observedAt": "2026-11-14T11:59:37.734Z",
+      "observedAt": "2026-11-14T15:15:57.318Z",
       "method": "collector"
     },
     {
@@ -230,7 +246,10 @@
       "bank": "Maybank",
       "name": "1M SORA · completed property",
       "property": "HDB / Private",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Completed",
       "kind": "Floating",
       "stages": [
@@ -268,7 +287,7 @@
       "lockYears": 2,
       "minLoan": 100000,
       "terms": "Published indicative package for completed Singapore residential property; confirm property eligibility with Maybank. Minimum tenure 5 years. SORA stages show the bank spread, not an all-in rate; the applicable fixing depends on drawdown or reset date. Fees, subsidies and approval require confirmation.",
-      "observedAt": "2026-11-14T11:59:37.734Z",
+      "observedAt": "2026-11-14T15:15:57.318Z",
       "method": "collector"
     },
     {
@@ -277,7 +296,10 @@
       "bank": "Maybank",
       "name": "3M SORA · completed property",
       "property": "HDB / Private",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Completed",
       "kind": "Floating",
       "stages": [
@@ -305,7 +327,7 @@
       "lockYears": 2,
       "minLoan": 100000,
       "terms": "Published indicative package for completed Singapore residential property; confirm property eligibility with Maybank. Minimum tenure 5 years. SORA stages show the bank spread, not an all-in rate; the applicable fixing depends on drawdown or reset date. Fees, subsidies and approval require confirmation.",
-      "observedAt": "2026-11-14T11:59:37.734Z",
+      "observedAt": "2026-11-14T15:15:57.318Z",
       "method": "collector"
     },
     {
@@ -314,7 +336,10 @@
       "bank": "UOB",
       "name": "3M SORA · new direct-to-bank customers",
       "property": "HDB / Private",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Completed",
       "kind": "Floating",
       "stages": [
@@ -371,7 +396,9 @@
       "bank": "Citi",
       "name": "Citigold · 1M SORA · upper loan band",
       "property": "Confirm with lender",
-      "purpose": ["Confirm with lender"],
+      "purpose": [
+        "Confirm with lender"
+      ],
       "construction": "Completed",
       "kind": "Floating",
       "stages": [
@@ -432,7 +459,9 @@
       "bank": "Citi",
       "name": "Citigold · 1M SORA · lower loan band",
       "property": "Confirm with lender",
-      "purpose": ["Confirm with lender"],
+      "purpose": [
+        "Confirm with lender"
+      ],
       "construction": "Completed",
       "kind": "Floating",
       "stages": [
@@ -494,7 +523,9 @@
       "bank": "Citi",
       "name": "Citibanking · 1M SORA · upper loan band",
       "property": "Confirm with lender",
-      "purpose": ["Confirm with lender"],
+      "purpose": [
+        "Confirm with lender"
+      ],
       "construction": "Completed",
       "kind": "Floating",
       "stages": [
@@ -554,7 +585,9 @@
       "bank": "Citi",
       "name": "Citibanking · 1M SORA · lower loan band",
       "property": "Confirm with lender",
-      "purpose": ["Confirm with lender"],
+      "purpose": [
+        "Confirm with lender"
+      ],
       "construction": "Completed",
       "kind": "Floating",
       "stages": [
@@ -615,7 +648,10 @@
       "bank": "SBI",
       "name": "3M SORA · 2-year lock-in",
       "property": "HDB / Private",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Completed",
       "kind": "Floating",
       "stages": [
@@ -662,7 +698,10 @@
       "bank": "SBI",
       "name": "3M SORA · 3-year lock-in",
       "property": "HDB / Private",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Any",
       "kind": "Floating",
       "stages": [
@@ -719,7 +758,10 @@
       "bank": "SBI",
       "name": "2-year fixed · completed property",
       "property": "HDB / Private",
-      "purpose": ["Purchase", "Refinance"],
+      "purpose": [
+        "Purchase",
+        "Refinance"
+      ],
       "construction": "Completed",
       "kind": "Fixed",
       "stages": [
@@ -756,7 +798,9 @@
       "bank": "Citi",
       "name": "Citigold · 2-year fixed · upper loan band",
       "property": "Confirm with lender",
-      "purpose": ["Confirm with lender"],
+      "purpose": [
+        "Confirm with lender"
+      ],
       "construction": "Confirm with lender",
       "kind": "Fixed",
       "stages": [
@@ -807,7 +851,9 @@
       "bank": "Citi",
       "name": "Citigold · 2-year fixed · lower loan band",
       "property": "Confirm with lender",
-      "purpose": ["Confirm with lender"],
+      "purpose": [
+        "Confirm with lender"
+      ],
       "construction": "Confirm with lender",
       "kind": "Fixed",
       "stages": [
@@ -859,7 +905,9 @@
       "bank": "Citi",
       "name": "Citigold · 1M SORA · building under construction",
       "property": "Confirm with lender",
-      "purpose": ["Confirm with lender"],
+      "purpose": [
+        "Confirm with lender"
+      ],
       "construction": "Under construction",
       "kind": "Floating",
       "stages": [
@@ -930,7 +978,9 @@
       "bank": "Citi",
       "name": "Citibanking · 2-year fixed · upper loan band",
       "property": "Confirm with lender",
-      "purpose": ["Confirm with lender"],
+      "purpose": [
+        "Confirm with lender"
+      ],
       "construction": "Confirm with lender",
       "kind": "Fixed",
       "stages": [
@@ -980,7 +1030,9 @@
       "bank": "Citi",
       "name": "Citibanking · 2-year fixed · lower loan band",
       "property": "Confirm with lender",
-      "purpose": ["Confirm with lender"],
+      "purpose": [
+        "Confirm with lender"
+      ],
       "construction": "Confirm with lender",
       "kind": "Fixed",
       "stages": [

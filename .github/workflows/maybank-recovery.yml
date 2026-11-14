@@ -1,22 +1,23 @@
 name: Maybank recovery validation
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - '.github/workflows/maybank-recovery.yml'
-      - 'scripts/maybank-transport.ts'
+    inputs:
+      runner:
+        description: 'Standard runner for one read-only request'
+        type: choice
+        options: [ubuntu-24.04, macos-15]
+        default: ubuntu-24.04
+      mode:
+        description: 'Repeat an explicitly selected transport comparison'
+        type: choice
+        options: [default, tls12, identified]
+        default: default
 permissions:
   contents: read
 jobs:
   transport:
-    name: Maybank ${{ matrix.runner }} / ${{ matrix.mode }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - runner: ubuntu-24.04
-            mode: identified
-    runs-on: ${{ matrix.runner }}
+    name: Maybank ${{ inputs.runner }} / ${{ inputs.mode }}
+    runs-on: ${{ inputs.runner }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -25,11 +26,13 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: node --import tsx scripts/maybank-transport.ts ${{ matrix.mode }}
+      - run: node --import tsx scripts/maybank-transport.ts "$MAYBANK_MODE"
+        env:
+          MAYBANK_MODE: ${{ inputs.mode }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: maybank-${{ matrix.runner }}-${{ matrix.mode }}
+          name: maybank-${{ inputs.runner }}-${{ inputs.mode }}
           path: research-output/maybank-transport/report.json
           if-no-files-found: error
           retention-days: 7
