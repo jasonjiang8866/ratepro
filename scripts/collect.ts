@@ -18,6 +18,7 @@ import { parseCiti, pdfText } from './citi';
 import { curlFetch } from './curl-fetch';
 import { parseHdbAskGov } from './hdb-askgov';
 import { cpfReleaseCurrent, parseCpfRelease } from './cpf-release';
+import { reportHealth, validateCollectedGroup } from './source-health';
 
 function failure(error: unknown, attempts: number, phase: 'parse' | 'document') {
   return {
@@ -119,6 +120,7 @@ export async function collect(
           parsed = parseCpfRelease(new TextDecoder().decode(bytes), at);
         }
       }
+      validateCollectedGroup(source.id, parsed, previous);
       for (const offer of parsed) offers.set(offer.id, offer);
       statuses.push({
         sourceId: source.id,
@@ -158,12 +160,19 @@ export async function collect(
     sources: statuses,
   });
 }
+export async function writeSnapshot(path: string, feed: Feed) {
+  if (!feed.sources.length || feed.sources.every((source) => source.status === 'error'))
+    throw Error('All sources failed; published snapshot left unchanged');
+  await writeFile(path + '.tmp', JSON.stringify(FeedSchema.parse(feed), null, 2) + '\n');
+  await rename(path + '.tmp', path);
+}
+
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const path = 'public/data/rates.json';
   const previous = FeedSchema.parse(JSON.parse(await readFile(path, 'utf8')));
   const feed = await collect(previous);
-  await writeFile(path + '.tmp', JSON.stringify(feed, null, 2) + '\n');
-  await rename(path + '.tmp', path);
+  await writeFile('source-check.json', JSON.stringify(feed, null, 2) + '\n');
+  await reportHealth(feed);
   for (const source of feed.sources) {
     console.log(`${source.sourceId}: ${source.status} — ${source.message}`);
     if (source.primaryFailure)
@@ -173,4 +182,5 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   }
   // Partial success is useful; all-source failure leaves the published file untouched in CI.
   if (feed.sources.every((s) => s.status === 'error')) process.exitCode = 1;
+  else await writeSnapshot(path, feed);
 }

@@ -299,6 +299,7 @@ export const parsers = {
   maybank: parseMaybank,
   'sc-sora': parseScSora,
   'uob-sora': parseUobSora,
+  sbi: parseSbi,
 };
 
 export function parseUobSora(page: Page, at: string, method: Offer['method']): Offer[] {
@@ -341,6 +342,93 @@ export function parseUobSora(page: Page, at: string, method: Offer['method']): O
         'Limited promotional tranche for new direct-to-bank customers, completed residential property, purchase or refinancing from another bank/HDB. Fixed-rate packages require a separate quote. Confirm availability and eligibility in the Letter of Offer; prepayment, sale and conversion concessions have conditions. SORA fixing is not collected.',
       observedAt: at,
       method,
+    }),
+  ];
+}
+
+export function parseSbi(page: Page, at: string, method: Offer['method']): Offer[] {
+  const text = page.text.replace(/\s+/g, ' ').trim();
+  for (const required of [
+    /Applicable for both private and HDB properties/,
+    /Promotional packages available for new purchases and refinancing/,
+    /Building under Construction are only eligible for the 3years lock-in floating package\./,
+    /1\.1\) Floating Rate : 2years lock-in floating package :/,
+    /1\.2\) Floating Rate : 3years lock-in floating package :/,
+    /2\) FixedRate Package : 2 year lock-in fixed rate package :/,
+  ])
+    if (!required.test(text)) throw Error('SBI package scope or headings changed');
+  const minimums = [...text.matchAll(/Minimum loan amount of S\$([\d,]+)/g)];
+  if (minimums.length !== 1) throw Error('SBI minimum loan missing or ambiguous');
+  const minLoan = Number(minimums[0][1].replaceAll(',', ''));
+  const tableFor = (labels: string[], header: string) => {
+    const matches = page.tables.filter(
+      (table) =>
+        table[0]?.[1] === header &&
+        JSON.stringify(table.map((r) => r[0])) === JSON.stringify(['Year', ...labels]),
+    );
+    if (matches.length !== 1 || matches[0].some((r) => r.length !== 2))
+      throw Error('SBI table missing, duplicated or changed');
+    return matches[0];
+  };
+  const floatingStage = (label: string, value: string) => {
+    const match = value.match(/^3M (?:Comp )?SORA \+ (\d+(?:\.\d+)?)%$/);
+    if (!match) throw Error('SBI SORA tenor or formula changed');
+    const spread = Number(match[1]);
+    return {
+      label,
+      rate: null,
+      formula: soraFormula('3M', spread),
+      benchmark: { name: 'SORA' as const, tenor: '3M' as const, spread },
+    };
+  };
+  const base = {
+    sourceId: 'sbi',
+    bank: 'SBI',
+    property: 'HDB / Private',
+    purpose: ['Purchase', 'Refinance'],
+    observedAt: at,
+    method,
+    terms:
+      'Published indicative Singapore home-loan schedule; confirm current availability and borrower eligibility with SBI. Building-under-construction properties qualify only for the three-year lock-in floating package. SORA spreads are not all-in rates; no benchmark fixing is collected. Fees, subsidies, income requirements and final approval must be checked with the bank. No publication/effective date is stated.',
+  };
+  const floating = [2, 3].map((years) => {
+    const labels = [
+      ...Array.from({ length: years }, (_, i) => String(i + 1)),
+      `${years + 1} onwards`,
+    ];
+    const table = tableFor(labels, '3M Compounded SORA Package (% p.a.)');
+    return OfferSchema.parse({
+      ...base,
+      id: `sbi-sora-${years}y`,
+      name: `3M SORA · ${years}-year lock-in`,
+      construction: years === 3 ? 'Any' : 'Completed',
+      kind: 'Floating',
+      lockYears: years,
+      minLoan,
+      stages: table.slice(1).map(([label, value]) => floatingStage(`Year ${label}`, value)),
+    });
+  });
+  const fixed = tableFor(['Loan Amount', '1', '2', '3 Onwards'], 'Interest (% p.a.)');
+  const fixedMinimum = fixed[1][1].match(/^Minimum SGD ([\d,]+)$/);
+  if (!fixedMinimum) throw Error('SBI fixed minimum loan changed');
+  return [
+    ...floating,
+    OfferSchema.parse({
+      ...base,
+      id: 'sbi-fixed-2y',
+      name: '2-year fixed · completed property',
+      construction: 'Completed',
+      kind: 'Fixed',
+      lockYears: 2,
+      minLoan: Number(fixedMinimum[1].replaceAll(',', '')),
+      stages: [
+        ...fixed.slice(2, 4).map(([label, value]) => {
+          const match = value.match(/^(\d+(?:\.\d+)?)% Fixed$/);
+          if (!match) throw Error('SBI fixed rate missing');
+          return { label: `Year ${label}`, rate: Number(match[1]), formula: 'Fixed' };
+        }),
+        floatingStage('Year 3 onwards', fixed[4][1]),
+      ],
     }),
   ];
 }

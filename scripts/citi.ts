@@ -60,13 +60,17 @@ export function parseCiti(text: string, at: string, method: Offer['method']): Of
     ];
     const aum = page.match(/maintain a Citigold banking relationship with AUM≥S\$([\d,]+)/);
     if (floors.length !== 1 || !aum) throw Error('Citi floor or relationship requirement missing');
-    const blocks = page.split('Applicable to Minimum Loan Size of ').slice(1);
+    const blocks = page
+      .split(/Terms and Conditions apply\.|The minimum Effective Interest Rate/)[0]
+      .split('Applicable to Minimum Loan Size of ')
+      .slice(1)
+      .map((block) => block.trim());
     if (
       blocks.length !== (index === 0 ? 5 : 4) ||
       (page.match(/Variable Interest Rate Package/g) ?? []).length !== 2
     )
       throw Error('Citi product layout changed');
-    // Completed-variable schedules only. Fixed and BUC packages are intentionally excluded.
+    // Validate the complete publication before returning any observations.
     for (let band = 0; band < 2; band++) {
       const block = blocks[band];
       const match = block.match(
@@ -118,6 +122,87 @@ export function parseCiti(text: string, at: string, method: Offer['method']): Of
     const [upper, lower] = all.slice(-2);
     if (lower.maxLoanExclusive !== upper.minLoan)
       throw Error('Citi loan bands overlap or have a gap');
+    const common = {
+      sourceId: 'citi',
+      bank: 'Citi',
+      property: 'Confirm with lender',
+      purpose: ['Confirm with lender'],
+      customerTier: tier,
+      minRelationshipBalance: tier === 'Citigold' ? Number(aum[1].replaceAll(',', '')) : undefined,
+      rateFloor: Number(floors[0][1]),
+      documentDate,
+      observedAt: at,
+      method,
+    };
+    const fixed: Offer[] = [];
+    for (let band = 0; band < 2; band++) {
+      const match = blocks[band + 2].match(
+        /^S\$([\d,]+)(?: \(less than S\$([\d,]+)\))? 2-Year Fixed Interest Rate Promotional Period Post-Promotional Period Package \((\d+)-year Lock-in\) Year 1 Year 2 Year 3 Year 4 and onwards Compounded SORA \(where applicable\) 1M Compounded SORA 1M Compounded SORA (\d+(?:\.\d+)?)% p\.a\. Fixed (\d+(?:\.\d+)?)% p\.a\. Fixed Interest Rate Spread \+ (\d+(?:\.\d+)?)% p\.a\. \+ (\d+(?:\.\d+)?)% p\.a\.$/,
+      );
+      if (!match) throw Error('Citi fixed schedule or column alignment changed');
+      const minLoan = Number(match[1].replaceAll(',', ''));
+      const maxLoanExclusive = match[2] ? Number(match[2].replaceAll(',', '')) : undefined;
+      if (
+        (band === 0 && maxLoanExclusive !== undefined) ||
+        (band === 1 && (!maxLoanExclusive || maxLoanExclusive <= minLoan))
+      )
+        throw Error('Citi fixed loan bands changed');
+      fixed.push(
+        OfferSchema.parse({
+          ...common,
+          id: `citi-${tier.toLowerCase()}-fixed-2y-${band === 0 ? 'large' : 'small'}`,
+          name: `${tier} · 2-year fixed · ${band === 0 ? 'upper' : 'lower'} loan band`,
+          construction: 'Confirm with lender',
+          kind: 'Fixed',
+          minLoan,
+          maxLoanExclusive,
+          lockYears: Number(match[3]),
+          stages: [
+            { label: 'Year 1', rate: Number(match[4]), formula: 'Fixed' },
+            { label: 'Year 2', rate: Number(match[5]), formula: 'Fixed' },
+            ...[match[6], match[7]].map((spread, i) => ({
+              label: i ? 'Year 4 onwards' : 'Year 3',
+              rate: null,
+              formula: soraFormula('1M', Number(spread)),
+              benchmark: { name: 'SORA', tenor: '1M', spread: Number(spread) },
+            })),
+          ],
+          terms:
+            'Limited-tranche two-year fixed schedule, then 1M Compounded SORA plus the published spread. Confirm property type, construction stage, purchase/refinance eligibility and availability with Citi; these are not specified in this table. Tier and loan-band conditions apply. The SORA floor applies to floating stages. Print date is not an effective date. Fees and subsidies are not extracted.',
+        }),
+      );
+    }
+    if (fixed[1].maxLoanExclusive !== fixed[0].minLoan)
+      throw Error('Citi fixed loan bands overlap or have a gap');
+    all.push(...fixed);
+    if (tier === 'Citigold') {
+      const match = blocks[4].match(
+        /^S\$([\d,]+) Floating Interest Rate Package Promotional Period Post-Promotional Period Building-under-Construction \(No Lock-in\) Year 1 Year 2 Year 3 Year 4 Year 5 and onwards Compounded SORA \(where applicable\) 1M Compounded SORA 1M Compounded SORA Interest Rate Spread (.+)$/,
+      );
+      if (!match) throw Error('Citi BUC schedule changed');
+      const rates = [...match[2].matchAll(/\+ (\d+(?:\.\d+)?)% p\.a\./g)];
+      if (rates.length !== 5 || match[2].replace(/\+ \d+(?:\.\d+)?% p\.a\./g, '').trim())
+        throw Error('Citi BUC spread columns changed');
+      all.push(
+        OfferSchema.parse({
+          ...common,
+          id: 'citi-citigold-sora-buc',
+          name: 'Citigold · 1M SORA · building under construction',
+          construction: 'Under construction',
+          kind: 'Floating',
+          lockYears: 0,
+          minLoan: Number(match[1].replaceAll(',', '')),
+          stages: rates.map((r, i) => ({
+            label: i === 4 ? 'Year 5 onwards' : `Year ${i + 1}`,
+            rate: null,
+            formula: soraFormula('1M', Number(r[1])),
+            benchmark: { name: 'SORA', tenor: '1M', spread: Number(r[1]) },
+          })),
+          terms:
+            'Published building-under-construction package with no lock-in. Confirm HDB/private eligibility, purpose and availability with Citi. Citigold relationship and minimum loan apply. Progressive drawdowns are not modelled. SORA floor applies; print date is not an effective date. Fees and subsidies are not extracted.',
+        }),
+      );
+    }
   }
   return all;
 }

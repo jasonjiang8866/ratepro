@@ -30,7 +30,11 @@ describe('expanded official schedules', () => {
       expect(() => parseUobSora(nodePage(html), at, 'collector')).toThrow();
   });
   it('keeps Citi tiers, bands, floor and print date separate from observations', () => {
-    const o = parseCiti(citi, at, 'collector');
+    const all = parseCiti(citi, at, 'collector');
+    expect(all).toHaveLength(9);
+    const o = all.filter(
+      (offer) => offer.kind === 'Floating' && offer.construction === 'Completed',
+    );
     expect(o).toHaveLength(4);
     expect(o.map((v) => v.stages.map((s) => s.benchmark?.spread))).toEqual([
       [0.45, 0.45, 0.6, 0.85],

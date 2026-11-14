@@ -45,6 +45,7 @@ import {
   stageDisplay,
   compareInitialRates,
   matchesProperty,
+  matchesConstruction,
   offerPayment,
 } from '@/lib/data';
 import {
@@ -118,7 +119,7 @@ function Select({
   return (
     <label className="filter-label">
       {label}
-      <select value={value} onChange={(e) => onChange(e.target.value)}>
+      <select aria-label={label} value={value} onChange={(e) => onChange(e.target.value)}>
         {options.map((o) => (
           <option key={o}>{o}</option>
         ))}
@@ -320,9 +321,7 @@ function MarketApp({
         matchesProperty(o, property) &&
         (kind === 'All rates' || o.kind === kind) &&
         (purpose === 'All purposes' || o.purpose.includes(purpose as 'Purchase' | 'Refinance')) &&
-        (construction === 'All stages' ||
-          o.construction === 'Any' ||
-          o.construction === construction) &&
+        matchesConstruction(o, construction) &&
         (bank === 'All lenders' || o.bank === bank) &&
         (!savedOnly || saved.includes(o.id)) &&
         `${o.bank} ${o.name} ${o.terms}`.toLowerCase().includes(query.toLowerCase()),
@@ -652,7 +651,12 @@ function MarketApp({
                     label="Property stage"
                     value={construction}
                     onChange={setConstruction}
-                    options={['All stages', 'Completed', 'Under construction']}
+                    options={[
+                      'All stages',
+                      'Completed',
+                      'Under construction',
+                      'Confirm with lender',
+                    ]}
                   />
                 </div>
               </div>
@@ -1271,9 +1275,11 @@ function MarketApp({
                                                       ? 'Not calculated: benchmark fixing required'
                                                       : o.construction === 'Under construction'
                                                         ? 'Progressive drawdown; check source'
-                                                        : validCalc && p !== null
-                                                          ? money(p)
-                                                          : 'Check calculator inputs'
+                                                        : o.construction === 'Confirm with lender'
+                                                          ? 'Confirm construction stage with lender'
+                                                          : validCalc && p !== null
+                                                            ? money(p)
+                                                            : 'Check calculator inputs'
                                                 : `${date(o.observedAt)}${isStale(o) ? ' · stale' : ''}`}
                             </td>
                           );
