@@ -75,6 +75,8 @@ export async function prepareMaybankJob(api: Api, capture = requestMaybank) {
   const base = Buffer.from(file.content, 'base64');
   const result = await capture('default');
   const prepared = buildMaybankCandidate(base, result);
+  if (!Buffer.from(result.body!.toString('utf8'), 'utf8').equals(result.body!))
+    throw Error('Official page is not lossless UTF-8; original evidence cannot be submitted');
   if ((await mainHead(api)) !== baseSha) throw Error('Main changed during capture; no submission');
   const stamp = result.report.finishedAt.replace(/[-:.]/g, '');
   const branch = `${PREFIX}${stamp}-${prepared.evidence.bodySha256.slice(0, 8)}`;

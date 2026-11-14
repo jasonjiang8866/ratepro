@@ -278,3 +278,13 @@ it('blocks overlapping invocations before a second capture or API request', asyn
     await rm(out, { recursive: true, force: true });
   }
 });
+it('rejects a body that would change bytes when archived as a UTF-8 Git file', async () => {
+  const { api, read } = harness();
+  const input = capture();
+  input.body = Buffer.concat([Buffer.from([255]), body]);
+  input.report.sha256 = digest(input.body);
+  input.report.bytes = input.body.length;
+  read.mockResolvedValueOnce(input);
+  await expect(prepareMaybankJob(api, read)).rejects.toThrow('lossless UTF-8');
+  expect(api.mock.calls.every(([method]) => method === 'GET')).toBe(true);
+});
