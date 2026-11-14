@@ -143,14 +143,18 @@ export async function submitMaybankJob(api: Api, plan: PreparedJob, beforeWrites
   return { number: Number(pr.number), branch: plan.branch, commitSha };
 }
 
-export async function runMaybankJob(submit: boolean) {
+export async function runMaybankJob(
+  submit: boolean,
+  options: { api?: Api; capture?: typeof requestMaybank; out?: string } = {},
+) {
+  const outRoot = options.out ?? OUT;
   const token = process.env.MAYBANK_GITHUB_TOKEN_FILE
     ? (await readFile(process.env.MAYBANK_GITHUB_TOKEN_FILE, 'utf8')).trim()
     : process.env.GH_TOKEN;
   if (submit && !token) throw Error('Set GH_TOKEN or MAYBANK_GITHUB_TOKEN_FILE for --submit');
-  await mkdir(OUT, { recursive: true });
+  await mkdir(outRoot, { recursive: true });
   // An exclusive file protects overlapping schedulers. Interrupted publication stays blocked.
-  const lock = join(OUT, 'publishing.json');
+  const lock = join(outRoot, 'publishing.json');
   if (submit) {
     try {
       await writeFile(
@@ -166,15 +170,15 @@ export async function runMaybankJob(submit: boolean) {
   }
   let writesStarted = false;
   try {
-    const api = githubApi(token);
-    const plan = await prepareMaybankJob(api);
+    const api = options.api ?? githubApi(token);
+    const plan = await prepareMaybankJob(api, options.capture);
     if (plan.kind === 'pending') {
       console.log(
         `Pending Maybank data PR: https://github.com/${REPO}/pull/${plan.number}; no new capture or writes`,
       );
       return;
     }
-    const out = await mkdtemp(join(OUT, 'capture-'));
+    const out = await mkdtemp(join(outRoot, 'capture-'));
     for (const file of plan.files) {
       const name =
         file.path === 'public/data/rates.json' ? 'rates.json' : file.path.split('/').at(-1)!;

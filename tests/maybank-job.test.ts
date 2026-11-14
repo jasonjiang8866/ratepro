@@ -181,3 +181,100 @@ it('keeps credentials on the fixed API origin, rejects redirects and sanitizes e
   await expect(githubApi(undefined, fetcher)('POST', '/pulls', {})).rejects.toThrow('token');
   expect(fetcher).toHaveBeenCalledTimes(1);
 });
+
+it('journals successful submission and retains ambiguous state to block a blind retry', async () => {
+  const { mkdtemp, readFile, readdir, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { runMaybankJob } = await import('../scripts/maybank-job');
+  const out = await mkdtemp(join(tmpdir(), 'maybank-job-'));
+  vi.stubEnv('GH_TOKEN', 'isolated-test-token');
+  const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+  try {
+    const { api, read } = harness();
+    await runMaybankJob(true, { api, capture: read, out });
+    await expect(readFile(join(out, 'publishing.json'))).rejects.toThrow();
+    const bundles = await readdir(out);
+    expect(
+      JSON.parse(await readFile(join(out, bundles[0], 'submission.json'), 'utf8')),
+    ).toMatchObject({ number: 25 });
+    const original = api.getMockImplementation()!;
+    api.mockImplementation(async (method, path, data) => {
+      if (path === '/pulls') throw Error('Ambiguous publication');
+      return original(method, path, data);
+    });
+    await expect(runMaybankJob(true, { api, capture: read, out })).rejects.toThrow('Ambiguous');
+    expect(JSON.parse(await readFile(join(out, 'publishing.json'), 'utf8'))).toMatchObject({
+      phase: 'publishing',
+      baseSha: HEAD,
+    });
+    const calls = api.mock.calls.length;
+    await expect(runMaybankJob(true, { api, capture: read, out })).rejects.toThrow(
+      'active or interrupted',
+    );
+    expect(api).toHaveBeenCalledTimes(calls);
+  } finally {
+    log.mockRestore();
+    vi.unstubAllEnvs();
+    await rm(out, { recursive: true, force: true });
+  }
+});
+it('releases submission state when failure happens before any GitHub write', async () => {
+  const { mkdtemp, readFile, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { runMaybankJob } = await import('../scripts/maybank-job');
+  const out = await mkdtemp(join(tmpdir(), 'maybank-job-'));
+  vi.stubEnv('GH_TOKEN', 'isolated-test-token');
+  try {
+    const { api, read } = harness();
+    read.mockRejectedValueOnce(Error('Source unavailable'));
+    await expect(runMaybankJob(true, { api, capture: read, out })).rejects.toThrow(
+      'Source unavailable',
+    );
+    await expect(readFile(join(out, 'publishing.json'))).rejects.toThrow();
+    expect(api.mock.calls.every(([method]) => method === 'GET')).toBe(true);
+  } finally {
+    vi.unstubAllEnvs();
+    await rm(out, { recursive: true, force: true });
+  }
+});
+it('blocks overlapping invocations before a second capture or API request', async () => {
+  const { mkdtemp, readFile, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { runMaybankJob } = await import('../scripts/maybank-job');
+  const out = await mkdtemp(join(tmpdir(), 'maybank-job-'));
+  vi.stubEnv('GH_TOKEN', 'isolated-test-token');
+  const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+  try {
+    const { api, read } = harness();
+    let entered!: () => void;
+    let release!: () => void;
+    const started = new Promise<void>((resolve) => {
+      entered = resolve;
+    });
+    const wait = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    api.mockImplementationOnce(async () => {
+      entered();
+      await wait;
+      return [{ number: 42, head: { ref: 'data/maybank-pending', repo: { full_name: REPO } } }];
+    });
+    const first = runMaybankJob(true, { api, capture: read, out });
+    await started;
+    await expect(runMaybankJob(true, { api, capture: read, out })).rejects.toThrow(
+      'active or interrupted',
+    );
+    release();
+    await first;
+    expect(api).toHaveBeenCalledTimes(1);
+    expect(read).not.toHaveBeenCalled();
+    await expect(readFile(join(out, 'publishing.json'))).rejects.toThrow();
+  } finally {
+    log.mockRestore();
+    vi.unstubAllEnvs();
+    await rm(out, { recursive: true, force: true });
+  }
+});
