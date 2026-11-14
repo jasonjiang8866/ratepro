@@ -12,6 +12,14 @@ export function transportArguments(mode: string) {
   if (mode === 'default') return ['--http1.1'];
   // Modern TLS 1.2 compatibility test; certificate/hostname checks stay enabled.
   if (mode === 'tls12') return ['--http1.1', '--tlsv1.2', '--tls-max', '1.2'];
+  if (mode === 'identified')
+    return [
+      '--http1.1',
+      '--user-agent',
+      'RatePro/1.0 (+https://github.com/jasonjiang8866/ratepro)',
+      '--header',
+      'Accept: text/html',
+    ];
   throw Error('Unknown Maybank transport mode');
 }
 export async function probeTransport(mode: string) {
@@ -84,7 +92,7 @@ export async function probeTransport(mode: string) {
       parseError,
       snapshotUnchanged,
       policy:
-        'One public GET; no credentials, custom identity, proxy override, redirect following or certificate bypass. Full four-product parsing required.',
+        'One public GET; identified mode declares RatePro truthfully. No credentials, browser impersonation, proxy override, redirect following or certificate bypass. Full four-product parsing required.',
     };
   } finally {
     await rm(path, { recursive: true, force: true });

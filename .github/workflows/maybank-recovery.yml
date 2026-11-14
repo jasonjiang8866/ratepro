@@ -14,10 +14,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runner: macos-15
-            mode: default
           - runner: ubuntu-24.04
-            mode: tls12
+            mode: identified
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 5
     steps:
