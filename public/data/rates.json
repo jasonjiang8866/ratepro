@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-14T15:49:22.904Z",
+  "generatedAt": "2026-11-15T11:40:44.192Z",
   "offers": [
     {
       "id": "hdb-concessionary",
@@ -25,7 +25,7 @@
       "documentDate": "2026-09-22",
       "evidenceSourceId": "cpf-release",
       "terms": "For eligible HDB buyers. Rate is reviewed quarterly and is not fixed for the full tenure. Confirm HFE eligibility and terms with HDB.",
-      "observedAt": "2026-11-14T12:09:48.085Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "effectiveUntil": "2026-12-31",
       "effectiveFrom": "2026-10-01",
       "method": "collector"
@@ -62,7 +62,7 @@
       "lockYears": 3,
       "minLoan": 100000,
       "terms": "CPF-OA-linked variable rate, not a fixed rate. 75% LTV: 25 years max loan tenor (provided borrower age + tenure ≤ 65 years old) 55% LTV: 30 years max loan tenor (provided borrower age + tenure > 65 years old). Confirm eligibility, fees and available package with DBS.",
-      "observedAt": "2026-11-14T12:09:40.029Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "method": "collector"
     },
     {
@@ -91,7 +91,7 @@
       "lockYears": null,
       "minLoan": 1000000,
       "terms": "For eligible green properties under construction. FHR6 is a bank reference rate and may change. Conversion features, green certification, fees and eligibility require confirmation with DBS. Lock-in not extracted.",
-      "observedAt": "2026-11-14T12:09:40.029Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "method": "collector"
     },
     {
@@ -151,7 +151,7 @@
       "lockYears": 2,
       "minLoan": 100000,
       "terms": "The source states this schedule is valid from 27 February 2021; a recent observation does not mean a new promotion. Confirm current availability with Standard Chartered. Applies to completed or under-construction HDB/private homes for purchase or refinancing. SORA plus spread is a formula, not an all-in quote. Fees and subsidies are not extracted.",
-      "observedAt": "2026-11-14T12:09:40.029Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "effectiveFrom": "2021-02-27",
       "method": "collector"
     },
@@ -387,7 +387,7 @@
       "lockYears": 2,
       "minLoan": 250000,
       "terms": "Limited promotional tranche for new direct-to-bank customers, completed residential property, purchase or refinancing from another bank/HDB. Fixed-rate packages require a separate quote. Confirm availability and eligibility in the Letter of Offer; prepayment, sale and conversion concessions have conditions. SORA fixing is not collected.",
-      "observedAt": "2026-11-14T12:09:49.178Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "method": "collector"
     },
     {
@@ -450,7 +450,7 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
-      "observedAt": "2026-11-14T12:09:49.178Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "method": "collector"
     },
     {
@@ -514,7 +514,7 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
-      "observedAt": "2026-11-14T12:09:49.178Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "method": "collector"
     },
     {
@@ -576,7 +576,7 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
-      "observedAt": "2026-11-14T12:09:49.178Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "method": "collector"
     },
     {
@@ -639,7 +639,7 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Published new-home-loan PDF; completed-property variable schedule only. Confirm HDB/private eligibility, purchase/refinance purpose and availability with Citi. Tier and loan-band conditions apply. The document print date is not an observation or effective date. The SORA formula is subject to the stated minimum effective rate; no current fixing is collected.",
-      "observedAt": "2026-11-14T12:09:49.178Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "method": "collector"
     },
     {
@@ -689,7 +689,7 @@
       "lockYears": 2,
       "minLoan": 250000,
       "terms": "Published indicative Singapore home-loan schedule; confirm current availability and borrower eligibility with SBI. Building-under-construction properties qualify only for the three-year lock-in floating package. SORA spreads are not all-in rates; no benchmark fixing is collected. Fees, subsidies, income requirements and final approval must be checked with the bank. No publication/effective date is stated.",
-      "observedAt": "2026-11-14T12:09:49.178Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "method": "collector"
     },
     {
@@ -749,7 +749,7 @@
       "lockYears": 3,
       "minLoan": 250000,
       "terms": "Published indicative Singapore home-loan schedule; confirm current availability and borrower eligibility with SBI. Building-under-construction properties qualify only for the three-year lock-in floating package. SORA spreads are not all-in rates; no benchmark fixing is collected. Fees, subsidies, income requirements and final approval must be checked with the bank. No publication/effective date is stated.",
-      "observedAt": "2026-11-14T12:09:49.178Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "method": "collector"
     },
     {
@@ -789,7 +789,7 @@
       "lockYears": 2,
       "minLoan": 400000,
       "terms": "Published indicative Singapore home-loan schedule; confirm current availability and borrower eligibility with SBI. Building-under-construction properties qualify only for the three-year lock-in floating package. SORA spreads are not all-in rates; no benchmark fixing is collected. Fees, subsidies, income requirements and final approval must be checked with the bank. No publication/effective date is stated.",
-      "observedAt": "2026-11-14T12:09:49.178Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "method": "collector"
     },
     {
@@ -842,7 +842,7 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Limited-tranche two-year fixed schedule, then 1M Compounded SORA plus the published spread. Confirm property type, construction stage, purchase/refinance eligibility and availability with Citi; these are not specified in this table. Tier and loan-band conditions apply. The SORA floor applies to floating stages. Print date is not an effective date. Fees and subsidies are not extracted.",
-      "observedAt": "2026-11-14T12:09:49.178Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "method": "collector"
     },
     {
@@ -896,7 +896,7 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Limited-tranche two-year fixed schedule, then 1M Compounded SORA plus the published spread. Confirm property type, construction stage, purchase/refinance eligibility and availability with Citi; these are not specified in this table. Tier and loan-band conditions apply. The SORA floor applies to floating stages. Print date is not an effective date. Fees and subsidies are not extracted.",
-      "observedAt": "2026-11-14T12:09:49.178Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "method": "collector"
     },
     {
@@ -969,7 +969,7 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Published building-under-construction package with no lock-in. Confirm HDB/private eligibility, purpose and availability with Citi. Citigold relationship and minimum loan apply. Progressive drawdowns are not modelled. SORA floor applies; print date is not an effective date. Fees and subsidies are not extracted.",
-      "observedAt": "2026-11-14T12:09:49.178Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "method": "collector"
     },
     {
@@ -1021,7 +1021,7 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Limited-tranche two-year fixed schedule, then 1M Compounded SORA plus the published spread. Confirm property type, construction stage, purchase/refinance eligibility and availability with Citi; these are not specified in this table. Tier and loan-band conditions apply. The SORA floor applies to floating stages. Print date is not an effective date. Fees and subsidies are not extracted.",
-      "observedAt": "2026-11-14T12:09:49.178Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "method": "collector"
     },
     {
@@ -1074,31 +1074,31 @@
       "rateFloor": 0.85,
       "documentDate": "2026-09-30",
       "terms": "Limited-tranche two-year fixed schedule, then 1M Compounded SORA plus the published spread. Confirm property type, construction stage, purchase/refinance eligibility and availability with Citi; these are not specified in this table. Tier and loan-band conditions apply. The SORA floor applies to floating stages. Print date is not an effective date. Fees and subsidies are not extracted.",
-      "observedAt": "2026-11-14T12:09:49.178Z",
+      "observedAt": "2026-11-15T01:26:00.028Z",
       "method": "collector"
     }
   ],
   "sources": [
     {
       "sourceId": "dbs-hdb",
-      "attemptedAt": "2026-11-14T12:09:40.029Z",
-      "successAt": "2026-11-14T12:09:40.029Z",
+      "attemptedAt": "2026-11-15T01:26:00.028Z",
+      "successAt": "2026-11-15T01:26:00.028Z",
       "status": "ok",
       "message": "Collected from official public page",
       "attempts": 1
     },
     {
       "sourceId": "dbs-green",
-      "attemptedAt": "2026-11-14T12:09:40.029Z",
-      "successAt": "2026-11-14T12:09:40.029Z",
+      "attemptedAt": "2026-11-15T01:26:00.028Z",
+      "successAt": "2026-11-15T01:26:00.028Z",
       "status": "ok",
       "message": "Collected from official public page",
       "attempts": 1
     },
     {
       "sourceId": "hdb",
-      "attemptedAt": "2026-11-14T12:09:48.085Z",
-      "successAt": "2026-11-14T12:09:48.085Z",
+      "attemptedAt": "2026-11-15T01:26:00.028Z",
+      "successAt": "2026-11-15T01:26:00.028Z",
       "status": "ok",
       "message": "Collected from official CPF Board · Quarterly announcement; HDB primary page unavailable.",
       "attempts": 1,
@@ -1121,41 +1121,41 @@
     },
     {
       "sourceId": "maybank",
-      "attemptedAt": "2026-11-14T12:09:48.896Z",
+      "attemptedAt": "2026-11-15T01:26:00.028Z",
       "successAt": "2026-11-14T11:59:37.734Z",
       "status": "error",
-      "message": "GitHub Actions collection timed out; latest successful local official-page extraction retained. Automatic runner recovery is not established.",
+      "message": "Collection failed; last observation retained. Request timed out",
       "failureKind": "timeout",
       "attempts": 2
     },
     {
       "sourceId": "sc-sora",
-      "attemptedAt": "2026-11-14T12:09:40.029Z",
-      "successAt": "2026-11-14T12:09:40.029Z",
+      "attemptedAt": "2026-11-15T01:26:00.028Z",
+      "successAt": "2026-11-15T01:26:00.028Z",
       "status": "ok",
       "message": "Collected from official public page",
       "attempts": 1
     },
     {
       "sourceId": "uob-sora",
-      "attemptedAt": "2026-11-14T12:09:49.178Z",
-      "successAt": "2026-11-14T12:09:49.178Z",
-      "status": "ok",
-      "message": "Collected from official public page",
-      "attempts": 1
-    },
-    {
-      "sourceId": "citi",
-      "attemptedAt": "2026-11-14T12:09:49.178Z",
-      "successAt": "2026-11-14T12:09:49.178Z",
+      "attemptedAt": "2026-11-15T01:26:00.028Z",
+      "successAt": "2026-11-15T01:26:00.028Z",
       "status": "ok",
       "message": "Collected from official public page",
       "attempts": 1
     },
     {
       "sourceId": "sbi",
-      "attemptedAt": "2026-11-14T12:09:49.178Z",
-      "successAt": "2026-11-14T12:09:49.178Z",
+      "attemptedAt": "2026-11-15T01:26:00.028Z",
+      "successAt": "2026-11-15T01:26:00.028Z",
+      "status": "ok",
+      "message": "Collected from official public page",
+      "attempts": 1
+    },
+    {
+      "sourceId": "citi",
+      "attemptedAt": "2026-11-15T01:26:00.028Z",
+      "successAt": "2026-11-15T01:26:00.028Z",
       "status": "ok",
       "message": "Collected from official public page",
       "attempts": 1

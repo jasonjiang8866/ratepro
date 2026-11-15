@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "action": "Resolve PR #25 snapshot conflict against current main",
+  "resolvedAt": "2026-11-15T11:40:44.192Z",
+  "mainCommit": "f937067f60bd55afcd7b5c48c7ec2453ccb9a3b1",
+  "originalPullRequestCommit": "c90205d743a69aee666af51d5875f25a8cf10e8f",
+  "mainSnapshotSha256": "1f4da77b167922df500bfc49f4d88e0364fa98c06cc7e7743c225e1213ddab64",
+  "originalCandidateSha256": "a10aa175cd00c7e482cca6c92e67604f06eead0810d6914d38644a3cb4cf8585",
+  "resolvedSnapshotSha256": "eea1338c8d929488afd5d7d87a9c5fd7fa441f112ca08dc68fb14cb3dc44d49c",
+  "originalEvidenceSha256": "9137755e3b336a640b0604674e8a2ca2cefad21bddcf892579ec842d97a31aef",
+  "bodySha256": "a29b8174ebb56951cff3239c3f6c8f1fd18b86327af587698c1d05fe9954d816",
+  "observedAt": "2026-11-14T15:49:22.874Z",
+  "updatedProductIds": [
+    "maybank-fixed-2y",
+    "maybank-fixed-3y",
+    "maybank-sora-1m",
+    "maybank-sora-3m"
+  ],
+  "otherProductsPreserved": 17,
+  "scheduledHealthPreserved": true,
+  "note": "Original capture evidence remains unchanged. Its baseCommit/baseSha256/candidateSha256 describe the original capture. This record binds the conflict-resolved snapshot to current main. No new bank retrieval or observation date is claimed."
+}

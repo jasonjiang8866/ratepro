@@ -1,0 +1,88 @@
+{
+  "run1": "https://github.com/jasonjiang8866/ratepro/actions/runs/43608549466",
+  "run2": "https://github.com/jasonjiang8866/ratepro/actions/runs/43608823551",
+  "reports": [
+    {
+      "url": "https://www.maybank2u.com.sg/en/rates/rates-sora.page",
+      "mode": "tls12",
+      "arguments": [
+        "--http1.1",
+        "--tlsv1.2",
+        "--tls-max",
+        "1.2"
+      ],
+      "startedAt": "2026-11-14T15:08:39.288Z",
+      "finishedAt": "2026-11-14T15:09:09.304Z",
+      "platform": "linux",
+      "architecture": "x64",
+      "exitCode": 28,
+      "timing": {
+        "time_namelookup": 0.259892,
+        "time_connect": 0.272211,
+        "time_appconnect": 0.304205,
+        "time_starttransfer": 0,
+        "time_total": 30.002771,
+        "size_download": 0,
+        "http_code": 0,
+        "lastMilestone": "TLS completed; no first response byte recorded"
+      },
+      "outcome": "failed",
+      "snapshotUnchanged": true,
+      "policy": "One public GET; no credentials, custom identity, proxy override, redirect following or certificate bypass. Full four-product parsing required."
+    },
+    {
+      "url": "https://www.maybank2u.com.sg/en/rates/rates-sora.page",
+      "mode": "default",
+      "arguments": [
+        "--http1.1"
+      ],
+      "startedAt": "2026-11-14T15:08:45.644Z",
+      "finishedAt": "2026-11-14T15:09:15.809Z",
+      "platform": "darwin",
+      "architecture": "arm64",
+      "exitCode": 28,
+      "timing": {
+        "time_namelookup": 0.029881,
+        "time_connect": 0.032694,
+        "time_appconnect": 0.058905,
+        "time_starttransfer": 0,
+        "time_total": 30.078297,
+        "size_download": 0,
+        "http_code": 0,
+        "lastMilestone": "TLS completed; no first response byte recorded"
+      },
+      "outcome": "failed",
+      "snapshotUnchanged": true,
+      "policy": "One public GET; no credentials, custom identity, proxy override, redirect following or certificate bypass. Full four-product parsing required."
+    },
+    {
+      "url": "https://www.maybank2u.com.sg/en/rates/rates-sora.page",
+      "mode": "identified",
+      "arguments": [
+        "--http1.1",
+        "--user-agent",
+        "RatePro/1.0 (+https://github.com/jasonjiang8866/ratepro)",
+        "--header",
+        "Accept: text/html"
+      ],
+      "startedAt": "2026-11-14T15:11:35.953Z",
+      "finishedAt": "2026-11-14T15:12:05.973Z",
+      "platform": "linux",
+      "architecture": "x64",
+      "exitCode": 28,
+      "timing": {
+        "time_namelookup": 0.053825,
+        "time_connect": 0.056195,
+        "time_appconnect": 0.07766,
+        "time_starttransfer": 0,
+        "time_total": 30.002771,
+        "size_download": 0,
+        "http_code": 0,
+        "lastMilestone": "TLS completed; no first response byte recorded"
+      },
+      "outcome": "failed",
+      "snapshotUnchanged": true,
+      "policy": "One public GET; identified mode declares RatePro truthfully. No credentials, browser impersonation, proxy override, redirect following or certificate bypass. Full four-product parsing required."
+    }
+  ]
+}

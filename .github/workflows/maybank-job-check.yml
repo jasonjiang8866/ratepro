@@ -1,0 +1,24 @@
+name: Maybank standalone job checks
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/maybank-job-check.yml'
+      - 'collectors/maybank/**'
+      - 'scripts/maybank-job.ts'
+      - 'scripts/capture-maybank.ts'
+      - 'scripts/maybank-transport.ts'
+      - 'tests/maybank-job.test.ts'
+      - 'package*.json'
+permissions:
+  contents: read
+jobs:
+  container:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f collectors/maybank/Dockerfile -t ratepro-maybank:test .
+      - name: Verify unprivileged read-only entrypoint
+        run: docker run --rm --read-only --tmpfs /tmp:size=16m --cap-drop ALL --security-opt no-new-privileges:true ratepro-maybank:test --help
+      - name: Verify submission behavior with controlled network doubles
+        run: docker run --rm --read-only --tmpfs /tmp:size=32m --cap-drop ALL --security-opt no-new-privileges:true --entrypoint node ratepro-maybank:test node_modules/vitest/vitest.mjs run tests/maybank-job.test.ts --no-cache
