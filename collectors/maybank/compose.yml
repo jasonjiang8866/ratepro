@@ -1,0 +1,17 @@
+services:
+  maybank:
+    build:
+      context: ../..
+      dockerfile: collectors/maybank/Dockerfile
+    restart: 'no'
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - maybank-evidence:/app/research-output
+    # Default: capture and prepare only. --submit is explicit; see README.
+volumes:
+  maybank-evidence:
