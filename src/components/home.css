@@ -995,3 +995,24 @@
     gap: 5px;
   }
 }
+
+.journal-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+  font-size: 12px;
+}
+.journal-pagination button {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  background: var(--card);
+  cursor: pointer;
+}
+.journal-pagination button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}

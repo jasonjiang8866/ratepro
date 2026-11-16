@@ -68,7 +68,7 @@ import { synchronize } from '@/lib/sync';
 import { cn } from '@/lib/utils';
 import { Home } from '@/components/Home';
 import { JapanTools } from '@/components/JapanTools';
-import { articles } from '@/lib/content';
+import { editorialClient, ContentError } from '@/lib/content';
 import { markets, marketInfo, resolveMarket, isMarket, type MarketCode } from '@/lib/markets';
 const money = (n: number) =>
   new Intl.NumberFormat('en-SG', {
@@ -134,26 +134,62 @@ function currentMarket() {
   } catch {
     /* Session-only selection. */
   }
-  const article = articles.find((a) => window.location.hash === `#/read/${a.slug}`);
-  return resolveMarket(window.location.search, window.location.hash, saved, article?.market);
+  return resolveMarket(window.location.search, window.location.hash, saved);
 }
 export default function App() {
+  const legacyArticle = () =>
+    !new URLSearchParams(location.search).has('market') && location.hash.startsWith('#/read/');
   const [market, setMarket] = useState(currentMarket);
+  const [resolving, setResolving] = useState(legacyArticle);
+  const [resolutionError, setResolutionError] = useState(false),
+    [resolveRetry, setResolveRetry] = useState(0);
   useEffect(() => {
-    const update = () => setMarket(currentMarket());
+    let controller: AbortController | undefined;
+    const update = () => {
+      setResolutionError(false);
+      controller?.abort();
+      controller = new AbortController();
+      const signal = controller.signal;
+      if (legacyArticle()) {
+        setResolving(true);
+        editorialClient
+          .locate(location.hash.slice(7), signal)
+          .then((found) => {
+            if (signal.aborted) return;
+            const url = new URL(location.href);
+            url.searchParams.set('market', found);
+            history.replaceState(null, '', url);
+            setMarket(found);
+            setResolving(false);
+          })
+          .catch((error) => {
+            if (!signal.aborted) {
+              if (error instanceof ContentError && error.status === 404) {
+                setMarket('SG');
+                setResolving(false);
+              } else setResolutionError(true);
+            }
+          });
+      } else {
+        const next = currentMarket();
+        setMarket(next);
+        setResolving(false);
+        if (!new URLSearchParams(location.search).has('market')) {
+          const url = new URL(location.href);
+          url.searchParams.set('market', next);
+          history.replaceState(null, '', url);
+        }
+      }
+    };
     window.addEventListener('popstate', update);
     window.addEventListener('hashchange', update);
-    // Make all subsequent hash links retain the selected market.
-    if (!new URLSearchParams(location.search).has('market')) {
-      const url = new URL(location.href);
-      url.searchParams.set('market', market);
-      history.replaceState(null, '', url);
-    }
+    update();
     return () => {
+      controller?.abort();
       window.removeEventListener('popstate', update);
       window.removeEventListener('hashchange', update);
     };
-  }, [market]);
+  }, [resolveRetry]);
   function chooseMarket(next: string) {
     if (!isMarket(next) || next === market) return;
     const url = new URL(location.href);
@@ -168,6 +204,19 @@ export default function App() {
     setMarket(next);
     window.scrollTo(0, 0);
   }
+  if (resolutionError)
+    return (
+      <main className="shell journal-empty" role="alert">
+        Unable to open this report.{' '}
+        <button onClick={() => setResolveRetry((n) => n + 1)}>Retry content</button>
+      </main>
+    );
+  if (resolving)
+    return (
+      <main className="shell journal-empty" role="status">
+        Opening the report…
+      </main>
+    );
   return <MarketApp key={market} market={market} chooseMarket={chooseMarket} />;
 }
 function MarketApp({
