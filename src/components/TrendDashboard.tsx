@@ -43,6 +43,19 @@ function Chart({
   series: { product: ProductSummary; points: TrendPoint[] }[];
   onSelect: (p: TrendPoint) => void;
 }) {
+  const [compact, setCompact] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth <= 640,
+  );
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 640px)');
+    const update = () => setCompact(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+  const width = compact ? 400 : 800,
+    left = compact ? 54 : 64,
+    right = width - (compact ? 12 : 56);
   const all = series.flatMap((s) => s.points).filter((p) => p.value !== null);
   if (!all.length)
     return (
@@ -60,12 +73,14 @@ function Chart({
     minY = lo - pad,
     maxY = hi + pad;
   const x = (p: TrendPoint) =>
-    maxT === minT ? 400 : 64 + ((Date.parse(p.observedAt) - minT) / (maxT - minT)) * 680;
+    maxT === minT
+      ? width / 2
+      : left + ((Date.parse(p.observedAt) - minT) / (maxT - minT)) * (right - left);
   const y = (v: number) => 250 - ((v - minY) / (maxY - minY)) * 210;
   return (
     <svg
       className="trend-chart"
-      viewBox="0 0 800 300"
+      viewBox={`0 0 ${width} 300`}
       role="group"
       aria-label="Mortgage rate trend chart"
     >
@@ -73,17 +88,17 @@ function Chart({
         const v = minY + ((maxY - minY) * i) / 4;
         return (
           <g key={i}>
-            <line x1="64" x2="744" y1={y(v)} y2={y(v)} stroke="var(--border)" />
-            <text x="54" y={y(v) + 4} textAnchor="end">
+            <line x1={left} x2={right} y1={y(v)} y2={y(v)} stroke="var(--border)" />
+            <text x={left - 10} y={y(v) + 4} textAnchor="end">
               {v.toFixed(2)}%
             </text>
           </g>
         );
       })}
-      <text x="64" y="284">
+      <text x={left} y="284">
         {fmt(new Date(minT).toISOString())}
       </text>
-      <text x="744" y="284" textAnchor="end">
+      <text x={right} y="284" textAnchor="end">
         {fmt(new Date(maxT).toISOString())}
       </text>
       {series.map(({ product, points }, i) => (
@@ -104,7 +119,9 @@ function Chart({
                 key={p.id}
                 cx={x(p)}
                 cy={y(p.value!)}
-                r="4"
+                r={compact ? 5 : 4}
+                stroke="transparent"
+                strokeWidth={compact ? 20 : 8}
                 tabIndex={0}
                 role="button"
                 aria-label={`${product.name}, ${p.observedAt}, ${percent(p.value)}`}
@@ -214,6 +231,7 @@ export default function TrendDashboard({
     return () => controller.abort();
   }, [selected, comparison, range, market, now, retry]);
   const products = index?.products.filter((p) => bank === 'All banks' || p.bank === bank) ?? [];
+  const pointProduct = series.find((s) => s.points.some((p) => p.id === point?.id))?.product;
   return (
     <section className="trends" aria-labelledby="trends-title">
       <header className="trends-heading">
@@ -372,6 +390,9 @@ export default function TrendDashboard({
                 {point ? (
                   <>
                     <strong>{percent(point.value)}</strong>
+                    <span>
+                      {pointProduct?.bank} · {pointProduct?.name}
+                    </span>
                     <span>
                       Observed {point.observedAt} · {point.method}
                     </span>

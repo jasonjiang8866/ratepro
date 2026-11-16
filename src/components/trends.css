@@ -298,3 +298,9 @@
     min-height: 150px;
   }
 }
+
+@media (max-width: 640px) {
+  .trend-chart text {
+    font-size: 14px;
+  }
+}

@@ -87,6 +87,7 @@ try {
   }
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('button', { name: 'Use dark theme', exact: true }).click();
+  assert.equal(await page.locator('.trend-chart').getAttribute('viewBox'), '0 0 400 300');
   await page.screenshot({ path: 'test-results/trends/sg-mobile-dark.png', fullPage: true });
   await page.getByLabel('Trend market', { exact: true }).selectOption('JP');
   assert.match(page.url(), /market=JP#\/trends/);
