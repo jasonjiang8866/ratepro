@@ -35,7 +35,9 @@ try {
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
   mkdirSync('test-results/homepage', { recursive: true });
-  browser = await chromium.launch();
+  browser = await chromium.launch({
+    executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH || undefined,
+  });
   const context = await browser.newContext({
     viewport: { width: 1440, height: 1000 },
     colorScheme: 'light',

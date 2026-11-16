@@ -34,9 +34,17 @@ jobs:
       - name: Check live Japan sources (PR only; no snapshot writes)
         if: github.event_name == 'pull_request'
         run: npm run verify:jp
+      - name: Preserve published observations before refresh
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: npm run history:ingest -- --market JP
       - name: Collect Japan snapshot
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        id: collector
+        continue-on-error: true
         run: npm run collect:jp
+      - name: Preserve attempts and generate analytics, including all-source failures
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: npm run history:ingest -- --market JP --input japan-source-check.json
       - run: npm run build
       - uses: actions/upload-artifact@v4
         if: always()
@@ -50,7 +58,10 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add public/data/rates-jp.json
+          git add public/data/rates-jp.json public/data/history public/data/analytics
           if git diff --cached --quiet; then exit 0; fi
           git commit -m 'data: refresh Japan mortgage observations'
           git push origin HEAD:main
+      - name: Report collection failure after preserving evidence
+        if: steps.collector.outcome == 'failure'
+        run: exit 1
