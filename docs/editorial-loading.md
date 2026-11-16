@@ -52,3 +52,35 @@ A currently open article can retain its loaded revision for that reading session
 - `npm run test:editorial:ui -- --build-only`: same deterministic build measurements without Chromium.
 
 The benchmark archives the audited baseline SHA and copies current code into temporary directories. It adds deterministic long-body fixtures there only, then deletes those directories. It never writes synthetic reports into release content or modifies the main checkout. The normal release excludes the read-only cache diagnostic used by the `editorial-test` production build. CI uploads `test-results/editorial/measurements.json` and screenshots. Gzip figures are reproducible compression estimates, not a claim about actual CDN transport encoding. No heap/process-RAM reduction is inferred from byte or cache counts.
+
+### Verified results — 16 November 2026
+
+Measured on implementation commit `03469faaf9ea0f62a3717528c86f16d1fb00be97` against the pinned audited baseline. Values below are ordinary production builds (the cache-diagnostic mode is used only for the subsequent browser stress scenario).
+
+| Corpus             | Before initial JS | After initial JS | Before gzip estimate | After gzip estimate |
+| ------------------ | ----------------: | ---------------: | -------------------: | ------------------: |
+| 18 real reports    |         559,314 B |        509,914 B |            171,613 B |           157,783 B |
+| 1,000 test reports |      13,494,618 B |        509,914 B |          1,515,937 B |           157,783 B |
+
+The reader UI is a separate 4,260-byte JS chunk; its article bodies are independent JSON. The main application still includes the existing rate directory/calculators; this change does not attempt a general application bundle overhaul.
+
+| Visit                          | Actual editorial requests                                                                                                                              |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| First SG home, 18 reports      | Manifest twice (parallel home/page initialization), SG November calendar, SG all/page 1 and SG home projection: **10,732 B decoded JSON**, zero bodies |
+| Switch to JP                   | JP November calendar, JP all/page 1, JP home projection; zero SG editorial requests and zero bodies                                                    |
+| Open one JP report             | `articles/jp-boj-asada-november-policy-lags.json` plus the reader UI chunk                                                                             |
+| First SG home, 1,000 reports   | Same bounded structure: **16,108 B decoded JSON**, 20 cards, zero bodies                                                                               |
+| Open one stress-session report | `articles/sg-weekly-2026-11-16.json` plus the reader UI chunk                                                                                          |
+
+Before the change, all bodies were already in initial JS, so opening a report or switching market required zero additional editorial requests. That zero was preloading, not a smaller payload. The above byte totals are decoded response-body sizes; they exclude unrelated existing rate-feed requests. Browser routing disables HTTP caching for reproducible cold-network tests. The two small concurrent manifest requests are retained to keep each caller's abort lifecycle independent; they do not grow with corpus size.
+
+Verification:
+
+- `npm ci`, content validation, TypeScript and production build passed.
+- Unit/integration suite: **211 passed, 12 skipped** (existing optional browser research tests).
+- [Existing production desktop/mobile UI suite](https://github.com/jasonjiang8866/ratepro/actions/runs/43807820892) passed, including calculators, market isolation, old links, back/forward, dark mode and 320px overflow checks. Desktop/light and mobile/dark screenshots were visually inspected.
+- [Production stress suite](https://github.com/jasonjiang8866/ratepro/actions/runs/43807820765) passed: nine pages, all-history category selection, 20-card DOM ceiling, eight articles, five-body LRU retention, evicted-body refetch, late-request isolation, retry after 503, missing/expired/legacy articles, mobile dark layout and cache byte bounds.
+- [Raw measured evidence](benchmarks/editorial-loading-2026-11-16.json) is committed separately from the synthetic content. Screenshots are available in those CI artifacts.
+- The separately triggered [official source integration workflow](https://github.com/jasonjiang8866/ratepro/actions/runs/43807820876) remains red because the unchanged Maybank transport/experimental live-source probes time out. Stable, expanded and HDB checks pass; no collector or feed repair is included in this editorial PR.
+
+Heap and Chrome process RAM are **not measured**. The local environment cannot run Chromium reliably, and the CI suite does not establish a controlled heap-profile baseline. Its evidence is production-build bytes, actual fetches, bounded retained cache entries/payloads and DOM counts. These do not establish a specific heap reduction or immediate OS memory release.

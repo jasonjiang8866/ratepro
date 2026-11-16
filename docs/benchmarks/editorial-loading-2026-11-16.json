@@ -1,0 +1,201 @@
+{
+  "baseline": "28fbb1a68db9255986b0c63c0520946ad9d9e31a",
+  "articleCounts": [18, 1000],
+  "notes": "Uncompressed bytes and reproducible gzip estimates are separate from JS heap and Chrome process RAM.",
+  "before-18": {
+    "entry": "index-BFwhv9oe.js",
+    "initialJsBytes": 559314,
+    "initialJsGzipBytes": 171613,
+    "totalJsBytes": 559314
+  },
+  "before-1000": {
+    "entry": "index-CenW0QWk.js",
+    "initialJsBytes": 13494618,
+    "initialJsGzipBytes": 1515937,
+    "totalJsBytes": 13494618
+  },
+  "after-18": {
+    "entry": "index-C9jt7idG.js",
+    "initialJsBytes": 509914,
+    "initialJsGzipBytes": 157783,
+    "totalJsBytes": 514174
+  },
+  "after-1000": {
+    "entry": "index-C9jt7idG.js",
+    "initialJsBytes": 509914,
+    "initialJsGzipBytes": 157783,
+    "totalJsBytes": 514174
+  },
+  "before-real-network": {
+    "initial": {
+      "requests": [
+        "/",
+        "/assets/index-BFwhv9oe.js",
+        "/assets/index-BpKbPngM.css",
+        "/data/rates.json",
+        "/personal/loans/home-loans/hdb-loan",
+        "/personal/loans/home-loans/dbs-green-home-loan",
+        "/managing-my-home/finances/loan-matters/interest-rate",
+        "/en/rates/rates-sora.page",
+        "/sg/borrow/mortgages/sora/",
+        "/personal/borrow/property-loans/about-sora.page",
+        "/en/home-loans"
+      ],
+      "editorialDecodedBytes": 0,
+      "responses": []
+    },
+    "switchJP": {
+      "requests": []
+    },
+    "openArticle": {
+      "requests": []
+    }
+  },
+  "after-real-network": {
+    "initial": {
+      "requests": [
+        "/",
+        "/assets/index-C9jt7idG.js",
+        "/assets/index-HiW4MqB7.css",
+        "/data/editorial/v1/manifest.json",
+        "/data/editorial/v1/manifest.json",
+        "/data/rates.json",
+        "/data/editorial/v1/fb1e5a98a6a81193297cc1a947909c63ea9ed09ca372379981a3732c15068021/SG/calendar/2026-11.json",
+        "/data/editorial/v1/fb1e5a98a6a81193297cc1a947909c63ea9ed09ca372379981a3732c15068021/SG/pages/all/1.json",
+        "/personal/loans/home-loans/hdb-loan",
+        "/personal/loans/home-loans/dbs-green-home-loan",
+        "/managing-my-home/finances/loan-matters/interest-rate",
+        "/en/rates/rates-sora.page",
+        "/sg/borrow/mortgages/sora/",
+        "/personal/borrow/property-loans/about-sora.page",
+        "/en/home-loans",
+        "/data/editorial/v1/fb1e5a98a6a81193297cc1a947909c63ea9ed09ca372379981a3732c15068021/SG/home/95dd82fa0904e9c88d32ea9a262121fc6018b5033582ada9e9f4d281b722824e.json"
+      ],
+      "editorialDecodedBytes": 10732,
+      "responses": [
+        {
+          "path": "/data/editorial/v1/manifest.json",
+          "bytes": 653
+        },
+        {
+          "path": "/data/editorial/v1/manifest.json",
+          "bytes": 653
+        },
+        {
+          "path": "/data/editorial/v1/fb1e5a98a6a81193297cc1a947909c63ea9ed09ca372379981a3732c15068021/SG/calendar/2026-11.json",
+          "bytes": 2539
+        },
+        {
+          "path": "/data/editorial/v1/fb1e5a98a6a81193297cc1a947909c63ea9ed09ca372379981a3732c15068021/SG/pages/all/1.json",
+          "bytes": 4623
+        },
+        {
+          "path": "/data/editorial/v1/fb1e5a98a6a81193297cc1a947909c63ea9ed09ca372379981a3732c15068021/SG/home/95dd82fa0904e9c88d32ea9a262121fc6018b5033582ada9e9f4d281b722824e.json",
+          "bytes": 2264
+        }
+      ]
+    },
+    "switchJP": {
+      "requests": [
+        "/data/editorial/v1/fb1e5a98a6a81193297cc1a947909c63ea9ed09ca372379981a3732c15068021/JP/calendar/2026-11.json",
+        "/data/editorial/v1/fb1e5a98a6a81193297cc1a947909c63ea9ed09ca372379981a3732c15068021/JP/pages/all/1.json",
+        "/data/editorial/v1/fb1e5a98a6a81193297cc1a947909c63ea9ed09ca372379981a3732c15068021/JP/home/5a79837f0a393a5be5638c0f468bcaf61de7a448585ff910fec45a18e45aa7b0.json"
+      ]
+    },
+    "openArticle": {
+      "requests": [
+        "/data/editorial/v1/articles/jp-boj-asada-november-policy-lags.json",
+        "/assets/ArticleReader-CX3kHxSj.js"
+      ]
+    }
+  },
+  "initialSG": {
+    "requests": [
+      "/",
+      "/assets/index-w0r-53Fp.js",
+      "/assets/index-BZJ7BQA3.css",
+      "/data/editorial/v1/manifest.json",
+      "/data/editorial/v1/manifest.json",
+      "/data/rates.json",
+      "/data/editorial/v1/f3cde15abbeff37dc8a8d1d90e0f5d0109e732c3e559d1950e17c27cde68e3de/SG/calendar/2026-11.json",
+      "/data/editorial/v1/f3cde15abbeff37dc8a8d1d90e0f5d0109e732c3e559d1950e17c27cde68e3de/SG/pages/all/1.json",
+      "/personal/loans/home-loans/hdb-loan",
+      "/personal/loans/home-loans/dbs-green-home-loan",
+      "/managing-my-home/finances/loan-matters/interest-rate",
+      "/en/rates/rates-sora.page",
+      "/sg/borrow/mortgages/sora/",
+      "/personal/borrow/property-loans/about-sora.page",
+      "/en/home-loans",
+      "/data/editorial/v1/f3cde15abbeff37dc8a8d1d90e0f5d0109e732c3e559d1950e17c27cde68e3de/SG/home/917d2cc87c7cee48673a7754ffdc665f6a4d4aa92ffd4af263f8e58ae1cc0545.json"
+    ],
+    "editorialDecodedBytes": 16108,
+    "responses": [
+      {
+        "path": "/data/editorial/v1/manifest.json",
+        "bytes": 668
+      },
+      {
+        "path": "/data/editorial/v1/manifest.json",
+        "bytes": 668
+      },
+      {
+        "path": "/data/editorial/v1/f3cde15abbeff37dc8a8d1d90e0f5d0109e732c3e559d1950e17c27cde68e3de/SG/calendar/2026-11.json",
+        "bytes": 2539
+      },
+      {
+        "path": "/data/editorial/v1/f3cde15abbeff37dc8a8d1d90e0f5d0109e732c3e559d1950e17c27cde68e3de/SG/pages/all/1.json",
+        "bytes": 9073
+      },
+      {
+        "path": "/data/editorial/v1/f3cde15abbeff37dc8a8d1d90e0f5d0109e732c3e559d1950e17c27cde68e3de/SG/home/917d2cc87c7cee48673a7754ffdc665f6a4d4aa92ffd4af263f8e58ae1cc0545.json",
+        "bytes": 3160
+      }
+    ]
+  },
+  "switchJP": {
+    "requests": [
+      "/data/editorial/v1/f3cde15abbeff37dc8a8d1d90e0f5d0109e732c3e559d1950e17c27cde68e3de/JP/calendar/2026-11.json",
+      "/data/editorial/v1/f3cde15abbeff37dc8a8d1d90e0f5d0109e732c3e559d1950e17c27cde68e3de/JP/pages/all/1.json",
+      "/data/editorial/v1/f3cde15abbeff37dc8a8d1d90e0f5d0109e732c3e559d1950e17c27cde68e3de/JP/home/0b89a78e49c39798a9ddc6b989b621791d844ede20abfd82f4d06b1b03cbdc9f.json"
+    ]
+  },
+  "openArticle": {
+    "requests": [
+      "/data/editorial/v1/articles/sg-weekly-2026-11-16.json",
+      "/assets/ArticleReader-1jvNtGfr.js"
+    ],
+    "slug": "sg-weekly-2026-11-16"
+  },
+  "finalCache": {
+    "bodies": {
+      "entries": 1,
+      "bytes": 2852,
+      "maxEntries": 5,
+      "maxBytes": 524288
+    },
+    "pages": {
+      "entries": 0,
+      "bytes": 0,
+      "maxEntries": 6,
+      "maxBytes": 393216
+    },
+    "homes": {
+      "entries": 0,
+      "bytes": 0,
+      "maxEntries": 2,
+      "maxBytes": 196608
+    },
+    "calendars": {
+      "entries": 0,
+      "bytes": 0,
+      "maxEntries": 2,
+      "maxBytes": 16384
+    }
+  },
+  "browser": {
+    "passed": true,
+    "totalEditorialResponses": 36,
+    "maxReadingRoomCards": 20,
+    "heap": "Not measured; no claim about Chrome process RAM or immediate OS memory release."
+  }
+}
