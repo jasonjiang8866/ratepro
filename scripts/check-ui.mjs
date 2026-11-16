@@ -77,13 +77,13 @@ try {
     animations: 'disabled',
   });
   await page.getByRole('button', { name: 'Buying & refinancing guides', exact: true }).click();
-  await page.locator('.story-list').waitFor();
+  await page.locator('.story-list[data-category="guide"]').waitFor();
   assert.equal(
     await page.locator('.story-row').count(),
     corpus.filter((a) => (a.market ?? 'SG') === 'SG' && a.category === 'guide').length,
   );
   await page.getByRole('button', { name: 'All stories', exact: true }).click();
-  await page.locator('.story-list').waitFor();
+  await page.locator('.story-list[data-category="all"]').waitFor();
   assert.ok((await page.locator('.story-row').count()) >= 3);
   await page.getByRole('link', { name: 'Read the briefing', exact: true }).click();
   await page.getByRole('heading', { name: 'At a glance', exact: true }).waitFor();

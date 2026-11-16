@@ -64,11 +64,7 @@ try {
         rmSync(join(dir, 'content'), { recursive: true });
         writeCorpus(join(dir, 'content'), stress);
       }
-      execFileSync(
-        'npm',
-        ['run', 'build', ...(version === 'after' ? ['--', '--mode', 'editorial-test'] : [])],
-        { cwd: dir, stdio: 'inherit' },
-      );
+      execFileSync('npm', ['run', 'build'], { cwd: dir, stdio: 'inherit' });
       const dist = join(dir, 'dist');
       builds[name] = dist;
       const html = readFileSync(join(dist, 'index.html'), 'utf8');
@@ -97,6 +93,85 @@ try {
   assert.ok(m['before-1000'].initialJsBytes > m[`before-${seed.length}`].initialJsBytes * 10);
   writeFileSync(join(output, 'measurements.json'), JSON.stringify(measurements, null, 2));
   if (!process.argv.includes('--build-only')) {
+    browser = await chromium.launch();
+    // Real-corpus network evidence for both audited baseline and normal production build.
+    for (const version of ['before', 'after']) {
+      const origin = 'http://127.0.0.1:4174';
+      server = spawn(
+        process.execPath,
+        [
+          'node_modules/vite/bin/vite.js',
+          'preview',
+          '--host',
+          '127.0.0.1',
+          '--port',
+          '4174',
+          '--strictPort',
+          '--outDir',
+          builds[`${version}-${seed.length}`],
+        ],
+        { stdio: 'inherit' },
+      );
+      for (let i = 0; i < 60; i++) {
+        if (
+          await fetch(origin)
+            .then((r) => r.ok)
+            .catch(() => false)
+        )
+          break;
+        await new Promise((r) => setTimeout(r, 250));
+      }
+      const c = await browser.newContext();
+      await c.route('**/*', (route) =>
+        route.request().url().startsWith(origin) ? route.continue() : route.abort(),
+      );
+      const p = await c.newPage();
+      const requests: string[] = [];
+      const responses: { path: string; bytes: number }[] = [];
+      const pending: Promise<unknown>[] = [];
+      p.on('request', (r) => requests.push(new URL(r.url()).pathname));
+      p.on('response', (r) => {
+        if (r.url().includes('/data/editorial/'))
+          pending.push(
+            r
+              .body()
+              .then((b) => responses.push({ path: new URL(r.url()).pathname, bytes: b.length }))
+              .catch(() => {}),
+          );
+      });
+      await p.goto(`${origin}/?market=SG#/home`);
+      await p.locator('.story-list').waitFor();
+      await Promise.all(pending);
+      const initial = {
+        requests: [...requests],
+        editorialDecodedBytes: responses.reduce((n, r) => n + r.bytes, 0),
+        responses: [...responses],
+      };
+      let start = requests.length;
+      await p.getByLabel('Country / market').selectOption('JP');
+      await p.getByText('THE JAPAN HOME LOAN JOURNAL', { exact: true }).waitFor();
+      const switchJP = { requests: requests.slice(start) };
+      start = requests.length;
+      await p.getByRole('link', { name: 'Read the briefing', exact: true }).click();
+      await p.locator('.reader').waitFor();
+      measurements[`${version}-real-network`] = {
+        initial,
+        switchJP,
+        openArticle: { requests: requests.slice(start) },
+      };
+      await c.close();
+      await new Promise<void>((r) => {
+        server!.once('exit', () => r());
+        server!.kill();
+      });
+      server = undefined;
+    }
+    // Only stress browser diagnostics use this extra production mode; byte comparisons above are ordinary releases.
+    execFileSync(
+      'node',
+      [join(root, 'node_modules/vite/bin/vite.js'), 'build', '--mode', 'editorial-test'],
+      { cwd: join(temp, 'after-1000'), stdio: 'inherit' },
+    );
     const base = 'http://127.0.0.1:4175';
     server = spawn(
       process.execPath,
@@ -123,7 +198,6 @@ try {
       if (i === 59) throw Error('Preview did not start');
       await new Promise((r) => setTimeout(r, 250));
     }
-    browser = await chromium.launch();
     const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
     await context.route('**/*', (route) =>
       route.request().url().startsWith(base) ? route.continue() : route.abort(),
@@ -145,7 +219,8 @@ try {
             .catch(() => {}),
         );
     });
-    const ready = () => page.locator('.story-list').waitFor();
+    const ready = (market = 'SG', category = 'all') =>
+      page.locator(`.story-list[data-market="${market}"][data-category="${category}"]`).waitFor();
     const navigate = async (slug: string, market = 'SG') => {
       await page.evaluate(
         ({ slug, market }) => {
@@ -196,7 +271,7 @@ try {
     );
     const startJP = requests.length;
     await page.getByLabel('Country / market').selectOption('JP');
-    await ready();
+    await ready('JP');
     measurements.switchJP = { requests: requests.slice(startJP) };
     assert.ok(!requests.slice(startJP).some((p) => p.includes('/articles/') || p.includes('/SG/')));
     await page.getByLabel('Country / market').selectOption('SG');
@@ -211,7 +286,7 @@ try {
       await bounds();
     }
     await page.getByRole('button', { name: 'Buying & refinancing guides', exact: true }).click();
-    await ready();
+    await ready('SG', 'guide');
     assert.equal(await page.locator('.story-row').count(), 20);
     assert.ok(
       (await page.locator('.story-row h3').allTextContents()).some((t) =>
@@ -227,7 +302,7 @@ try {
     const selected = stress.filter((a) => a.market === 'SG').slice(0, 8);
     const beforeBody = requests.length;
     await navigate(selected[0].slug);
-    await page.locator('.reader').waitFor();
+    await page.getByRole('heading', { name: selected[0].title, exact: true }).waitFor();
     measurements.openArticle = { requests: requests.slice(beforeBody), slug: selected[0].slug };
     assert.equal(requests.slice(beforeBody).filter((p) => p.includes('/articles/')).length, 1);
     for (const article of selected.slice(1)) {
@@ -238,7 +313,7 @@ try {
     assert.equal((await stats()).bodies.entries, 5);
     const evicted = requests.length;
     await navigate(selected[0].slug);
-    await page.locator('.reader').waitFor();
+    await page.getByRole('heading', { name: selected[0].title, exact: true }).waitFor();
     assert.ok(
       requests.slice(evicted).some((p) => p.endsWith(`/articles/${selected[0].slug}.json`)),
       'Oldest body is fetched after eviction',

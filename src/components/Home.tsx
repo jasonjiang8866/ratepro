@@ -237,7 +237,12 @@ export function JournalView({
             </button>
           ))}
         </div>
-        <div className="story-list visual-story-grid">
+        <div
+          className="story-list visual-story-grid"
+          data-category={page.category}
+          data-page={page.page}
+          data-market={page.market}
+        >
           {archive.map((a) => (
             <article key={a.slug} className="story-row visual-story-card">
               <StoryIllustration category={a.category} />
@@ -364,6 +369,8 @@ function Journal({ market, now }: { market: MarketCode; now: Date }) {
     [page, setPage] = useState<EditorialPage>(),
     [error, setError] = useState<Error>();
   const day = marketDay(now, market);
+  const requestKey = `${market}/${day}/${category}/${pageNumber}/${retry}`;
+  const [loadedKey, setLoadedKey] = useState('');
   useEffect(() => {
     const c = new AbortController();
     setError(undefined);
@@ -377,6 +384,7 @@ function Journal({ market, now }: { market: MarketCode; now: Date }) {
         if (!c.signal.aborted) {
           setData(home);
           setPage(page);
+          setLoadedKey(requestKey);
         }
       })
       .catch((e) => {
@@ -394,7 +402,7 @@ function Journal({ market, now }: { market: MarketCode; now: Date }) {
         }}
       />
     );
-  if (!data || !page) return <Loading />;
+  if (!data || !page || loadedKey !== requestKey) return <Loading />;
   return (
     <JournalView
       data={data}

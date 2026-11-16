@@ -29,12 +29,12 @@ Home fetches only a manifest, the selected market's current calendar/home projec
 
 Opening an article fetches its stable JSON path. Only reader UI code uses dynamic import; article data uses fetch so it is not retained by the module registry. AbortController and unmount guards prevent late responses from replacing a newer route. Loading, unavailable/retry, empty and missing-report states are distinct. Slugs, explicit market queries, legacy hash links, source links, expired articles, revision links and browser forward/back remain supported.
 
-| Cache | Entries | UTF-8 serialized payload budget |
-| --- | ---: | ---: |
-| Full article bodies | 5 | 512 KiB |
-| List pages | 6 | 384 KiB |
-| Home projections | 2 | 192 KiB |
-| Month calendars | 2 | 16 KiB |
+| Cache               | Entries | UTF-8 serialized payload budget |
+| ------------------- | ------: | ------------------------------: |
+| Full article bodies |       5 |                         512 KiB |
+| List pages          |       6 |                         384 KiB |
+| Home projections    |       2 |                         192 KiB |
+| Month calendars     |       2 |                          16 KiB |
 
 All four caches use LRU plus a five-minute TTL checked on access/insertion. There is one manifest (maximum 8 KiB, 60-second refresh). Responses are stream-limited before parsing (body 512 KiB, page 128 KiB, home 96 KiB, calendar/manifest 8 KiB, locator 2 KiB). Cache sizes account for serialized UTF-8 bytes, **not actual heap size**. Active React state and a bounded number of in-flight responses add overhead. Eviction releases application references; browser HTTP caches, GC timing and OS RAM are outside this guarantee. No editorial data is stored in localStorage.
 

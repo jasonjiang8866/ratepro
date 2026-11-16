@@ -87,7 +87,7 @@ async function limitedJson<T>(
   }
   if (response.headers.get('content-type')?.includes('text/html')) {
     await response.body?.cancel();
-    throw new RevisionError('Editorial asset unavailable. Please retry.');
+    throw new ContentError('Editorial asset was not found.', 404);
   }
   if (Number(response.headers.get('content-length')) > limit) {
     await response.body?.cancel();

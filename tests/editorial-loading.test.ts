@@ -187,6 +187,18 @@ describe('bounded fetch client', () => {
     });
     expect(await client.locate(articles[0].slug, signal())).toBe(articles[0].market);
   });
+  it('treats an HTML SPA fallback as a missing JSON asset, then refreshes once', async () => {
+    const fetcher = mocked(),
+      real = fetcher.getMockImplementation()!;
+    fetcher.mockImplementation(async (url) =>
+      String(url).includes('/articles/missing.json')
+        ? new Response('<html>App shell</html>', { headers: { 'content-type': 'text/html' } })
+        : real(url),
+    );
+    const client = createEditorialClient(fetcher);
+    await expect(client.article('missing', 'SG', signal())).rejects.toMatchObject({ status: 404 });
+    expect(fetcher.mock.calls.filter(([u]) => String(u).endsWith('manifest.json'))).toHaveLength(2);
+  });
   it('rejects oversized/malformed responses and allows a successful retry', async () => {
     const fetcher = mocked(),
       client = createEditorialClient(fetcher);
