@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import {
   ArrowDownToLine,
   ArrowUpFromLine,
@@ -70,6 +70,7 @@ import { Home } from '@/components/Home';
 import { JapanTools } from '@/components/JapanTools';
 import { editorialClient, ContentError } from '@/lib/content';
 import { markets, marketInfo, resolveMarket, isMarket, type MarketCode } from '@/lib/markets';
+const TrendDashboard = lazy(() => import('@/components/TrendDashboard'));
 const money = (n: number) =>
   new Intl.NumberFormat('en-SG', {
     style: 'currency',
@@ -194,7 +195,7 @@ export default function App() {
     if (!isMarket(next) || next === market) return;
     const url = new URL(location.href);
     url.searchParams.set('market', next);
-    url.hash = '/home';
+    url.hash = location.hash === '#/trends' ? '/trends' : '/home';
     history.pushState(null, '', url);
     try {
       localStorage.setItem('ratepro.market', next);
@@ -240,13 +241,15 @@ function MarketApp({
   const [clock, setClock] = useState(Date.now);
   const [route, setRoute] = useState(window.location.hash);
   const tab =
-    route === '#/rates'
-      ? 'Rates'
-      : route === '#/sources'
-        ? 'Sources'
-        : route === '#/history'
-          ? 'History'
-          : 'Home';
+    route === '#/trends'
+      ? 'Trends'
+      : route === '#/rates'
+        ? 'Rates'
+        : route === '#/sources'
+          ? 'Sources'
+          : route === '#/history'
+            ? 'History'
+            : 'Home';
   const setTab = (next: string) => {
     window.location.hash = `/${next.toLowerCase()}`;
   };
@@ -458,6 +461,7 @@ function MarketApp({
               ['Home', 'The journal'],
               ['Rates', market === 'SG' ? 'Compare rates' : 'Loan explorer'],
               ['Sources', 'Our sources'],
+              ['Trends', 'Trends'],
             ].map(([key, label]) => (
               <a
                 key={key}
@@ -498,8 +502,15 @@ function MarketApp({
             now={new Date(clock)}
           />
         )}
-        {market === 'JP' && tab !== 'Home' && <JapanTools tab={tab} now={new Date(clock)} />}
-        {market === 'SG' && tab !== 'Home' && (
+        {tab === 'Trends' && (
+          <Suspense fallback={<p role="status">Loading trends…</p>}>
+            <TrendDashboard market={market} onMarket={chooseMarket} />
+          </Suspense>
+        )}
+        {market === 'JP' && tab !== 'Home' && tab !== 'Trends' && (
+          <JapanTools tab={tab} now={new Date(clock)} />
+        )}
+        {market === 'SG' && tab !== 'Home' && tab !== 'Trends' && (
           <>
             <section className="hero">
               <div>

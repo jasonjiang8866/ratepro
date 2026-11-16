@@ -1,0 +1,306 @@
+.trends {
+  padding-top: 40px;
+}
+.trends-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+.trends h1 {
+  font-size: clamp(30px, 4vw, 52px);
+  letter-spacing: -1.8px;
+  font-weight: 650;
+  line-height: 1.1;
+  margin: 14px 0;
+}
+.trends h1 span {
+  color: var(--primary);
+}
+.trends p {
+  color: var(--muted);
+}
+.trends h2 {
+  font-size: 22px;
+  font-weight: 650;
+  margin-bottom: 12px;
+}
+.trends h3 {
+  font-weight: 650;
+}
+.trends label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.trends select {
+  background: var(--card);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px;
+  font-size: 13px;
+  text-transform: none;
+  letter-spacing: 0;
+  width: 100%;
+  min-width: 0;
+}
+.trend-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0 0 30px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0;
+  gap: 18px;
+}
+.trend-stats span {
+  display: block;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.trend-stats strong {
+  font-size: clamp(18px, 2.5vw, 30px);
+  font-weight: 500;
+}
+.trend-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 26px;
+  margin-bottom: 30px;
+}
+.trend-controls {
+  display: grid;
+  grid-template-columns: 1fr 2fr 2fr;
+  gap: 16px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.trend-chart-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 24px;
+}
+.trend-chart-heading h2 {
+  margin-bottom: 5px;
+}
+.trend-chart-heading p {
+  font-size: 12px;
+}
+.trend-ranges {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.trend-ranges button {
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.trend-ranges button[aria-pressed='true'] {
+  background: var(--foreground);
+  color: var(--background);
+}
+.trends button {
+  cursor: pointer;
+}
+.trends a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.trends :focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+.trend-note {
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 12px 0;
+}
+.trend-chart {
+  width: 100%;
+  height: auto;
+  min-height: 200px;
+  overflow: visible;
+}
+.trend-chart text {
+  fill: var(--muted);
+  font-size: 11px;
+}
+.trend-chart circle {
+  cursor: pointer;
+}
+.trend-chart circle:hover,
+.trend-chart circle:focus {
+  r: 7;
+}
+.trend-primary {
+  color: var(--primary);
+}
+.trend-secondary {
+  color: #bb7e31;
+}
+.dark .trend-primary {
+  color: #68cda4;
+}
+.trend-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+.trend-point {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 20px;
+  background: var(--secondary);
+  padding: 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  min-height: 86px;
+}
+.trend-point strong {
+  font-size: 24px;
+}
+.trend-numbers {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.trend-numbers strong {
+  display: block;
+  font-size: 22px;
+  color: var(--foreground);
+  margin: 7px 0;
+  font-weight: 500;
+}
+.trend-movements {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 20px 0 30px;
+}
+.trend-movements article {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px;
+  background: var(--hero);
+}
+.trend-movements h3 {
+  margin-bottom: 18px;
+}
+.trend-movements p {
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 14px;
+}
+.trend-movements span,
+.trend-movements strong {
+  display: block;
+}
+.trend-coverage {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  margin: 24px 0;
+}
+.trend-coverage article {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.trend-coverage h3 {
+  font-size: 13px;
+}
+.trend-coverage strong {
+  font-size: 24px;
+  font-weight: 500;
+}
+.trend-coverage small,
+.trend-coverage span {
+  font-size: 11px;
+  color: var(--muted);
+}
+.trend-coverage meter {
+  width: 100%;
+  height: 8px;
+}
+.trend-tracking li {
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+  font-size: 12px;
+}
+.trend-tracking span {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+}
+.trend-empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--muted);
+}
+.trend-empty button {
+  text-decoration: underline;
+}
+@media (max-width: 760px) {
+  .trends-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+  .trends-heading label {
+    width: 100%;
+  }
+  .trend-controls {
+    grid-template-columns: 1fr;
+  }
+  .trend-panel {
+    padding: 18px;
+  }
+  .trend-chart-heading {
+    flex-direction: column;
+  }
+  .trend-movements {
+    grid-template-columns: 1fr;
+  }
+  .trend-coverage,
+  .trend-numbers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .trend-stats {
+    gap: 12px;
+  }
+  .trend-stats strong {
+    font-size: 16px;
+  }
+  .trend-stats span {
+    font-size: 9px;
+  }
+  .trend-chart {
+    min-height: 150px;
+  }
+}
+
+@media (max-width: 640px) {
+  .trend-chart text {
+    font-size: 14px;
+  }
+}

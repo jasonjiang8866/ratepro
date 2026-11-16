@@ -18,7 +18,7 @@
     "format:check": "prettier --check .",
     "build:editorial": "node --import tsx scripts/build-editorial.ts",
     "check:content": "node --import tsx scripts/check-content.ts",
-    "test:ui": "node scripts/check-ui.mjs",
+    "test:ui": "node scripts/check-ui.mjs && node scripts/check-trends-ui.mjs",
     "research:cpf": "node --import tsx scripts/cpf-browser.ts",
     "research:maybank": "node --import tsx scripts/maybank-diagnostics.ts",
     "capture:maybank": "node --import tsx scripts/capture-maybank.ts",
@@ -28,7 +28,11 @@
     "review:file": "node --import tsx scripts/review-file.ts",
     "collect:jp": "node --import tsx scripts/collect-japan.ts",
     "verify:jp": "node --import tsx scripts/collect-japan.ts --check",
-    "test:editorial:ui": "node --import tsx scripts/benchmark-editorial.ts"
+    "test:editorial:ui": "node --import tsx scripts/benchmark-editorial.ts",
+    "history:backfill": "node --import tsx scripts/history.ts backfill",
+    "history:ingest": "node --import tsx scripts/history.ts ingest",
+    "history:build": "node --import tsx scripts/history.ts build",
+    "history:validate": "node --import tsx scripts/history.ts validate"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",

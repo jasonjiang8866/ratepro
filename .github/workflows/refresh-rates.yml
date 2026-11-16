@@ -24,7 +24,13 @@ jobs:
       - name: Install PDF text extractor
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends poppler-utils
       - run: npm test
+      - name: Preserve published observations before refresh
+        run: npm run history:ingest -- --market SG
       - run: npm run collect
+        id: collector
+        continue-on-error: true
+      - name: Preserve attempts and generate analytics, including all-source failures
+        run: npm run history:ingest -- --market SG --input source-check.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -37,8 +43,11 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add public/data/rates.json
+          git add public/data/rates.json public/data/history public/data/analytics
           if git diff --cached --quiet; then exit 0; fi
           git commit -m 'data: refresh public mortgage observations'
           git push origin HEAD:main
 
+      - name: Report collection failure after preserving evidence
+        if: steps.collector.outcome == 'failure'
+        run: exit 1

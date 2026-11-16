@@ -6,6 +6,8 @@ on:
       - 'content/**'
       - 'scripts/check-content.ts'
       - 'scripts/check-ui.mjs'
+      - 'scripts/check-trends-ui.mjs'
+      - 'public/data/analytics/**'
       - 'package*.json'
       - 'index.html'
       - 'vite.config.ts'
@@ -31,5 +33,5 @@ jobs:
         if: always()
         with:
           name: homepage-screenshots
-          path: test-results/homepage
+          path: test-results
           if-no-files-found: warn

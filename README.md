@@ -1,6 +1,6 @@
 # RatePro
 
-An independent Singapore home-loan directory built with **React + TypeScript + Vite + Tailwind CSS + shadcn/ui**. The deployed application is static: no Django, API server, database, accounts, Worker functions, or secret keys. Cloudflare Pages serves `dist/`.
+An independent Singapore / Japan home-loan directory and public observation archive built with **React + TypeScript + Vite + Tailwind CSS + shadcn/ui**. The deployed application is static: no Django, API server, database, accounts, Worker functions, or secret keys. Cloudflare Pages serves `dist/`.
 
 ## Run
 
@@ -12,6 +12,26 @@ npm run dev
 npm test
 npm run build
 ```
+
+## Public historical trends
+
+Open **Trends** for SG/JP product histories, compatible bank overlays, observed
+high/low/latest rates, recent movement and source coverage. Records live in Git,
+independently of browser storage. SORA spreads and Japan applied/standard pricing
+stay distinct; missing dates are not filled or interpolated.
+
+```sh
+npm run history:backfill -- --ref origin/main # one-time replay, full Git clone
+npm run history:ingest                       # incremental, idempotent snapshots
+npm run history:validate                     # schema and relationship checks
+npm run history:build                        # static product/year analytics
+```
+
+The daily collection workflows preserve observations and failures, then generate
+analytics alongside the compatible latest feeds. See the [historical data contract](docs/HISTORICAL_DATA.md)
+for schema/versioning, original timestamps, immutable evidence, migrations, backfill
+statistics, loading limits and verification. Browser-local history remains a separate
+personal convenience; imports do not write to the public archive.
 
 ## Editorial journal
 
@@ -83,16 +103,16 @@ The scheduled collector requires GitHub Actions to be enabled and repository rul
 
 ### Current source coverage
 
-| Source             | Supported observations              | Coverage                                                                                          |
-| ------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------- |
-| DBS HDB / Green    | CPF-OA and FHR6 stage schedules     | Two public products                                                                               |
-| HDB                | Concessionary quarter               | HDB primary, CPF / AskGov, then dated CPF announcement; retain prior observation if all fail  |
-| Maybank            | 2-year / 3-year fixed, 1M / 3M SORA | Four completed-property schedules; latest local capture retained, GitHub runner times out; BUC excluded |
-| Standard Chartered | Published 3M SORA schedule          | Formula only; source effective date is displayed separately                                       |
-| UOB                | Published completed-property SORA   | New direct-to-bank customers; fixed-rate enquiries remain quote-only                              |
-| Citi               | Nine variable, fixed and BUC schedules   | Separate Citigold/Citibanking and loan bands; property/purpose eligibility needs confirmation     |
-| SBI Singapore      | Two floating schedules + two-year fixed | Three full published schedules; BUC only for three-year floating lock-in |
-| OCBC / HSBC        | Official research links             | Quote required; no headline-only rate records                                                     |
+| Source             | Supported observations                  | Coverage                                                                                                |
+| ------------------ | --------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| DBS HDB / Green    | CPF-OA and FHR6 stage schedules         | Two public products                                                                                     |
+| HDB                | Concessionary quarter                   | HDB primary, CPF / AskGov, then dated CPF announcement; retain prior observation if all fail            |
+| Maybank            | 2-year / 3-year fixed, 1M / 3M SORA     | Four completed-property schedules; latest local capture retained, GitHub runner times out; BUC excluded |
+| Standard Chartered | Published 3M SORA schedule              | Formula only; source effective date is displayed separately                                             |
+| UOB                | Published completed-property SORA       | New direct-to-bank customers; fixed-rate enquiries remain quote-only                                    |
+| Citi               | Nine variable, fixed and BUC schedules  | Separate Citigold/Citibanking and loan bands; property/purpose eligibility needs confirmation           |
+| SBI Singapore      | Two floating schedules + two-year fixed | Three full published schedules; BUC only for three-year floating lock-in                                |
+| OCBC / HSBC        | Official research links                 | Quote required; no headline-only rate records                                                           |
 
 The November 14 expansion supports **21 SG products across eight official source URLs**:
 Citi now includes four fixed packages and one Citigold BUC package in addition to
