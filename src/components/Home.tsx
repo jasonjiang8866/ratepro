@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -9,15 +9,16 @@ import {
   ExternalLink,
   SlidersHorizontal,
 } from 'lucide-react';
-import { articles as allArticles } from '../lib/content';
-import { articleHref, marketInfo, type MarketCode } from '../lib/markets';
+import { editorialClient, ContentError } from '../lib/content';
+import { marketDay } from '../lib/markets';
 import {
-  categories,
-  editorialStatus,
-  readingMinutes,
-  selectFeaturedArticle,
-  type Article,
-} from '../lib/editorial';
+  type ArticleSummary,
+  type HomeData,
+  type EditorialPage,
+  type EditorialFilter,
+} from '../lib/editorial-data';
+import { articleHref, marketInfo, type MarketCode } from '../lib/markets';
+import { categories, editorialStatus, readingMinutes, type Article } from '../lib/editorial';
 import './home.css';
 import { HomeIllustration, StoryIllustration } from './MortgageVisuals';
 
@@ -29,173 +30,40 @@ const date = (s: string, market: MarketCode = 'SG') =>
     timeZone: marketInfo(market).timeZone,
   }).format(new Date(s));
 const href = articleHref;
-function SourceLinks({ article, ids }: { article: Article; ids: string[] }) {
-  return (
-    <span className="evidence-links">
-      {ids.map((id) => {
-        const source = article.sources.find((s) => s.id === id)!;
-        return (
-          <a key={id} href={source.url} target="_blank" rel="noreferrer">
-            {source.publisher}
-            <ArrowUpRight size={12} />
-            <span className="sr-only"> (opens in a new tab)</span>
-          </a>
-        );
-      })}
-    </span>
-  );
-}
-function Meta({ article }: { article: Article }) {
+export function Meta({ article }: { article: Article | ArticleSummary }) {
   return (
     <div className="story-meta">
       <span>{categories[article.category]}</span>
       <span>{date(article.reportDate)}</span>
       <span>
         <Clock3 size={12} />
-        {readingMinutes(article)} min read
+        {'minutes' in article ? article.minutes : readingMinutes(article)} min read
       </span>
     </div>
   );
 }
-function Reader({ article, now }: { article: Article; now: Date }) {
-  const replacement = allArticles.find(
-    (item) => item.market === article.market && item.supersedes === article.slug,
-  );
-  return (
-    <article className="reader">
-      <a className="text-link" href="#/home">
-        <ChevronLeft size={16} /> Back to the journal
-      </a>
-      <header className="reader-header">
-        <Meta article={article} />
-        <h1>{article.title}</h1>
-        <p className="reader-deck">{article.summary}</p>
-        <span className="story-status">
-          {replacement ? 'Superseded report' : editorialStatus(article, now)}
-        </span>
-        {replacement && (
-          <p className="correction-notice">
-            This report has a correction.{' '}
-            <a className="text-link" href={href(replacement)}>
-              Read the updated report <ArrowRight size={14} />
-            </a>
-          </p>
-        )}
-      </header>
-      <div className="reader-columns">
-        <div className="reader-body">
-          <section className="reader-takeaways">
-            <h2>At a glance</h2>
-            {article.takeaways.map((t, i) => (
-              <div key={i}>
-                <p>{t.text}</p>
-                <SourceLinks article={article} ids={t.sourceIds} />
-              </div>
-            ))}
-          </section>
-          {article.sections.map((s, i) => (
-            <section key={i}>
-              <div className="eyebrow">
-                {s.kind === 'analysis' ? 'EDITORIAL INTERPRETATION' : 'OFFICIAL PUBLICATION'}
-              </div>
-              <h2>{s.heading}</h2>
-              <p>{s.text}</p>
-              <SourceLinks article={article} ids={s.sourceIds} />
-            </section>
-          ))}
-          {article.package && (
-            <section className="package-terms">
-              <h2>The eligibility & conditions</h2>
-              <dl>
-                <dt>Who it covers</dt>
-                <dd>{article.package.eligibility}</dd>
-                <dt>Important conditions</dt>
-                <dd>{article.package.conditions}</dd>
-                <dt>Published end date</dt>
-                <dd>
-                  {article.package.expiry
-                    ? date(article.package.expiry)
-                    : 'Not stated in the reviewed source. Confirm availability with the lender.'}
-                </dd>
-              </dl>
-              <SourceLinks article={article} ids={article.package.sourceIds} />
-            </section>
-          )}
-        </div>
-        <aside className="reader-sources">
-          <div className="eyebrow">THE EVIDENCE</div>
-          <h2>Follow the sources.</h2>
-          <p>
-            Report date: {date(article.reportDate)}. Source checks below are separate from rate
-            observations in the comparison tool.
-          </p>
-          {(article.effectiveFrom || article.effectiveUntil) && (
-            <p>
-              Stated period:{' '}
-              {article.effectiveFrom ? date(article.effectiveFrom) : 'Start not stated'}
-              {article.effectiveUntil && ` – ${date(article.effectiveUntil)}`}.
-            </p>
-          )}
-          {article.sources.map((s) => (
-            <div key={s.id} className="source-note">
-              <a href={s.url} target="_blank" rel="noreferrer">
-                {s.publisher}
-                <ExternalLink size={13} />
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
-              <p>{s.title}</p>
-              <small>
-                Checked:{' '}
-                {new Intl.DateTimeFormat('en-SG', {
-                  dateStyle: 'medium',
-                  timeStyle: 'short',
-                  timeZone: marketInfo(article.market).timeZone,
-                }).format(new Date(s.checkedAt))}{' '}
-                {marketInfo(article.market).timeZoneLabel}
-              </small>
-              <small>Document date: {s.documentDate ? date(s.documentDate) : 'Not stated'}</small>
-            </div>
-          ))}
-          {article.supersedes && (
-            <a className="text-link" href={href({ ...article, slug: article.supersedes })}>
-              Earlier report <ArrowRight size={14} />
-            </a>
-          )}
-        </aside>
-      </div>
-      <div className="reader-next">
-        <div>
-          <span className="eyebrow">PUT THE CONTEXT TO WORK</span>
-          <h2>Compare the terms that matter to you.</h2>
-        </div>
-        <a className="journal-button" href="#/rates">
-          Explore loan packages <ArrowRight size={17} />
-        </a>
-      </div>
-    </article>
-  );
-}
-export function Home({ slug, now, market }: { slug?: string; now: Date; market: MarketCode }) {
-  const articles = allArticles.filter((a) => a.market === market);
+export function JournalView({
+  data,
+  page,
+  now,
+  market,
+  category,
+  onCategory,
+  onPage,
+}: {
+  data: HomeData;
+  page: EditorialPage;
+  now: Date;
+  market: MarketCode;
+  category: EditorialFilter;
+  onCategory: (category: EditorialFilter) => void;
+  onPage: (page: number) => void;
+}) {
   const info = marketInfo(market);
-  const [category, setCategory] = useState('all');
-  if (slug) {
-    const article = articles.find((a) => a.slug === slug);
-    return article ? (
-      <Reader article={article} now={now} />
-    ) : (
-      <section className="journal-empty">
-        <h1>We couldn’t find that report.</h1>
-        <a className="text-link" href="#/home">
-          Back to the journal <ArrowRight size={16} />
-        </a>
-      </section>
-    );
-  }
-  const isSuperseded = (a: Article) => articles.some((item) => item.supersedes === a.slug);
-  const featured = selectFeaturedArticle(articles, market, now);
-  const packages = articles.filter((a) => a.category === 'package' && !isSuperseded(a)).slice(0, 3);
-  const archive = articles.filter((a) => category === 'all' || a.category === category);
+  const featured = data.featured,
+    packages = data.packages,
+    archive = page.items;
+  const isSuperseded = (a: ArticleSummary) => Boolean(a.supersededBy);
   return (
     <div className="journal">
       <section className="journal-hero">
@@ -256,7 +124,15 @@ export function Home({ slug, now, market }: { slug?: string; now: Date; market: 
                 <span>0{i + 1}</span>
                 <div>
                   <p>{t.text}</p>
-                  <SourceLinks article={featured} ids={t.sourceIds} />
+                  <span className="evidence-links">
+                    {t.sources.map((source) => (
+                      <a key={source.url} href={source.url} target="_blank" rel="noreferrer">
+                        {source.publisher}
+                        <ArrowUpRight size={12} />
+                        <span className="sr-only"> (opens in a new tab)</span>
+                      </a>
+                    ))}
+                  </span>
                 </div>
               </div>
             ))}
@@ -284,10 +160,10 @@ export function Home({ slug, now, market }: { slug?: string; now: Date; market: 
           {packages.map((a) => (
             <article key={a.slug} className="watch-card">
               <div className="watch-top">
-                <span className="lender-monogram">{a.package!.lender.slice(0, 1)}</span>
+                <span className="lender-monogram">{a.lender.slice(0, 1)}</span>
                 <div>
-                  <strong>{a.package!.lender}</strong>
-                  <small>Checked {date(a.sources[0].checkedAt, a.market)}</small>
+                  <strong>{a.lender}</strong>
+                  <small>Checked {date(a.firstCheckedAt, a.market)}</small>
                 </div>
                 <ArrowUpRight size={20} />
               </div>
@@ -299,7 +175,7 @@ export function Home({ slug, now, market }: { slug?: string; now: Date; market: 
               </h3>
               <details className="visual-disclosure">
                 <summary>Who is this for?</summary>
-                <p>{a.package!.eligibility}</p>
+                <p>{a.eligibilityPreview}</p>
               </details>
               <div className="watch-expiry">
                 {a.package!.expiry
@@ -352,12 +228,21 @@ export function Home({ slug, now, market }: { slug?: string; now: Date; market: 
         </div>
         <div className="journal-filters" aria-label="Filter reports">
           {[['all', 'All stories'], ...Object.entries(categories)].map(([key, label]) => (
-            <button key={key} aria-pressed={category === key} onClick={() => setCategory(key)}>
+            <button
+              key={key}
+              aria-pressed={category === key}
+              onClick={() => onCategory(key as EditorialFilter)}
+            >
               {label}
             </button>
           ))}
         </div>
-        <div className="story-list visual-story-grid">
+        <div
+          className="story-list visual-story-grid"
+          data-category={page.category}
+          data-page={page.page}
+          data-market={page.market}
+        >
           {archive.map((a) => (
             <article key={a.slug} className="story-row visual-story-card">
               <StoryIllustration category={a.category} />
@@ -380,6 +265,17 @@ export function Home({ slug, now, market }: { slug?: string; now: Date; market: 
             <p className="journal-empty">No reports in this category yet.</p>
           )}
         </div>
+        <nav className="journal-pagination" aria-label="Reading room pages">
+          <button disabled={page.page === 1} onClick={() => onPage(page.page - 1)}>
+            Previous page
+          </button>
+          <span role="status">
+            Page {page.page} of {Math.max(1, Math.ceil(page.total / 20))} · {page.total} reports
+          </span>
+          <button disabled={page.page * 20 >= page.total} onClick={() => onPage(page.page + 1)}>
+            Next page
+          </button>
+        </nav>
       </section>
       <section className="journal-method">
         <div className="eyebrow">OUR APPROACH</div>
@@ -403,5 +299,129 @@ export function Home({ slug, now, market }: { slug?: string; now: Date; market: 
         </div>
       </section>
     </div>
+  );
+}
+
+const Reader = lazy(() => import('./ArticleReader'));
+function Loading() {
+  return (
+    <section className="journal-empty" role="status">
+      Loading editorial content…
+    </section>
+  );
+}
+export function Failure({ error, retry }: { error: Error; retry: () => void }) {
+  const missing = error instanceof ContentError && error.status === 404;
+  return (
+    <section className="journal-empty" role="alert">
+      <h1>{missing ? 'We couldn’t find that report.' : 'Editorial content is unavailable.'}</h1>
+      {!missing && <p>{error.message}</p>}
+      <button className="text-link" onClick={retry}>
+        Retry content
+      </button>{' '}
+      <a className="text-link" href="#/home">
+        Back to the journal <ArrowRight size={16} />
+      </a>
+    </section>
+  );
+}
+function ReadArticle({ slug, market, now }: { slug: string; market: MarketCode; now: Date }) {
+  const [body, setBody] = useState<import('../lib/editorial-data').ArticleBody>();
+  const [error, setError] = useState<Error>();
+  const [retry, setRetry] = useState(0);
+  useEffect(() => {
+    const c = new AbortController();
+    setBody(undefined);
+    setError(undefined);
+    editorialClient
+      .article(slug, market, c.signal)
+      .then((value) => {
+        if (!c.signal.aborted) setBody(value);
+      })
+      .catch((e) => {
+        if (!c.signal.aborted) setError(e);
+      });
+    return () => c.abort();
+  }, [slug, market, retry]);
+  if (error)
+    return (
+      <Failure
+        error={error}
+        retry={() => {
+          editorialClient.clear();
+          setRetry((r) => r + 1);
+        }}
+      />
+    );
+  return body ? (
+    <Suspense fallback={<Loading />}>
+      <Reader article={body.article} meta={body.meta} now={now} />
+    </Suspense>
+  ) : (
+    <Loading />
+  );
+}
+function Journal({ market, now }: { market: MarketCode; now: Date }) {
+  const [category, setCategory] = useState<EditorialFilter>('all'),
+    [pageNumber, setPageNumber] = useState(1),
+    [retry, setRetry] = useState(0);
+  const [data, setData] = useState<HomeData>(),
+    [page, setPage] = useState<EditorialPage>(),
+    [error, setError] = useState<Error>();
+  const day = marketDay(now, market);
+  const requestKey = `${market}/${day}/${category}/${pageNumber}/${retry}`;
+  const [loadedKey, setLoadedKey] = useState('');
+  useEffect(() => {
+    const c = new AbortController();
+    setError(undefined);
+    setData(undefined);
+    setPage(undefined);
+    Promise.all([
+      editorialClient.home(market, new Date(day + 'T04:00:00Z'), c.signal),
+      editorialClient.page(market, category, pageNumber, c.signal),
+    ])
+      .then(([home, page]) => {
+        if (!c.signal.aborted) {
+          setData(home);
+          setPage(page);
+          setLoadedKey(requestKey);
+        }
+      })
+      .catch((e) => {
+        if (!c.signal.aborted) setError(e);
+      });
+    return () => c.abort();
+  }, [market, day, category, pageNumber, retry]);
+  if (error)
+    return (
+      <Failure
+        error={error}
+        retry={() => {
+          editorialClient.clear();
+          setRetry((r) => r + 1);
+        }}
+      />
+    );
+  if (!data || !page || loadedKey !== requestKey) return <Loading />;
+  return (
+    <JournalView
+      data={data}
+      page={page}
+      market={market}
+      now={now}
+      category={category}
+      onCategory={(c) => {
+        setCategory(c);
+        setPageNumber(1);
+      }}
+      onPage={setPageNumber}
+    />
+  );
+}
+export function Home({ slug, market, now }: { slug?: string; market: MarketCode; now: Date }) {
+  return slug ? (
+    <ReadArticle key={market + ':' + slug} slug={slug} market={market} now={now} />
+  ) : (
+    <Journal key={market} market={market} now={now} />
   );
 }

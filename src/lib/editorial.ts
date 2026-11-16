@@ -119,7 +119,15 @@ export function validateArticles(raw: unknown[], now = new Date()): Article[] {
     (a, b) => b.reportDate.localeCompare(a.reportDate) || a.slug.localeCompare(b.slug),
   );
 }
-export function editorialPeriod(a: Article, now = new Date()): 'ended' | 'upcoming' | 'current' {
+type StatusArticle = Pick<Article, 'market' | 'effectiveFrom' | 'effectiveUntil' | 'edition'> & {
+  package?: { expiry: string | null } | null;
+  sources?: readonly { checkedAt: string }[];
+  oldestCheckedAt?: string;
+};
+export function editorialPeriod(
+  a: StatusArticle,
+  now = new Date(),
+): 'ended' | 'upcoming' | 'current' {
   const today = marketDay(now, a.market);
   const end = [a.effectiveUntil, a.package?.expiry].filter((v): v is string => !!v).sort()[0];
   if (end && today > end) return 'ended';
@@ -141,11 +149,13 @@ export function selectFeaturedArticle(
     )
     .sort((a, b) => b.reportDate.localeCompare(a.reportDate) || a.slug.localeCompare(b.slug))[0];
 }
-export function editorialStatus(a: Article, now = new Date()): string {
+export function editorialStatus(a: StatusArticle, now = new Date()): string {
   const period = editorialPeriod(a, now);
   if (period === 'ended') return 'Period ended';
   if (period === 'upcoming') return 'Upcoming period';
-  const lastCheck = Math.min(...a.sources.map((s) => Date.parse(s.checkedAt)));
+  const lastCheck = a.oldestCheckedAt
+    ? Date.parse(a.oldestCheckedAt)
+    : Math.min(...(a.sources ?? []).map((s) => Date.parse(s.checkedAt)));
   if (now.getTime() - lastCheck > 7 * 86400000) return 'Recheck needed';
   return a.edition === 'baseline'
     ? 'Baseline · not a new launch'

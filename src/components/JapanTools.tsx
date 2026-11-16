@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowUpRight, ArrowRight } from 'lucide-react';
-import { articles } from '../lib/content';
+import { editorialClient } from '../lib/content';
+import { type EditorialPage, type EditorialFilter } from '../lib/editorial-data';
 import { articleHref } from '../lib/markets';
 import { editorialStatus } from '../lib/editorial';
 import { payment } from '../lib/data';
@@ -8,10 +9,6 @@ import { ScenarioCalculator } from './ScenarioCalculator';
 import { JapanRates } from './JapanRates';
 
 export function JapanTools({ tab, now }: { tab: string; now: Date }) {
-  const records = articles.filter((a) => a.market === 'JP');
-  const packages = records.filter(
-    (a) => a.category === 'package' && !records.some((b) => b.supersedes === a.slug),
-  );
   const [principal, setPrincipal] = useState('30000000');
   const [years, setYears] = useState('35');
   const [rate, setRate] = useState('');
@@ -28,7 +25,6 @@ export function JapanTools({ tab, now }: { tab: string; now: Date }) {
     Number(rate) <= 30;
   const monthly = valid ? payment(Number(principal), Number(rate), Number(years)) : null;
   if (tab === 'Sources') {
-    const sources = [...new Map(records.flatMap((a) => a.sources).map((s) => [s.url, s])).values()];
     return (
       <section className="jp-tools">
         <div className="eyebrow">JAPAN · OFFICIAL PUBLICATIONS</div>
@@ -42,27 +38,7 @@ export function JapanTools({ tab, now }: { tab: string; now: Date }) {
         </p>
         <JapanRates now={now} sourcesOnly />
         <h2>Editorial evidence</h2>
-        <div className="jp-source-grid">
-          {sources.map((s) => (
-            <article className="watch-card" key={s.url}>
-              <h2>{s.publisher}</h2>
-              <p>{s.title}</p>
-              <p>
-                Checked{' '}
-                {new Intl.DateTimeFormat('en-JP', {
-                  dateStyle: 'medium',
-                  timeStyle: 'short',
-                  timeZone: 'Asia/Tokyo',
-                }).format(new Date(s.checkedAt))}{' '}
-                JST
-              </p>
-              <a className="text-link" href={s.url} target="_blank" rel="noreferrer">
-                Read official source <ArrowUpRight size={16} />
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
-            </article>
-          ))}
-        </div>
+        <EditorialLinks category="all" now={now} />
       </section>
     );
   }
@@ -98,33 +74,10 @@ export function JapanTools({ tab, now }: { tab: string; now: Date }) {
         <div>
           <JapanRates now={now} />
           <h2>Reviewed package observations</h2>
-          {packages.map((a) => (
-            <article className="watch-card" key={a.slug}>
-              <span className="eyebrow">{a.package!.lender}</span>
-              <span className="story-status">{editorialStatus(a, now)}</span>
-              <h3>
-                <a href={articleHref(a)}>{a.title}</a>
-              </h3>
-              <p>{a.summary}</p>
-              <p>
-                <strong>Who it covers:</strong> {a.package!.eligibility}
-              </p>
-              <a className="text-link" href={articleHref(a)}>
-                Read terms & evidence <ArrowRight size={16} />
-              </a>
-            </article>
-          ))}
-          {!packages.length && <p>No reviewed Japanese package records yet.</p>}
+          <EditorialLinks category="package" now={now} />
           <div className="jp-reading">
             <h2>Before you choose</h2>
-            {records
-              .filter((a) => a.category === 'guide')
-              .map((a) => (
-                <a className="text-link" key={a.slug} href={articleHref(a)}>
-                  {a.title}
-                  <ArrowRight size={16} />
-                </a>
-              ))}
+            <EditorialLinks category="guide" now={now} />
           </div>
         </div>
         <ScenarioCalculator
@@ -139,5 +92,71 @@ export function JapanTools({ tab, now }: { tab: string; now: Date }) {
         />
       </div>
     </section>
+  );
+}
+
+function EditorialLinks({ category, now }: { category: EditorialFilter; now: Date }) {
+  const [number, setNumber] = useState(1),
+    [retry, setRetry] = useState(0);
+  const [page, setPage] = useState<EditorialPage>(),
+    [error, setError] = useState(false);
+  useEffect(() => {
+    const c = new AbortController();
+    setPage(undefined);
+    setError(false);
+    editorialClient
+      .page('JP', category, number, c.signal)
+      .then((p) => {
+        if (!c.signal.aborted) setPage(p);
+      })
+      .catch(() => {
+        if (!c.signal.aborted) setError(true);
+      });
+    return () => c.abort();
+  }, [category, number, retry]);
+  if (error)
+    return (
+      <p role="alert">
+        Editorial evidence is unavailable.{' '}
+        <button
+          onClick={() => {
+            editorialClient.clear();
+            setRetry((r) => r + 1);
+          }}
+        >
+          Retry content
+        </button>
+      </p>
+    );
+  if (!page) return <p role="status">Loading editorial evidence…</p>;
+  return (
+    <div className="jp-editorial-links">
+      {page.items.map((a) => (
+        <article className="watch-card" key={a.slug}>
+          <span className="story-status">
+            {a.supersededBy ? 'Superseded report' : editorialStatus(a, now)}
+          </span>
+          <h3>
+            <a href={articleHref(a)}>{a.title}</a>
+          </h3>
+          <p>{a.summary}</p>
+          <a className="text-link" href={articleHref(a)}>
+            Read terms & evidence <ArrowRight size={16} />
+          </a>
+        </article>
+      ))}
+      {!page.total && <p>No reviewed reports in this category yet.</p>}
+      <nav className="journal-pagination" aria-label={`${category} report pages`}>
+        <button disabled={page.page === 1} onClick={() => setNumber((n) => n - 1)}>
+          Previous page
+        </button>
+        <span>
+          Page {page.page} of {Math.max(1, Math.ceil(page.total / 20))}
+        </span>
+        <button disabled={page.page * 20 >= page.total} onClick={() => setNumber((n) => n + 1)}>
+          Next page
+        </button>
+      </nav>
+    </div>
   );
 }

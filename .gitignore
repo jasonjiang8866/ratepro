@@ -12,3 +12,6 @@ hdb-diagnostics.json
 research-output/
 review-output/
 japan-source-check.json
+
+# Reproducible editorial publication output
+public/data/editorial/

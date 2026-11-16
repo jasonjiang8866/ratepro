@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { load } from 'cheerio';
@@ -15,9 +15,12 @@ import btoRecord from '../content/insights/2026-11-bto-launch-application-deadli
 import baselineRecord from '../content/insights/2026-11-market-initial-observation.json';
 import japanRecord from '../content/insights/jp-mortgage-first-look.json';
 
-const content = vi.hoisted(() => ({ articles: [] as Article[] }));
-vi.mock('../src/lib/content', () => content);
-import { Home } from '../src/components/Home';
+const content = { articles: [] as Article[] };
+import { JournalView, Failure } from '../src/components/Home';
+import Reader from '../src/components/ArticleReader';
+import { ContentError } from '../src/lib/content';
+import { homeData } from '../scripts/build-editorial';
+import { summarize } from '../src/lib/editorial-data';
 
 const bto = ArticleSchema.parse(btoRecord);
 const baseline = ArticleSchema.parse(baselineRecord);
@@ -32,8 +35,41 @@ const corpus = ['insights', 'promotions']
       ),
   )
   .sort((a, b) => b.reportDate.localeCompare(a.reportDate) || a.slug.localeCompare(b.slug));
-const render = (now: Date, market: MarketCode = 'SG', slug?: string) =>
-  load(renderToStaticMarkup(createElement(Home, { now, market, slug })));
+const render = (now: Date, market: MarketCode = 'SG', slug?: string) => {
+  const revision = 'a'.repeat(64);
+  if (slug) {
+    const article = content.articles.find((a) => a.slug === slug && a.market === market);
+    return load(
+      renderToStaticMarkup(
+        article
+          ? createElement(Reader, { article, meta: summarize(article, content.articles), now })
+          : createElement(Failure, { error: new ContentError('Not found', 404), retry: () => {} }),
+      ),
+    );
+  }
+  const selected = content.articles.filter((a) => a.market === market);
+  return load(
+    renderToStaticMarkup(
+      createElement(JournalView, {
+        now,
+        market,
+        category: 'all',
+        onCategory: () => {},
+        onPage: () => {},
+        data: homeData(content.articles, market, now, revision),
+        page: {
+          schemaVersion: 1,
+          revision,
+          market,
+          category: 'all',
+          page: 1,
+          total: selected.length,
+          items: selected.slice(0, 20).map((a) => summarize(a, content.articles)),
+        },
+      }),
+    ),
+  );
+};
 
 beforeEach(() => {
   content.articles = [...corpus];

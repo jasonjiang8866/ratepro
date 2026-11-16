@@ -79,11 +79,13 @@ try {
     animations: 'disabled',
   });
   await page.getByRole('button', { name: 'Buying & refinancing guides', exact: true }).click();
+  await page.locator('.story-list[data-category="guide"]').waitFor();
   assert.equal(
     await page.locator('.story-row').count(),
     corpus.filter((a) => (a.market ?? 'SG') === 'SG' && a.category === 'guide').length,
   );
   await page.getByRole('button', { name: 'All stories', exact: true }).click();
+  await page.locator('.story-list[data-category="all"]').waitFor();
   assert.ok((await page.locator('.story-row').count()) >= 3);
   await page.getByRole('link', { name: 'Read the briefing', exact: true }).click();
   await page.getByRole('heading', { name: 'At a glance', exact: true }).waitFor();
@@ -403,6 +405,7 @@ try {
 
   await page.getByRole('link', { name: 'RatePro home', exact: true }).click();
   await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.getByText('THE JAPAN HOME LOAN JOURNAL', { exact: true }).waitFor();
   await page.screenshot({ path: 'test-results/homepage/japan-desktop-light.png', fullPage: true });
   await page.getByRole('button', { name: 'Use dark theme', exact: true }).click();
   await page.screenshot({ path: 'test-results/homepage/japan-desktop-dark.png', fullPage: true });
