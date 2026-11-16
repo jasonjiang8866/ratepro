@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "market": "SG",
+  "slug": "sg-weekly-2026-11-16",
+  "category": "market",
+  "title": "Singapore weekly: BTO applications close; December referral terms need a separate check",
+  "summary": "9–15 November: the BTO window ended and reviewed SC referral terms point to December eligibility changes. Existing quarterly rates and bank illustrations remain context, not new offers.",
+  "reportDate": "2026-11-16",
+  "edition": "weekly",
+  "eventKey": "sg-weekly-2026-11-09-to-15",
+  "supersedes": null,
+  "effectiveFrom": "2026-11-09",
+  "effectiveUntil": "2026-11-15",
+  "takeaways": [
+    {
+      "text": "The November BTO application window ended on 11 November.",
+      "sourceIds": ["hdb-annex"]
+    },
+    {
+      "text": "SC's revised referral period is 4–31 December, with Letter of Offer acceptance due by 15 January.",
+      "sourceIds": ["sc-terms"]
+    },
+    {
+      "text": "No current SORA fixing or new fully verified mortgage promotion was established in this review.",
+      "sourceIds": ["sora", "uob", "dbs"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "The week's housing deadline",
+      "kind": "fact",
+      "text": "HDB's November BTO administrative annex specifies applications from 4 to 11 November 2026, requiring a valid HFE letter. It describes computer-ballot shortlisting, not first-come priority. The application window has therefore ended; this review does not establish final application totals or ballot results.",
+      "sourceIds": ["hdb-annex"]
+    },
+    {
+      "heading": "Referral terms reviewed during the week",
+      "kind": "fact",
+      "text": "SC's amendment was first covered by RatePro on 11 November; neither bank document states its publication date, so this is not described as a new announcement that day. Changes take effect on 4 December. Referred applicants and co-applicants must be at least 21, have no active mortgage account with SC and meet the preceding-12-month loan-redemption restriction. Clause 13 allows reward refusal or recovery for misconduct, breaches and other stated conditions.",
+      "sourceIds": ["sc-notice"]
+    },
+    {
+      "heading": "Two separate referral deadlines",
+      "kind": "fact",
+      "text": "The revised PDF specifies a 4–31 December promotion period. A successful referral requires bank approval and Letter of Offer acceptance by 15 January 2027. Eligible existing personal-banking customers receive the referral fee; consent and disclosure requirements apply, and staff and bridging loans are excluded. This is a referrer arrangement, not a verified borrower subsidy or mortgage-rate offer.",
+      "sourceIds": ["sc-terms"]
+    },
+    {
+      "heading": "Older macro context, not weekly changes",
+      "kind": "fact",
+      "text": "MAS's October summary says it kept the Singapore dollar on its existing appreciating path. CPF still lists OA interest of 2.50% and HDB mortgage interest of 2.60% p.a. for 1 October–31 December. SingStat's 23 October entries report Q3 private residential prices up 1.4% and HDB resale prices down 0.1% quarter-on-quarter. These reference periods precede this reporting week.",
+      "sourceIds": ["mas", "cpf", "housing"]
+    },
+    {
+      "heading": "Bank comparison context",
+      "kind": "fact",
+      "text": "UOB's indicative completed-property schedule remains 3M compounded SORA plus 0.70% in years 1–2, 0.80% in year 3 and 1.00% thereafter: two-year lock-in, minimum SGD250,000, limited tranche for new direct-to-bank customers purchasing or refinancing. Its Letter of Offer confirms rates and benefits. Maximum loan, full charges, subsidy recovery and availability deadline are not established here. DBS's rewards page states a 31 December deadline, but complete qualifying and clawback terms remain unverified; no confirmed promotion record is added.",
+      "sourceIds": ["uob", "dbs"]
+    },
+    {
+      "heading": "What readers should do with this evidence",
+      "kind": "analysis",
+      "text": "Compare the entire rate schedule, benchmark tenor, reset dates, loan/property eligibility, lock-in and exit costs before valuing a reward. The MAS statistics read returned an invalid-period message, so this review supplies no fixing or funding-cost trend. CPF's historical deposit input is not a current marginal bank-funding measure. A US rate move or MAS exchange-rate stance does not establish an immediate matching change in a Singapore mortgage. Referral eligibility does not establish loan approval.",
+      "sourceIds": ["sora", "cpf", "mas", "sc-notice", "uob"]
+    },
+    {
+      "heading": "Coverage and dates",
+      "kind": "fact",
+      "text": "This retrospective covers 9–15 November in Asia/Singapore and was written on 16 November. Its end date is a reporting boundary, not an offer expiry. Source checks below record actual UTC reads. HDB's annex states no publication date; SC's publication dates are unknown. The CPF source update date is retained separately from its quarter. This weekly synthesis does not renew earlier observations or claim collector recovery.",
+      "sourceIds": ["hdb-annex", "sc-notice", "cpf"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "hdb-annex",
+      "publisher": "Housing & Development Board",
+      "title": "Annex B: Administrative details for November 2026 BTO exercise",
+      "url": "https://www.hdb.gov.sg/-/media/hdb-pulse/news/2026/hdb-launches-7964-flats-across-seven-projects-in-nov-2026-bto-sales-exercise/Annex-B---Nov-2026-BTO---Final.pdf",
+      "checkedAt": "2026-11-16T02:02:07Z",
+      "documentDate": null
+    },
+    {
+      "id": "sc-notice",
+      "publisher": "Standard Chartered Bank (Singapore) Limited",
+      "title": "Amendments to Home Loan Member-Get-Member Referral Promotion Terms & Conditions – Effective 4 December 2026",
+      "url": "https://www.sc.com/sg/important-information/amendments-to-mortgage-mgm-terms/",
+      "checkedAt": "2026-11-16T02:02:48Z",
+      "documentDate": null
+    },
+    {
+      "id": "sc-terms",
+      "publisher": "Standard Chartered Bank (Singapore) Limited",
+      "title": "Home Loan Member-Get-Member Referral Promotion Terms & Conditions — revised preview",
+      "url": "https://www.sc.com/content/dam/sc/sg/en/documents/sg-home-loan-mgm-referral-promo-tc.pdf",
+      "checkedAt": "2026-11-16T02:04:31Z",
+      "documentDate": null
+    },
+    {
+      "id": "mas",
+      "publisher": "Monetary Authority of Singapore",
+      "title": "Monetary Policy Statement At A Glance — October 2026",
+      "url": "https://www.mas.gov.sg/monetary-policy/mps-at-a-glance/mps-at-a-glance-14oct2026",
+      "checkedAt": "2026-11-16T02:02:58Z",
+      "documentDate": "2026-10-14"
+    },
+    {
+      "id": "cpf",
+      "publisher": "CPF Board",
+      "title": "How are CPF interest rates determined?",
+      "url": "https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined",
+      "checkedAt": "2026-11-16T02:04:31Z",
+      "documentDate": "2026-09-22"
+    },
+    {
+      "id": "housing",
+      "publisher": "Singapore Department of Statistics",
+      "title": "Property Price Indices — Latest News & Data",
+      "url": "https://www.singstat.gov.sg/find-data/explore-data-themes/economy-prices/property-price-indices/latest-news-data",
+      "checkedAt": "2026-11-16T02:02:48Z",
+      "documentDate": null
+    },
+    {
+      "id": "uob",
+      "publisher": "United Overseas Bank",
+      "title": "SORA Home Loan Package",
+      "url": "https://www.uob.com.sg/personal/borrow/property-loans/about-sora.page",
+      "checkedAt": "2026-11-16T02:02:48Z",
+      "documentDate": null
+    },
+    {
+      "id": "dbs",
+      "publisher": "DBS",
+      "title": "DBS Home Loan Exclusive Rewards",
+      "url": "https://www.dbs.com.sg/personal/loans/promotion/home-loan-promo",
+      "checkedAt": "2026-11-16T02:02:48Z",
+      "documentDate": null
+    },
+    {
+      "id": "sora",
+      "publisher": "Monetary Authority of Singapore",
+      "title": "Domestic Interest Rates — no fixing returned in this read",
+      "url": "https://eservices.mas.gov.sg/Statistics/dir/DomesticInterestRates.aspx",
+      "checkedAt": "2026-11-16T02:02:48Z",
+      "documentDate": null
+    }
+  ],
+  "package": null
+}
