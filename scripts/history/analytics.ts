@@ -13,6 +13,7 @@ import {
 } from '../../src/lib/history';
 import { canonical, digest } from './normalize';
 import { files, writeJson } from './store';
+const byTime = (a: string, b: string) => Date.parse(a) - Date.parse(b);
 const metric = (o: Observation, v: ProductVersion) =>
   v.basis === 'sora-spread' ? o.pricing.spread : o.pricing.annualRate;
 function rateSignature(o: Observation) {
@@ -52,7 +53,7 @@ export function analyze(records: HistoryRecord[], market: Market, generatedAt: s
     const list = groups.get(o.productId) ?? [];
     const previous = list.at(-1);
     // Conflicting snapshots at the same claimed observation time need review, not an invented sequence.
-    if (previous?.observedAt === o.observedAt)
+    if (previous && Date.parse(previous.observedAt) === Date.parse(o.observedAt))
       throw Error(`Conflicting observation: ${market}/${o.productId}/${o.observedAt}`);
     const v = versions.get(o.productVersionId)!;
     const body = {
@@ -95,7 +96,7 @@ export function analyze(records: HistoryRecord[], market: Market, generatedAt: s
   }
   const catalogs = rows
     .filter((r) => r.type === 'catalog')
-    .sort((a, b) => a.generatedAt.localeCompare(b.generatedAt) || a.id.localeCompare(b.id));
+    .sort((a, b) => byTime(a.generatedAt, b.generatedAt) || a.id.localeCompare(b.id));
   let tracked = new Set<string>(),
     seen = new Set<string>();
   for (const c of catalogs) {
@@ -125,7 +126,7 @@ export function analyze(records: HistoryRecord[], market: Market, generatedAt: s
     tracked = next;
     seen = new Set([...seen, ...next]);
   }
-  events.sort((a, b) => a.at.localeCompare(b.at) || a.id.localeCompare(b.id));
+  events.sort((a, b) => byTime(a.at, b.at) || a.id.localeCompare(b.id));
   const products: AnalyticsIndex['products'] = [...groups]
     .map(([productId, points]) => {
       const first = points[0],
@@ -165,19 +166,21 @@ export function analyze(records: HistoryRecord[], market: Market, generatedAt: s
     .map((sourceId) => {
       // Snapshot corrections of the same attemptedAt count as one logical attempt; fail closed on conflicting outcomes.
       const buckets = new Map<string, typeof attempts>();
-      for (const a of attempts.filter((a) => a.sourceId === sourceId))
-        buckets.set(a.attemptedAt, [...(buckets.get(a.attemptedAt) ?? []), a]);
+      for (const a of attempts.filter((a) => a.sourceId === sourceId)) {
+        const instant = new Date(a.attemptedAt).toISOString();
+        buckets.set(instant, [...(buckets.get(instant) ?? []), a]);
+      }
       const good = [...buckets]
         .filter(([, a]) => a.every((x) => x.status === 'ok'))
         .map(([at]) => at)
-        .sort();
+        .sort(byTime);
       return {
         sourceId,
         observations: observations.filter((o) => o.sourceId === sourceId).length,
         attempts: buckets.size,
         successes: good.length,
         successRate: buckets.size ? good.length / buckets.size : null,
-        lastAttempt: [...buckets.keys()].sort().at(-1) ?? null,
+        lastAttempt: [...buckets.keys()].sort(byTime).at(-1) ?? null,
         lastSuccess: good.at(-1) ?? null,
       };
     });
@@ -189,8 +192,8 @@ export function analyze(records: HistoryRecord[], market: Market, generatedAt: s
     lastSuccessfulCollection:
       sources
         .map((s) => s.lastSuccess)
-        .filter(Boolean)
-        .sort()
+        .filter((at): at is string => at !== null)
+        .sort(byTime)
         .at(-1) ?? null,
     products,
     sources,
@@ -250,7 +253,7 @@ export async function generateAnalytics(
     }
     const days = new Map<string, ChangeEvent[]>();
     for (const e of events) {
-      const day = e.at.slice(0, 10);
+      const day = new Date(e.at).toISOString().slice(0, 10);
       days.set(day, [...(days.get(day) ?? []), e]);
     }
     for (const [day, entries] of days)

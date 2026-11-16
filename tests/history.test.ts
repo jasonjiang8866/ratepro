@@ -256,6 +256,17 @@ describe('Git replay and static analytics integration', () => {
       true,
     );
   });
+  it('orders offset timestamps by instant and deduplicates logical attempt instants', () => {
+    const first = feed('2026-11-01T09:00:00+08:00');
+    const later = feed('2026-11-01T02:00:00.000Z');
+    const sameAttempt = feed('2026-11-01T01:00:00.000Z');
+    sameAttempt.offers = [];
+    const result = analyze(records(first, later, sameAttempt), 'SG', importedAt);
+    expect(result.index.products[0].lastObservedAt).toBe(later.generatedAt);
+    expect(result.index.sources[0]).toMatchObject({ attempts: 2, successes: 2 });
+    expect(result.index.products[0].tracked).toBe(true);
+    expect(result.index.lastSuccessfulCollection).toBe(later.generatedAt);
+  });
   it('source collection replaces complete groups and preserves unrelated sources', async () => {
     const prior = feed();
     prior.offers = [

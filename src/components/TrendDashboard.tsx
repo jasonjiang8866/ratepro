@@ -226,7 +226,11 @@ export default function TrendDashboard({
         </div>
         <label>
           Trend market
-          <select value={market} onChange={(e) => onMarket(e.target.value)}>
+          <select
+            aria-label="Trend market"
+            value={market}
+            onChange={(e) => onMarket(e.target.value)}
+          >
             <option>SG</option>
             <option>JP</option>
           </select>
@@ -266,6 +270,7 @@ export default function TrendDashboard({
                 <label>
                   Trend bank
                   <select
+                    aria-label="Trend bank"
                     value={bank}
                     onChange={(e) => {
                       setBank(e.target.value);
@@ -286,6 +291,7 @@ export default function TrendDashboard({
                 <label>
                   Trend product
                   <select
+                    aria-label="Trend product"
                     value={productId}
                     onChange={(e) => {
                       setProductId(e.target.value);
@@ -301,7 +307,11 @@ export default function TrendDashboard({
                 </label>
                 <label>
                   Compare matching basis
-                  <select value={compareId} onChange={(e) => setCompareId(e.target.value)}>
+                  <select
+                    aria-label="Compare matching basis"
+                    value={compareId}
+                    onChange={(e) => setCompareId(e.target.value)}
+                  >
                     <option value="">Single product</option>
                     {index.products
                       .filter(
