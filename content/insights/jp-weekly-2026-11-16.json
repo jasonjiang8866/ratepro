@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-weekly-2026-11-16",
+  "category": "market",
+  "title": "Japan weekly: BOJ disclosures put the pace and lag of tightening in focus",
+  "summary": "9–15 November: October meeting opinions and Asada's November remarks highlight differing assessments of tightening. They set no bank mortgage rate; monthly illustrations remain conditional.",
+  "reportDate": "2026-11-16",
+  "edition": "weekly",
+  "eventKey": "jp-weekly-2026-11-09-to-15",
+  "supersedes": null,
+  "effectiveFrom": "2026-11-09",
+  "effectiveUntil": "2026-11-15",
+  "takeaways": [
+    {
+      "text": "BOJ published October meeting opinions on 10 November; the meeting itself was on 29–30 October.",
+      "sourceIds": ["opinions"]
+    },
+    {
+      "text": "Asada's 12 November remarks emphasise delayed effects; his subsequent transcript does not signal a promised rate cut.",
+      "sourceIds": ["speech", "conference"]
+    },
+    {
+      "text": "Bank reset dates and funding-month conditions matter more to an individual contract than a policy headline.",
+      "sourceIds": ["mizuho", "flat35"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "10 November: a new disclosure about an earlier meeting",
+      "kind": "fact",
+      "text": "BOJ published the October meeting opinions at 08:50 JST on 10 November. The document compiles participants' views, not a unanimous forecast. Some favour holding to assess risks and cumulative tightening; others favour further increases or faster movement toward neutral. One opinion says another increase could restrain housing investment. These are attributed assessments, not measured mortgage-price changes.",
+      "sourceIds": ["opinions"]
+    },
+    {
+      "heading": "12–13 November: lag and pace",
+      "kind": "fact",
+      "text": "In his 12 November Nagasaki speech, Policy Board member Toichiro Asada says effects of policy increases can take a year or longer, warranting attention to household borrowing and cumulative tightening. He urges caution over the pace. In the transcript published on 13 November of his 12 November press conference, he says he does not currently intend to propose a cut and does not rule out gradual further increases. Neither publication is a new policy decision or a promised bank-rate path.",
+      "sourceIds": ["speech", "conference"]
+    },
+    {
+      "heading": "Existing variable-rate context",
+      "kind": "fact",
+      "text": "Mizuho's notice links borrowing by 31 March 2027 from 1.275% p.a. to July 2027 repayments from 1.525%, reflecting its 2 November short-prime revision. Additional revisions by 1 April 2027 would also be reflected; underwriting determines the discount. This previously reported conditional notice is not a new weekly promotion or a full-term promise.",
+      "sourceIds": ["mizuho"]
+    },
+    {
+      "heading": "Existing full-term fixed context",
+      "kind": "fact",
+      "text": "JHF's November Flat35 illustration shows 2.81% p.a. for five years and 3.81% thereafter, with four discount points, LTV no greater than 90% and new JHF group credit life insurance. These are the most common offered rates for that example. The repayment schedule is fixed at funding; temporary discounts still create stages. Flat35 cannot finance investment-property acquisition. This is existing monthly context, not a universal JPY quote.",
+      "sourceIds": ["flat35"]
+    },
+    {
+      "heading": "Practical interpretation and remaining checks",
+      "kind": "analysis",
+      "text": "A macroeconomic transmission lag is not a mortgage's contractual reset timetable. For variable borrowing, ask when interest and payments reset; for fixed-period selection, check pricing after the initial period; for full-term fixed borrowing, check funding-month rates and every discount stage. Individual JPY loan limits, term, nationality/residency eligibility, occupancy, LTV, insurance premiums, fees/guarantee charges, rewards and early repayment conditions remain unverified here. Five-year/125% payment rules must be checked for the bank and repayment method; they are not a nationwide interest-rate cap. Singapore permanent residence establishes no Japanese permanent-residence eligibility.",
+      "sourceIds": ["speech", "mizuho", "flat35"]
+    },
+    {
+      "heading": "Coverage and dates",
+      "kind": "fact",
+      "text": "This retrospective covers 9–15 November in Asia/Tokyo and was written on 16 November. The coverage end is not a campaign deadline. BOJ document dates identify publication; the meeting and press-conference event dates are stated separately above. Mizuho's panel says 1 November and footer 11 November; documentDate uses the latter as an as-of date, not proven first publication or evidence of a new rate. JHF states a November example without a page publication date. Actual checks are UTC. No confirmed promotion or automated-collection recovery is established.",
+      "sourceIds": ["opinions", "speech", "conference", "mizuho", "flat35"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "opinions",
+      "publisher": "Bank of Japan",
+      "title": "金融政策決定会合における主な意見（2026年10月29、30日開催分）",
+      "url": "https://www.boj.or.jp/mopo/mpmsche_minu/opinion_2026/opi261030.pdf",
+      "checkedAt": "2026-11-16T02:02:48Z",
+      "documentDate": "2026-11-10"
+    },
+    {
+      "id": "speech",
+      "publisher": "Bank of Japan",
+      "title": "浅田統一郎：わが国の経済・物価情勢と金融政策（長崎県金融経済懇談会）",
+      "url": "https://www.boj.or.jp/about/press/koen_2026/data/ko261112a1.pdf",
+      "checkedAt": "2026-11-16T02:02:48Z",
+      "documentDate": "2026-11-12"
+    },
+    {
+      "id": "conference",
+      "publisher": "Bank of Japan",
+      "title": "浅田審議委員記者会見（2026年11月12日開催、11月13日公表）",
+      "url": "https://www.boj.or.jp/about/press/kaiken_2026/kk261113a.pdf",
+      "checkedAt": "2026-11-16T02:02:48Z",
+      "documentDate": "2026-11-13"
+    },
+    {
+      "id": "mizuho",
+      "publisher": "Mizuho Bank",
+      "title": "住宅ローン：変動金利の注意事項",
+      "url": "https://www.mizuhobank.co.jp/loan_housing/index.html",
+      "checkedAt": "2026-11-16T02:04:31Z",
+      "documentDate": "2026-11-11"
+    },
+    {
+      "id": "flat35",
+      "publisher": "Japan Housing Finance Agency",
+      "title": "長期固定金利住宅ローン【フラット35】：2026年11月の最頻金利",
+      "url": "https://www.flat35.com/?vm=r",
+      "checkedAt": "2026-11-16T02:02:48Z",
+      "documentDate": null
+    }
+  ],
+  "package": null
+}
