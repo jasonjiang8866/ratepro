@@ -121,6 +121,8 @@ export async function collect(
         }
       }
       validateCollectedGroup(source.id, parsed, previous);
+      // A complete validated source group replaces its previous inventory.
+      for (const [id, offer] of offers) if (offer.sourceId === source.id) offers.delete(id);
       for (const offer of parsed) offers.set(offer.id, offer);
       statuses.push({
         sourceId: source.id,

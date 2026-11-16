@@ -48,6 +48,7 @@ describe('deadline-aware briefing selection', () => {
     ['2026-11-11T16:00:00Z', false], // 12 Nov 00:00 SGT, still 11 Nov UTC
     ['2026-11-12T04:00:00Z', false], // 12 Nov noon SGT
   ])('uses the SG deadline at %s (eligible: %s)', (instant, eligible) => {
+    content.articles = [bto, baseline, japan];
     const now = new Date(instant);
     expect(selectFeaturedArticle([bto], 'SG', now)).toBe(eligible ? bto : undefined);
     expect(editorialPeriod(bto, now)).toBe(eligible ? 'current' : 'ended');
@@ -57,6 +58,7 @@ describe('deadline-aware briefing selection', () => {
   });
 
   it('falls back to an older eligible report without renewing its source checks', () => {
+    content.articles = [bto, baseline, japan];
     expect(selectFeaturedArticle([bto, baseline], 'SG', after)).toBe(baseline);
     const $ = render(after);
     expect($('.briefing .story-status').text()).toBe('Recheck needed');
