@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-boj-takata-november-policy-pace",
+  "category": "market",
+  "title": "BOJ's Takata argues for a faster move toward neutral rates",
+  "summary": "A 16 November speech advocates flexible tightening. This is a member's view, with no new mortgage quote or policy decision.",
+  "reportDate": "2026-11-17",
+  "edition": "update",
+  "eventKey": "jp-boj-takata-speech-2026-11-16",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "Takata favours moving toward neutral faster, without assuming fixed intervals or sizes for increases.",
+      "sourceIds": ["speech"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "The new statement",
+      "kind": "fact",
+      "text": "In his Tokushima speech, BOJ Policy Board member Hajime Takata argues for bringing policy rates near the middle of the neutral range early enough to respond in either direction. He says neutral is difficult to identify in advance and could exceed market expectations. These are his assessments.",
+      "sourceIds": ["speech"]
+    },
+    {
+      "heading": "What borrowers should confirm",
+      "kind": "analysis",
+      "text": "This signals a policy debate, not a contractual reset notice. Confirm your lender's rate-review date, payment-review date and applicable rate at funding. The speech establishes no mortgage rate, promotion or universal repayment rule; it does not determine the next policy decision.",
+      "sourceIds": ["speech"]
+    },
+    {
+      "heading": "Dates and scope",
+      "kind": "fact",
+      "text": "The speech and publication are dated 16 November 2026 in Japan. This report was written on 17 November; the successful source check is recorded separately in UTC. No offer-validity period applies.",
+      "sourceIds": ["speech"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "speech",
+      "publisher": "Bank of Japan",
+      "title": "高田創：わが国の経済・物価情勢と金融政策：日本のマネー・資本市場転換、山は動くか（徳島経済同友会、2026年11月16日）",
+      "url": "https://www.boj.or.jp/about/press/koen_2026/data/ko261116a1.pdf",
+      "checkedAt": "2026-11-17T02:03:03Z",
+      "documentDate": "2026-11-16"
+    }
+  ],
+  "package": null
+}
