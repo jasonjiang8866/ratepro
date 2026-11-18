@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-boj-housing-loan-statistics-revision-november",
+  "category": "market",
+  "title": "BOJ revises historical housing-loan statistics alongside September data",
+  "summary": "A 17 November statistical notice includes retrospective revisions to housing-fund lending. Compare consistent data vintages before drawing trend conclusions.",
+  "reportDate": "2026-11-18",
+  "edition": "update",
+  "eventKey": "jp-boj-loan-statistics-revision-2026-11-17",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "BOJ's revision scope includes housing-fund loans to individuals at domestic banks and shinkin banks.",
+      "sourceIds": ["notice"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "What was published",
+      "kind": "fact",
+      "text": "On 17 November 2026, BOJ announced September 2026 data for loans by borrower and loans to individuals. It also announced corrections to some figures from June 2025 through June 2026. The listed affected series include housing-fund loans to individuals at domestic banks and shinkin banks, alongside specified shinkin lending series.",
+      "sourceIds": ["notice"]
+    },
+    {
+      "heading": "Practical interpretation",
+      "kind": "analysis",
+      "text": "When assessing housing-credit trends, retrieve the revised series rather than joining a new release to unrevised historical figures. This is a statistical revision, not a change to a borrower's contract or an advertised mortgage rate. It establishes no promotion or lending-policy change.",
+      "sourceIds": ["notice"]
+    },
+    {
+      "heading": "Evidence and dates",
+      "kind": "fact",
+      "text": "The notice does not quantify the revisions; their size and direction were not verified here. No trend figures or charts are supplied. Publication occurred on 17 November in Japan; the underlying periods are stated above. This report was written on 18 November, with the actual UTC source check recorded separately. No offer-validity period applies.",
+      "sourceIds": ["notice"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "notice",
+      "publisher": "Bank of Japan",
+      "title": "「貸出先別貸出金」（2026年9月）等の公表について",
+      "url": "https://www.boj.or.jp/statistics/outline/notice_2026/not261117a.htm",
+      "checkedAt": "2026-11-18T02:04:48Z",
+      "documentDate": "2026-11-17"
+    }
+  ],
+  "package": null
+}
