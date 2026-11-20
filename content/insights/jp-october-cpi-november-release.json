@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-october-cpi-november-release",
+  "category": "market",
+  "title": "Japan's October CPI: fresh inflation data, not a mortgage reset",
+  "summary": "Published on 20 November: headline CPI rose 2.3% year on year; both exclusion measures rose 2.2%. These are October price data, not a bank-rate announcement.",
+  "reportDate": "2026-11-20",
+  "edition": "update",
+  "eventKey": "jp-national-cpi-2026-10-release-2026-11-20",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "October national CPI rose 2.3% year on year; excluding fresh food, it rose 2.2%.",
+      "sourceIds": [
+        "cpi"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "The new release",
+      "kind": "fact",
+      "text": "The Statistics Bureau published October 2026 national CPI on 20 November. Headline inflation was 2.3% year on year; excluding fresh food it was 2.2%, and excluding both fresh food and energy it was also 2.2%. These are different baskets, not three measures of mortgage costs. The release uses 2025=100.",
+      "sourceIds": [
+        "cpi"
+      ]
+    },
+    {
+      "heading": "Earlier policy context",
+      "kind": "fact",
+      "text": "In his 19 November parliamentary explanation, Governor Ueda described the October decision to maintain the overnight policy target around 1.25%. Further adjustments depend on economic, price and financial conditions, with timing and pace assessed against the outlook and risks. That statement predates today's CPI publication; it is not a response to this release.",
+      "sourceIds": [
+        "boj"
+      ]
+    },
+    {
+      "heading": "Practical interpretation",
+      "kind": "analysis",
+      "text": "This adds inflation evidence to the policy backdrop but does not establish the next BOJ decision or any lender's mortgage rate. For JPY borrowing, confirm the contract's rate-reset and payment-review dates, or the funding-month terms for a fixed-rate loan. No bank promotion, borrower eligibility or repayment-rule change is verified by these macro sources.",
+      "sourceIds": [
+        "cpi",
+        "boj"
+      ]
+    },
+    {
+      "heading": "Dates and scope",
+      "kind": "fact",
+      "text": "The statistical reference month is October; publication and report writing are 20 November in Japan. The BOJ statement is dated 19 November. Actual source checks are recorded separately in UTC. The CPI links are rolling latest-release URLs and may later display a different month; this report records the October edition read today. No offer-validity period applies.",
+      "sourceIds": [
+        "cpi",
+        "boj"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "cpi",
+      "publisher": "Statistics Bureau of Japan",
+      "title": "2025年基準 消費者物価指数 全国 2026年10月分（2026年11月20日公表）",
+      "url": "https://www.stat.go.jp/data/cpi/sokuhou/tsuki/index-z.htm",
+      "checkedAt": "2026-11-20T02:02:29Z",
+      "documentDate": "2026-11-20"
+    },
+    {
+      "id": "boj",
+      "publisher": "Bank of Japan",
+      "title": "植田和男：「通貨及び金融の調節に関する報告書」概要説明（2026年11月19日）",
+      "url": "https://www.boj.or.jp/mopo/diet/d_state/data/dst261119a.pdf",
+      "checkedAt": "2026-11-20T02:03:01Z",
+      "documentDate": "2026-11-19"
+    }
+  ],
+  "package": null
+}
