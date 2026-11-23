@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-weekly-2026-11-23",
+  "category": "market",
+  "title": "Japan weekly: policy signals, revised credit data and October inflation",
+  "summary": "16–22 November: BOJ statements, retrospective housing-credit revisions and October CPI add context for borrowing decisions. They do not establish new bank mortgage rates or confirmed promotions.",
+  "reportDate": "2026-11-23",
+  "edition": "weekly",
+  "eventKey": "jp-weekly-2026-11-16-to-22",
+  "supersedes": null,
+  "effectiveFrom": "2026-11-16",
+  "effectiveUntil": "2026-11-22",
+  "takeaways": [
+    {
+      "text": "Separate policy views from decisions: Takata discussed flexible tightening; Ueda restated the October hold and a conditional adjustment path.",
+      "sourceIds": [
+        "takata",
+        "ueda"
+      ]
+    },
+    {
+      "text": "October CPI was released on 20 November. BOJ's 17 November credit notice also requires care with historical data vintages.",
+      "sourceIds": [
+        "cpi",
+        "revision"
+      ]
+    },
+    {
+      "text": "Existing monthly examples remain conditional; no newly confirmed bank promotion is established by this review.",
+      "sourceIds": [
+        "mizuho",
+        "flat35"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "16 November: a member's policy assessment",
+      "kind": "fact",
+      "text": "In his Tokushima speech, Hajime Takata argued for flexible, data-dependent adjustments rather than a predetermined interval or size of rate increases. He described his own assessment of inflation risks and the need to monitor financial conditions. This was a member's speech, not a new policy decision or lender announcement.",
+      "sourceIds": [
+        "takata"
+      ]
+    },
+    {
+      "heading": "17 November: housing-credit data revisions",
+      "kind": "fact",
+      "text": "BOJ announced September lending data and retrospective corrections to some figures from June 2025 through June 2026. Affected series include housing-fund loans to individuals at domestic banks and shinkin banks. The notice does not quantify the corrections; their direction and magnitude are not established here.",
+      "sourceIds": [
+        "revision"
+      ]
+    },
+    {
+      "heading": "19 November: Ueda's parliamentary explanation",
+      "kind": "fact",
+      "text": "Governor Ueda said the October meeting maintained an overnight policy target around 1.25%. Further adjustments depend on economic, price and financial conditions, with timing and pace assessed against the outlook and risks. This statement preceded the next day's CPI release and is not a response to it.",
+      "sourceIds": [
+        "ueda"
+      ]
+    },
+    {
+      "heading": "20 November: October national CPI",
+      "kind": "fact",
+      "text": "The Statistics Bureau reported October headline CPI up 2.3% year on year. Excluding fresh food, inflation was 2.2%; excluding both fresh food and energy, it was also 2.2%. The release uses 2025=100. These measure consumer-price baskets, not mortgage costs.",
+      "sourceIds": [
+        "cpi"
+      ]
+    },
+    {
+      "heading": "Earlier bank and funding-month context",
+      "kind": "fact",
+      "text": "Mizuho's existing notice links borrowing by 31 March 2027 from 1.275% to July 2027 repayments from 1.525%, subject to further short-prime revisions and underwriting. JHF's November Flat35 example remains 2.81% for five years and 3.81% thereafter, assuming four discount points, LTV at most 90% and new JHF group credit life insurance. These pre-existing illustrations are not new weekly offers; Flat35's full-term schedule is fixed at funding.",
+      "sourceIds": [
+        "mizuho",
+        "flat35"
+      ]
+    },
+    {
+      "heading": "What this means for a borrower",
+      "kind": "analysis",
+      "text": "Read the week's policy statements as context, not a rate forecast. For JPY variable borrowing, verify the contract's rate-reset and payment-review dates. For an initial fixed period, obtain the later pricing; for full-term fixed borrowing, confirm the funding month and every discount stage. Before using housing-credit trends, use consistently revised historical data rather than mixing vintages.",
+      "sourceIds": [
+        "ueda",
+        "revision",
+        "mizuho",
+        "flat35"
+      ]
+    },
+    {
+      "heading": "Unresolved package conditions",
+      "kind": "analysis",
+      "text": "This review does not establish individual JPY loan limits, term, residency or nationality eligibility, insurance, fees or guarantee charges, reward entitlement, early-repayment costs, or bank-specific five-year/125% payment rules. Those remain to verify. A public illustration is not a universal quote; no confirmed promotion record or automated-collection recovery claim is made.",
+      "sourceIds": [
+        "mizuho",
+        "flat35"
+      ]
+    },
+    {
+      "heading": "Coverage and date meanings",
+      "kind": "fact",
+      "text": "This retrospective covers 16–22 November in Asia/Tokyo and was written on 23 November. The coverage end is not an offer deadline. It synthesises events already covered in RatePro's individual reports without renewing them. Sources were re-read at the UTC times below. Mizuho's panel states 1 November; its first publication date is unknown. JHF states a November illustration, without a page publication date. The CPI URL is a rolling latest-release page; this report records its October edition.",
+      "sourceIds": [
+        "takata",
+        "revision",
+        "ueda",
+        "cpi",
+        "mizuho",
+        "flat35"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "takata",
+      "publisher": "Bank of Japan",
+      "title": "高田創：わが国の経済・物価情勢と金融政策（2026年11月16日）",
+      "url": "https://www.boj.or.jp/about/press/koen_2026/data/ko261116a1.pdf",
+      "documentDate": "2026-11-16",
+      "checkedAt": "2026-11-23T02:02:31Z"
+    },
+    {
+      "id": "revision",
+      "publisher": "Bank of Japan",
+      "title": "「貸出先別貸出金」（2026年9月）等の公表について",
+      "url": "https://www.boj.or.jp/statistics/outline/notice_2026/not261117a.htm",
+      "documentDate": "2026-11-17",
+      "checkedAt": "2026-11-23T02:02:13Z"
+    },
+    {
+      "id": "ueda",
+      "publisher": "Bank of Japan",
+      "title": "「通貨及び金融の調節に関する報告書」概要説明（2026年11月19日）",
+      "url": "https://www.boj.or.jp/mopo/diet/d_state/data/dst261119a.pdf",
+      "documentDate": "2026-11-19",
+      "checkedAt": "2026-11-23T02:01:30Z"
+    },
+    {
+      "id": "cpi",
+      "publisher": "Statistics Bureau of Japan",
+      "title": "消費者物価指数 全国 2026年10月分（2026年11月20日公表）",
+      "url": "https://www.stat.go.jp/data/cpi/sokuhou/tsuki/index-z.htm",
+      "documentDate": "2026-11-20",
+      "checkedAt": "2026-11-23T02:01:30Z"
+    },
+    {
+      "id": "mizuho",
+      "publisher": "Mizuho Bank",
+      "title": "住宅ローン：変動金利の注意事項",
+      "url": "https://www.mizuhobank.co.jp/loan_housing/index.html",
+      "documentDate": null,
+      "checkedAt": "2026-11-23T02:02:13Z"
+    },
+    {
+      "id": "flat35",
+      "publisher": "Japan Housing Finance Agency",
+      "title": "フラット35：2026年11月の最頻金利",
+      "url": "https://www.flat35.com/?vm=r",
+      "documentDate": null,
+      "checkedAt": "2026-11-23T02:02:13Z"
+    }
+  ],
+  "package": null
+}
