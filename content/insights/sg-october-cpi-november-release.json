@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "market": "SG",
+  "slug": "sg-october-cpi-november-release",
+  "category": "market",
+  "title": "Singapore October inflation slows; mortgage resets remain contract-specific",
+  "summary": "October's inflation release adds context for household budgets. Mortgage comparisons still require contract-specific benchmarks, reset dates and charges.",
+  "reportDate": "2026-11-24",
+  "edition": "update",
+  "eventKey": "sg-cpi-2026-10-release-2026-11-23",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "October core inflation eased to 1.5% year on year; headline inflation slowed to 1.9%.",
+      "sourceIds": ["mas-cpi"]
+    },
+    {
+      "text": "The existing October–December HDB mortgage rate remains 2.60% p.a. in CPF's quarterly calculation.",
+      "sourceIds": ["cpf-quarter"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "What the new release reports",
+      "kind": "fact",
+      "text": "The 23 November release reports core inflation of 1.5%, down from September's 2.0%, and CPI-All Items inflation of 1.9%, down from 2.2%. Lower services and electricity & gas inflation reduced core inflation; private transport also contributed to the headline slowdown. Accommodation inflation stayed at 0.9%. Core excludes accommodation and private transport; CPI excludes house purchases.",
+      "sourceIds": ["mas-cpi", "mas-release"]
+    },
+    {
+      "heading": "Official outlook, not a mortgage forecast",
+      "kind": "fact",
+      "text": "MAS and METI still describe upside inflation risks and expect core inflation to ease more clearly from mid-2027. This is their conditional outlook.",
+      "sourceIds": ["mas-cpi"]
+    },
+    {
+      "heading": "Existing loan context",
+      "kind": "fact",
+      "text": "CPF's October–December calculation retains OA interest at 2.50% and HDB mortgage interest at 2.60%. Its bank-deposit input covers May–July, not current marginal funding costs. UOB's existing indicative completed-property schedule uses 3M compounded SORA plus 0.70% in years 1–2, 0.80% in year 3 and 1.00% thereafter, with a two-year lock-in and SGD250,000 minimum. It is a limited tranche for new direct-to-bank purchase/refinance customers; the Letter of Offer confirms terms.",
+      "sourceIds": ["cpf-quarter", "uob-sora"]
+    },
+    {
+      "heading": "What to confirm before comparing",
+      "kind": "analysis",
+      "text": "Our interpretation: slower consumer-price growth informs a household budget but does not establish a matching SORA or mortgage reduction. For floating loans, obtain the benchmark tenor, every spread stage and reset date; for fixed loans, check the fixed period and subsequent pricing. Compare eligibility, fees, penalties and subsidy clawbacks together. This review establishes no current SORA fixing, bank-funding trend or new confirmed promotion. UOB's maximum loan, complete charges and availability deadline remain unverified here.",
+      "sourceIds": ["mas-cpi", "uob-sora", "cpf-quarter"]
+    },
+    {
+      "heading": "Dates and scope",
+      "kind": "fact",
+      "text": "October is the statistical reference month. The MAS release and PDF are dated 23 November; the release webpage also states a 23 November update. This report was written on 24 November in Asia/Singapore. CPF's page update is 22 September; UOB states no publication date. Actual successful reads are recorded separately in UTC. No offer-validity period is inferred, and earlier observations are not renewed.",
+      "sourceIds": ["mas-cpi", "mas-release", "cpf-quarter", "uob-sora"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "mas-cpi",
+      "publisher": "Monetary Authority of Singapore / Ministry of Energy, Trade and Industry",
+      "title": "Consumer Price Developments in October 2026",
+      "url": "https://www.mas.gov.sg/-/media/mas-media-library/news/consumer-price-developments/2026/consumer-price-developments-in-october-2026.pdf",
+      "checkedAt": "2026-11-24T02:04:10Z",
+      "documentDate": "2026-11-23"
+    },
+    {
+      "id": "mas-release",
+      "publisher": "Monetary Authority of Singapore",
+      "title": "Consumer Price Developments in October 2026 — release page",
+      "url": "https://www.mas.gov.sg/news/consumer-price-developments/2026/consumer-price-developments-in-october-2026",
+      "checkedAt": "2026-11-24T02:03:32Z",
+      "documentDate": "2026-11-23"
+    },
+    {
+      "id": "cpf-quarter",
+      "publisher": "Central Provident Fund Board",
+      "title": "How are CPF interest rates determined?",
+      "url": "https://www.cpf.gov.sg/service/article/how-are-cpf-interest-rates-determined",
+      "checkedAt": "2026-11-24T02:04:10Z",
+      "documentDate": "2026-09-22"
+    },
+    {
+      "id": "uob-sora",
+      "publisher": "United Overseas Bank",
+      "title": "SORA Home Loan Package",
+      "url": "https://www.uob.com.sg/personal/borrow/property-loans/about-sora.page",
+      "checkedAt": "2026-11-24T02:03:43Z",
+      "documentDate": null
+    }
+  ],
+  "package": null
+}
