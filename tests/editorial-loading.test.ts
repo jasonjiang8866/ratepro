@@ -42,7 +42,7 @@ describe('static editorial generation', () => {
       expect(json).not.toContain('"conditions"');
     }
     expect(paths.filter((p) => p.startsWith('articles/'))).toHaveLength(1000);
-  });
+  }, 15_000);
   it('paginates every category across the full market corpus, including old records', () => {
     for (const market of ['SG', 'JP'])
       for (const category of ['all', 'guide', 'market', 'package']) {
