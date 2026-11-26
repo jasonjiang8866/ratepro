@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { MAX_BYTES } from '../src/lib/data';
 import { HistoryMarket, type Market, type Provenance } from '../src/lib/history';
 import { bytesDigest, normalize, sourceUrls } from './history/normalize';
 import { Ledger } from './history/store';
@@ -16,6 +17,14 @@ export function git(cwd: string, ...args: string[]) {
     maxBuffer: 20 * 1024 * 1024,
     stdio: ['ignore', 'pipe', 'pipe'],
   }).trimEnd();
+}
+function captureBlobsAt(repo: string, commit: string) {
+  return (path: string) =>
+    execFileSync('git', ['show', `${commit}:${path}`], {
+      cwd: repo,
+      maxBuffer: MAX_BYTES,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
 }
 export async function backfill(repo: string, ledger: Ledger, ref: string, importedAt: string) {
   if (git(repo, 'rev-parse', '--is-shallow-repository') === 'true')
@@ -59,7 +68,9 @@ export async function backfill(repo: string, ledger: Ledger, ref: string, import
           runUrl: null,
         };
         const urls = sourceUrls(git(repo, 'show', `${commit}:${schemaPaths[market]}`));
-        report.added += await ledger.append(normalize(raw, market, provenance, urls));
+        report.added += await ledger.append(
+          normalize(raw, market, provenance, urls, captureBlobsAt(repo, commit)),
+        );
         report.snapshots++;
       } catch (error) {
         report.rejected.push({
@@ -113,6 +124,7 @@ export async function ingestFile(
       market,
       provenance,
       sourceUrls(await readFile(join(repo, schemaPaths[market]), 'utf8')),
+      snapshotCommit ? captureBlobsAt(repo, snapshotCommit) : undefined,
     ),
   );
 }

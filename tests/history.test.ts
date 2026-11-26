@@ -7,7 +7,7 @@ import jpRaw from '../public/data/rates-jp.json';
 import { FeedSchema, type Feed } from '../src/lib/schema';
 import { analyze, generateAnalytics } from '../scripts/history/analytics';
 import { bytesDigest, canonical, normalize, sourceUrls } from '../scripts/history/normalize';
-import { backfill, git } from '../scripts/history';
+import { backfill, git, ingestFile } from '../scripts/history';
 import { Ledger, files, readRecords } from '../scripts/history/store';
 import {
   chartSegments,
@@ -196,6 +196,62 @@ describe('immutable observation ledger', () => {
 });
 
 describe('Git replay and static analytics integration', () => {
+  it('ingests a later standalone Maybank capture only with matching committed evidence', async () => {
+    const repo = await temp();
+    const dir = 'docs/captures/maybank/20261114T154922874Z';
+    const raw = await readFile(join(dir, 'evidence.json'), 'utf8');
+    const evidence = JSON.parse(raw);
+    const body = await readFile(join(dir, 'official.html'));
+    const snapshot = FeedSchema.parse({
+      ...feed(evidence.observedAt),
+      offers: evidence.changes.map((entry: { after: unknown }) => entry.after),
+      sources: [{ sourceId: 'maybank', status: 'error', attemptedAt: day2, message: 'timeout' }],
+    });
+    git(repo, 'init', '-b', 'main');
+    git(repo, 'config', 'user.email', 'tests@example.com');
+    git(repo, 'config', 'user.name', 'Tests');
+    for (const path of ['public/data', 'src/lib', dir])
+      await mkdir(join(repo, path), { recursive: true });
+    const input = 'public/data/rates.json';
+    await writeFile(join(repo, input), JSON.stringify(snapshot));
+    await writeFile(join(repo, 'src/lib/schema.ts'), await readFile('src/lib/schema.ts'));
+    await writeFile(join(repo, dir, 'evidence.json'), raw);
+    await writeFile(join(repo, dir, 'official.html'), body);
+    git(repo, 'add', '.');
+    git(repo, 'commit', '-qm', 'verified standalone capture');
+    // Uncommitted edits to the evidence must never affect a committed snapshot.
+    await writeFile(join(repo, dir, 'official.html'), 'edited');
+    const ledger = await Ledger.open(await temp());
+    await ingestFile(repo, ledger, 'SG', input, 'snapshot', importedAt);
+    expect(
+      ledger
+        .records()
+        .filter((r) => r.type === 'observation')
+        .map((r) => r.observedAt),
+    ).toEqual(Array(4).fill(evidence.observedAt));
+    expect(ledger.records().filter((r) => r.type === 'attempt')).toMatchObject([
+      { status: 'error' },
+    ]);
+    expect((await backfill(repo, ledger, 'main', importedAt)).added).toBe(0);
+    const fromCollection = await Ledger.open(await temp());
+    await ingestFile(repo, fromCollection, 'SG', input, 'collection', importedAt);
+    expect(fromCollection.records().filter((r) => r.type === 'observation')).toHaveLength(0);
+    const normalizeWith = (meta: unknown, html: Buffer, f = snapshot) =>
+      normalize(f, 'SG', provenance(f.generatedAt), sgUrls, (path) =>
+        path.endsWith('/official.html') ? html : Buffer.from(JSON.stringify(meta)),
+      ).filter((r) => r.type === 'observation');
+    expect(normalizeWith(null, body)).toHaveLength(0);
+    expect(normalizeWith({ ...evidence, url: 'https://example.org' }, body)).toHaveLength(0);
+    expect(normalizeWith({ ...evidence, observedAt: day1 }, body)).toHaveLength(0);
+    expect(normalizeWith({ ...evidence, bodySha256: '0'.repeat(64) }, body)).toHaveLength(0);
+    expect(normalizeWith(evidence, Buffer.from('modified'))).toHaveLength(0);
+    const altered = structuredClone(snapshot);
+    altered.offers[0].stages[0].rate = 10;
+    expect(normalizeWith(evidence, body, altered)).toHaveLength(0);
+    expect(
+      normalizeWith(evidence, body, { ...snapshot, offers: snapshot.offers.slice(1) }),
+    ).toHaveLength(0);
+  });
   it('replays only mainline snapshots, is byte-idempotent, and reports malformed revisions', async () => {
     const repo = await temp(),
       root = join(repo, 'ledger');

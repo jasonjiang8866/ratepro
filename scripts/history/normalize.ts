@@ -1,4 +1,6 @@
 import { createHash } from 'node:crypto';
+import { isDeepStrictEqual } from 'node:util';
+import { validateMaybankCandidate } from '../maybank-diagnostics';
 import { FeedSchema, type Feed } from '../../src/lib/schema';
 import { JpFeedSchema } from '../../src/lib/japan-rates';
 import {
@@ -36,13 +38,54 @@ export function sourceUrls(schemaText: string): Record<string, string> {
       .map(([, id, url]) => [id, url]),
   );
 }
+// A standalone capture keeps the scheduled failure. Verify the four offers against
+// the official response archived in the same Git revision as the snapshot.
+type ReadBlob = (path: string) => Buffer;
+function verifiedMaybankTime(feed: Feed, url: string, readBlob: ReadBlob) {
+  const status = feed.sources.find((s) => s.sourceId === 'maybank');
+  const offers = feed.offers.filter((o) => o.sourceId === 'maybank');
+  const at = offers[0]?.observedAt;
+  if (!at || status?.status !== 'error' || Date.parse(at) < Date.parse(status.attemptedAt)) return;
+  const stamp = new Date(at).toISOString().replace(/[-:.]/g, '');
+  const dir = `docs/captures/maybank/${stamp}`;
+  try {
+    const evidence = JSON.parse(readBlob(`${dir}/evidence.json`).toString('utf8'));
+    if (
+      evidence.version !== 1 ||
+      evidence.sourceId !== 'maybank' ||
+      evidence.url !== url ||
+      evidence.observedAt !== at
+    )
+      return;
+    const body = readBlob(`${dir}/official.html`);
+    if (
+      evidence.bytes !== body.length ||
+      evidence.bodySha256 !== createHash('sha256').update(body).digest('hex')
+    )
+      return;
+    const parsed = validateMaybankCandidate(body, 200, at);
+    const byId = new Map(offers.map((offer) => [offer.id, offer]));
+    if (
+      byId.size === parsed.length &&
+      parsed.every((offer) => isDeepStrictEqual(offer, byId.get(offer.id)))
+    )
+      return at;
+  } catch {
+    // Missing or unverifiable evidence leaves the ordinary failed-attempt rule in force.
+  }
+}
 export function normalize(
   raw: unknown,
   market: Market,
   provenance: Provenance,
   urls: Record<string, string>,
+  readBlob?: ReadBlob,
 ): HistoryRecord[] {
   const feed = market === 'SG' ? FeedSchema.parse(raw) : JpFeedSchema.parse(raw);
+  const verifiedAt =
+    market === 'SG' && provenance.mode !== 'collection' && provenance.commit && readBlob
+      ? verifiedMaybankTime(feed as Feed, urls.maybank, readBlob)
+      : undefined;
   const records: HistoryRecord[] = [];
   const url = (sourceId: string) => {
     if (!urls[sourceId]) throw Error(`Missing historical evidence URL: ${sourceId}`);
@@ -87,7 +130,8 @@ export function normalize(
     if (
       status?.status === 'error' &&
       (observation.method === 'collector' || market === 'JP') &&
-      Date.parse(observation.observedAt) >= Date.parse(status.attemptedAt)
+      Date.parse(observation.observedAt) >= Date.parse(status.attemptedAt) &&
+      !(version.sourceId === 'maybank' && observation.observedAt === verifiedAt)
     )
       return;
     const productVersionId = digest(version);
