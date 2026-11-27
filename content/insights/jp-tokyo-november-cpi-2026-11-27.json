@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-tokyo-november-cpi-2026-11-27",
+  "category": "market",
+  "title": "Tokyo November CPI: a regional inflation update, not a mortgage repricing",
+  "summary": "Tokyo's November mid-month preliminary CPI rose 2.8% year on year; excluding fresh food, it rose 2.9%. The 27 November release adds regional inflation evidence, without establishing a change in any lender's mortgage terms.",
+  "reportDate": "2026-11-27",
+  "edition": "update",
+  "eventKey": "jp-tokyo-cpi-november-2026-release",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "Tokyo's November preliminary annual CPI increases were 2.8% overall, 2.9% excluding fresh food and 2.5% excluding fresh food and energy.",
+      "sourceIds": ["tokyo-cpi-pdf"]
+    },
+    {
+      "text": "These are Tokyo ward-area statistics, not nationwide November results or a bank loan quotation.",
+      "sourceIds": ["tokyo-cpi-release", "tokyo-cpi-pdf"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "What the official release says",
+      "kind": "fact",
+      "text": "The Statistics Bureau published the November 2026 Tokyo ward-area mid-month preliminary CPI on 27 November 2026. On the 2025=100 base, the overall index was 103.8; the index excluding fresh food was 103.9; excluding fresh food and energy, it was 103.6. Their year-on-year increases were 2.8%, 2.9% and 2.5%, respectively. These measures have different coverage and should not be conflated.",
+      "sourceIds": ["tokyo-cpi-pdf", "tokyo-cpi-release"]
+    },
+    {
+      "heading": "What this means for mortgage comparisons",
+      "kind": "analysis",
+      "text": "This report's interpretation: regional inflation is context for monitoring financing conditions, but this statistical release establishes neither a BOJ policy decision nor a lender's repricing. It does not justify a deterministic rate forecast. Before comparing JPY mortgages, confirm the actual funding-month rate, variable versus initial-period or full-term fixed structure, eligibility, fees, insurance and contractual reset dates with the lender. No confirmed promotion is added by this update.",
+      "sourceIds": ["tokyo-cpi-pdf"]
+    },
+    {
+      "heading": "Dates and limits",
+      "kind": "fact",
+      "text": "The reference month is November 2026 and the publication date is 27 November. This report was written on 27 November in Asia/Tokyo; source checks are separately recorded in UTC. The latest-results webpage can roll forward, so the release-specific official PDF is retained. No separate webpage modification timestamp was established. No loan offer validity period applies; the null effective dates do not assert continuing availability of a mortgage package.",
+      "sourceIds": ["tokyo-cpi-release", "tokyo-cpi-pdf"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "tokyo-cpi-release",
+      "publisher": "Statistics Bureau of Japan",
+      "title": "2025年基準 消費者物価指数 東京都区部 2026年11月分（中旬速報値）公表ページ",
+      "url": "https://www.stat.go.jp/data/cpi/sokuhou/tsuki/index-t.html",
+      "checkedAt": "2026-11-27T01:58:24Z",
+      "documentDate": "2026-11-27"
+    },
+    {
+      "id": "tokyo-cpi-pdf",
+      "publisher": "Statistics Bureau of Japan / e-Stat",
+      "title": "2025年基準 消費者物価指数 東京都区部 2026年11月分（中旬速報値）",
+      "url": "https://www.e-stat.go.jp/stat-search/file-download?fileKind=2&statInfId=000040525998",
+      "checkedAt": "2026-11-27T01:58:24Z",
+      "documentDate": "2026-11-27"
+    }
+  ],
+  "package": null
+}
