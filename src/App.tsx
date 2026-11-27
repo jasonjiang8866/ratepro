@@ -43,6 +43,7 @@ import {
   readCache,
   saveCache,
   stageDisplay,
+  commitmentDisplay,
   compareInitialRates,
   matchesProperty,
   matchesConstruction,
@@ -811,9 +812,7 @@ function MarketApp({
                           </div>
                           <div>
                             <span>Commitment</span>
-                            <strong>
-                              {o.lockYears === null ? 'Check source' : `${o.lockYears} years`}
-                            </strong>
+                            <strong>{commitmentDisplay(o.lockYears)}</strong>
                           </div>
                           <div>
                             <span>Minimum loan</span>
@@ -1128,7 +1127,7 @@ function MarketApp({
                       {s.id === 'maybank' && (
                         <p className="text-sm mt-3">
                           {status?.status === 'error'
-                            ? 'Manual recheck required. Verify the current official package table; retained observations keep their original review dates.'
+                            ? 'Manual recheck required. Verify the current official package table; each package shows its latest verified observation time.'
                             : 'Experimental automatic collection. Reviewed snapshots remain available when retrieval fails.'}
                         </p>
                       )}
@@ -1306,9 +1305,7 @@ function MarketApp({
                                   : label === 'Formula'
                                     ? o.stages[0].formula
                                     : label === 'Commitment'
-                                      ? o.lockYears === null
-                                        ? 'Check source'
-                                        : `${o.lockYears} years`
+                                      ? commitmentDisplay(o.lockYears)
                                       : label === 'Minimum loan'
                                         ? o.minLoan === null
                                           ? 'Check source'
@@ -1331,10 +1328,10 @@ function MarketApp({
                                                   : o.maxLoanExclusive &&
                                                       Number(principal) >= o.maxLoanExclusive
                                                     ? 'Outside loan amount band'
-                                                    : o.stages[0].rate === null
-                                                      ? 'Not calculated: benchmark fixing required'
-                                                      : o.construction === 'Under construction'
-                                                        ? 'Progressive drawdown; check source'
+                                                    : o.construction === 'Under construction'
+                                                      ? 'Progressive drawdown; check source'
+                                                      : o.stages[0].rate === null
+                                                        ? 'Not calculated: benchmark fixing required'
                                                         : o.construction === 'Confirm with lender'
                                                           ? 'Confirm construction stage with lender'
                                                           : validCalc && p !== null

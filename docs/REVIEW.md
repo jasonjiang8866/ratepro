@@ -54,7 +54,7 @@ without reviewing the corresponding candidate.
 
 Preparation rejects future observations, evidence older than seven days,
 observations no newer than the retained source, expired periods and changed
-product IDs. Maybank's four products and Citi's four products are handled as a
+product IDs. The six Maybank packages and the supported Citi packages are each handled as a
 whole source group. Use a separate parser/schema PR for a product ID change.
 
 ## Explicit review and staging

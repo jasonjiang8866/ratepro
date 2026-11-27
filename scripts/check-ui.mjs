@@ -114,6 +114,37 @@ try {
     await page.locator('.offer-card').count(),
     JSON.parse(readFileSync('public/data/rates.json', 'utf8')).offers.length,
   );
+  await page.getByLabel('Lender', { exact: true }).selectOption('Maybank');
+  await page.getByLabel('Property stage', { exact: true }).selectOption('Under construction');
+  const buc = page.locator('.offer-card');
+  assert.equal(await buc.count(), 2);
+  for (const tenor of ['1M', '3M']) {
+    const card = buc.filter({
+      has: page.getByRole('heading', { name: `${tenor} SORA · building under construction` }),
+    });
+    await card.locator('summary').click();
+    const cardText = await card.innerText();
+    assert.match(cardText, /No lock-in/);
+    assert.match(cardText, /Formula only/);
+    assert.ok(cardText.includes(`${tenor} Compounded SORA +`));
+    assert.match(cardText, tenor === '1M' ? /1st drawdown to TOP/ : /One-time free conversion/);
+    assert.match(cardText, /TOP to within 6 months from TOP/);
+    assert.match(cardText, /Observed .*SGT/s);
+    assert.equal(
+      await card.getByRole('link', { name: 'View official source' }).getAttribute('href'),
+      'https://www.maybank2u.com.sg/en/rates/rates-sora.page',
+    );
+    await card.getByRole('checkbox', { name: 'Compare' }).check();
+  }
+  await page.getByRole('button', { name: 'Compare packages' }).click();
+  const payments = page.getByRole('dialog').getByRole('row', { name: /Monthly estimate/ });
+  assert.deepEqual(
+    await payments.locator('td').allTextContents(),
+    Array(2).fill('Progressive drawdown; check source'),
+  );
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Clear comparison' }).click();
+  await page.getByLabel('Property stage', { exact: true }).selectOption('All stages');
   // Expanded SG sources and unknown construction eligibility stay distinct.
   await page.getByLabel('Lender', { exact: true }).selectOption('SBI');
   assert.equal(await page.locator('.offer-card').count(), 3);

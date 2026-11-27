@@ -8,15 +8,21 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { nodePage } from './collect';
-import { parseMaybank } from '../src/lib/parsers';
+import { parseMaybank, parseMaybankCompleted } from '../src/lib/parsers';
 
 // Publicly indexed country-specific page; not an invented query or internal API.
 export const MAYBANK_COUNTRY_URL =
   'https://www.maybank2u.com.sg/en/rates/rates-sora.page?country=en-sg';
-export function validateMaybankCandidate(bytes: Uint8Array, status: number, at: string) {
+export function validateMaybankCandidate(
+  bytes: Uint8Array,
+  status: number,
+  at: string,
+  version: 1 | 2 = 2,
+) {
   if (status !== 200) throw Error(`Candidate HTTP ${status}; no extraction`);
   if (!bytes.length || bytes.length > MAX_BYTES) throw Error('Candidate body size rejected');
-  return parseMaybank(nodePage(new TextDecoder().decode(bytes)), at, 'collector');
+  const parser = version === 1 ? parseMaybankCompleted : parseMaybank;
+  return parser(nodePage(new TextDecoder().decode(bytes)), at, 'collector');
 }
 
 export function timingEvidence(raw: Record<string, unknown>) {

@@ -22,6 +22,10 @@ export function mergeCheckEvidence(cache: Cache, incoming: Cache): Cache {
   }
   return next;
 }
+export function commitmentDisplay(years: Offer['lockYears']) {
+  if (years === null) return 'Check source';
+  return years === 0 ? 'No lock-in' : `${years} years`;
+}
 export function stageDisplay(stage: Offer['stages'][number]) {
   return stage.rate === null ? stage.formula : `${stage.rate.toFixed(2)}%`;
 }

@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { FeedSchema, sourceFor } from '../src/lib/schema';
 import { validateMaybankCandidate } from './maybank-diagnostics';
 import { requestMaybank } from './maybank-transport';
-import { validateCollectedGroup } from './source-health';
+import { matchesMaybankGroup, validateCollectedGroup } from './source-health';
 
 export const digest = (bytes: Uint8Array | string) =>
   createHash('sha256').update(bytes).digest('hex');
@@ -39,24 +39,23 @@ export function buildMaybankCandidate(base: Buffer, capture: Capture, now = Date
   const parsed = validateMaybankCandidate(body, 200, report.finishedAt);
   validateCollectedGroup('maybank', parsed, previous);
   const old = previous.offers.filter((offer) => offer.sourceId === 'maybank');
-  if (
-    old.length !== parsed.length ||
-    old.some((offer) => !parsed.some((next) => next.id === offer.id))
-  )
+  if (!matchesMaybankGroup(old, 1) && !matchesMaybankGroup(old, 2))
     throw Error('Supported Maybank product IDs changed');
   if (old.some((offer) => Date.parse(offer.observedAt) >= observed))
     throw Error('Capture is not newer than retained observations');
   // Preserve scheduled collector health. A local read does not repair GitHub access.
+  const offers = new Map(previous.offers.map((offer) => [offer.id, offer]));
+  for (const offer of parsed) offers.set(offer.id, offer);
   const feed = FeedSchema.parse({
     ...previous,
     generatedAt: new Date(Math.max(now, Date.parse(previous.generatedAt))).toISOString(),
-    offers: previous.offers.map((offer) => parsed.find((next) => next.id === offer.id) ?? offer),
+    offers: [...offers.values()],
   });
   const candidate = JSON.stringify(feed, null, 2) + '\n';
   return {
     candidate,
     evidence: {
-      version: 1,
+      version: 2,
       sourceId: 'maybank',
       url: report.url,
       observedAt: report.finishedAt,
@@ -68,9 +67,9 @@ export function buildMaybankCandidate(base: Buffer, capture: Capture, now = Date
       architecture: report.architecture,
       transport: 'Ordinary curl HTTP/1.1; one public GET; no custom identity or proxy override',
       scheduledHealthPreserved: true,
-      changes: old.map((before) => ({
-        before,
-        after: parsed.find((after) => after.id === before.id)!,
+      changes: parsed.map((after) => ({
+        before: old.find((before) => before.id === after.id) ?? null,
+        after,
       })),
     },
   };
@@ -113,8 +112,8 @@ export async function captureMaybank(apply = false) {
   console.log(`MAYBANK_CAPTURE=${JSON.stringify({ out, ...evidence, changes: undefined })}`);
   console.log(
     apply
-      ? 'Four complete products applied locally. Scheduled health unchanged; no commit, push or deploy.'
-      : 'Four complete products staged. Published snapshot and scheduled health unchanged.',
+      ? `${evidence.changes.length} complete products applied locally. Scheduled health unchanged; no commit, push or deploy.`
+      : `${evidence.changes.length} complete products staged. Published snapshot and scheduled health unchanged.`,
   );
   return out;
 }

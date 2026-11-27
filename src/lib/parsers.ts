@@ -166,7 +166,9 @@ function soraStage(label: string, value: string): Offer['stages'][number] {
   };
 }
 function lockYears(table: string[][]) {
-  const m = row(table, /^Lock-in period$/i).match(/^(\d+) years?$/i);
+  const value = row(table, /^Lock-in period$/i);
+  if (/^No lock in$/i.test(value)) return 0;
+  const m = value.match(/^(\d+) years?$/i);
   if (!m) throw Error('Lock-in period changed');
   return Number(m[1]);
 }
@@ -175,7 +177,19 @@ function checkStageLabels(table: string[][], labels: string[]) {
   if (JSON.stringify(found) !== JSON.stringify(labels)) throw Error('Rate schedule changed');
 }
 
-export function parseMaybank(page: Page, at: string, method: Offer['method']): Offer[] {
+function maybankSoraStages(table: string[][], months: number, labels: string[]) {
+  checkStageLabels(table, labels);
+  const stages = labels.map((label) => soraStage(label, row(table, new RegExp(`^${label}$`))));
+  if (
+    stages.some((s) => s.benchmark?.tenor !== `${months}M`) ||
+    row(table, /^Rate refresh$/i) !== `Every ${months} month${months === 1 ? '' : 's'}`
+  )
+    throw Error('SORA tenor or refresh period changed');
+  return stages;
+}
+
+// Version 1 capture evidence covers exactly these four completed-property schedules.
+export function parseMaybankCompleted(page: Page, at: string, method: Offer['method']): Offer[] {
   const text = page.text.replace(/\s+/g, ' ');
   if (
     !/valid for completed residential properties in Singapore, for new purchase or refinancing from another financial institution/i.test(
@@ -227,13 +241,7 @@ export function parseMaybank(page: Page, at: string, method: Offer['method']): O
     const table = uniqueTable(page, heading);
     const labels =
       months === 1 ? ['Year 1', 'Year 2', 'Thereafter'] : ['Year 1 to Year 3', 'Thereafter'];
-    checkStageLabels(table, labels);
-    const stages = labels.map((label) => soraStage(label, row(table, new RegExp(`^${label}$`))));
-    if (
-      stages.some((s) => s.benchmark?.tenor !== `${months}M`) ||
-      row(table, /^Rate refresh$/i) !== `Every ${months} month${months === 1 ? '' : 's'}`
-    )
-      throw Error('SORA tenor or refresh period changed');
+    const stages = maybankSoraStages(table, months, labels);
     return OfferSchema.parse({
       ...base,
       id: `maybank-sora-${months}m`,
@@ -243,8 +251,46 @@ export function parseMaybank(page: Page, at: string, method: Offer['method']): O
       stages,
     });
   });
-  // Parse the complete supported group before returning any observations.
   return [...fixed, ...floating];
+}
+
+export function parseMaybank(page: Page, at: string, method: Offer['method']): Offer[] {
+  const completed = parseMaybankCompleted(page, at, method);
+  const buc = [1, 3].map((months) => {
+    const heading =
+      months === 1
+        ? /^1-Month Compounded SORA \(For Building Under Construction \(BUC\) properties\)$/i
+        : /^3M Compounded SORA \(For Building Under Construction \(BUC\) properties\)$/i;
+    const table = uniqueTable(page, heading);
+    const labels =
+      months === 1
+        ? ['Year 1 to Year 4', 'Year 5', 'Thereafter']
+        : ['Year 1 to Year 4', 'Thereafter'];
+    const stages = maybankSoraStages(table, months, labels);
+    const conversion = row(table, /^Free Conversion$/i);
+    const expected =
+      months === 1
+        ? /^2 times free conversion; once to be exercised from 1st drawdown to TOP and the 2nd time to be exercised from TOP to within 6 months from TOP$/i
+        : /^One-time free conversion to be exercised from TOP to within 6 months from TOP$/i;
+    if (!expected.test(conversion)) throw Error('Maybank BUC conversion terms changed');
+    return OfferSchema.parse({
+      id: `maybank-sora-${months}m-buc`,
+      sourceId: 'maybank',
+      bank: 'Maybank',
+      name: `${months}M SORA · building under construction`,
+      property: 'Confirm with lender',
+      purpose: ['Confirm with lender'],
+      construction: 'Under construction',
+      kind: 'Floating',
+      stages,
+      lockYears: lockYears(table),
+      minLoan: null,
+      terms: `${conversion}. TOP means Temporary Occupation Permit. Confirm property type, loan purpose, minimum loan and tenure with Maybank. The page's eligibility footnotes refer to completed properties. Progressive drawdowns apply.`,
+      observedAt: at,
+      method,
+    });
+  });
+  return [...completed, ...buc];
 }
 
 export function parseScSora(page: Page, at: string, method: Offer['method']): Offer[] {

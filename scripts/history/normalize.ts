@@ -1,7 +1,8 @@
 import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
+import { matchesMaybankGroup } from '../source-health';
 import { validateMaybankCandidate } from '../maybank-diagnostics';
-import { FeedSchema, type Feed } from '../../src/lib/schema';
+import { FeedSchema, OfferSchema, type Feed } from '../../src/lib/schema';
 import { JpFeedSchema } from '../../src/lib/japan-rates';
 import {
   HistoryRecordSchema,
@@ -38,10 +39,10 @@ export function sourceUrls(schemaText: string): Record<string, string> {
       .map(([, id, url]) => [id, url]),
   );
 }
-// A standalone capture keeps the scheduled failure. Verify the four offers against
+// A standalone capture keeps the scheduled failure. Verify the versioned product group against
 // the official response archived in the same Git revision as the snapshot.
 type ReadBlob = (path: string) => Buffer;
-function verifiedMaybankTime(feed: Feed, url: string, readBlob: ReadBlob) {
+function verifiedMaybankTime(feed: Feed, url: string, readBlob: ReadBlob, feedSha256: string) {
   const status = feed.sources.find((s) => s.sourceId === 'maybank');
   const offers = feed.offers.filter((o) => o.sourceId === 'maybank');
   const at = offers[0]?.observedAt;
@@ -51,7 +52,9 @@ function verifiedMaybankTime(feed: Feed, url: string, readBlob: ReadBlob) {
   try {
     const evidence = JSON.parse(readBlob(`${dir}/evidence.json`).toString('utf8'));
     if (
-      evidence.version !== 1 ||
+      (evidence.version !== 1 && evidence.version !== 2) ||
+      !matchesMaybankGroup(offers, evidence.version) ||
+      (evidence.version === 2 && evidence.candidateSha256 !== feedSha256) ||
       evidence.sourceId !== 'maybank' ||
       evidence.url !== url ||
       evidence.observedAt !== at
@@ -63,11 +66,37 @@ function verifiedMaybankTime(feed: Feed, url: string, readBlob: ReadBlob) {
       evidence.bodySha256 !== createHash('sha256').update(body).digest('hex')
     )
       return;
-    const parsed = validateMaybankCandidate(body, 200, at);
+    const parsed = validateMaybankCandidate(body, 200, at, evidence.version);
+    if (!Array.isArray(evidence.changes) || evidence.changes.length !== parsed.length) return;
+    if (evidence.version === 2) {
+      if (evidence.scheduledHealthPreserved !== true) return;
+      const previous: Feed['offers'] = [];
+      for (const { before, after } of evidence.changes) {
+        if (before === null) continue;
+        const old = OfferSchema.parse(before);
+        if (
+          old.sourceId !== 'maybank' ||
+          old.id !== after.id ||
+          Date.parse(old.observedAt) >= Date.parse(at)
+        )
+          return;
+        previous.push(old);
+      }
+      if (!matchesMaybankGroup(previous, 1) && !matchesMaybankGroup(previous, 2)) return;
+    }
+    const archived = new Map(
+      evidence.changes.map(
+        (change: { after: Feed['offers'][number] }) => [change.after.id, change.after] as const,
+      ),
+    );
+
     const byId = new Map(offers.map((offer) => [offer.id, offer]));
     if (
-      byId.size === parsed.length &&
-      parsed.every((offer) => isDeepStrictEqual(offer, byId.get(offer.id)))
+      parsed.every(
+        (offer) =>
+          isDeepStrictEqual(offer, byId.get(offer.id)) &&
+          isDeepStrictEqual(offer, archived.get(offer.id)),
+      )
     )
       return at;
   } catch {
@@ -84,7 +113,7 @@ export function normalize(
   const feed = market === 'SG' ? FeedSchema.parse(raw) : JpFeedSchema.parse(raw);
   const verifiedAt =
     market === 'SG' && provenance.mode !== 'collection' && provenance.commit && readBlob
-      ? verifiedMaybankTime(feed as Feed, urls.maybank, readBlob)
+      ? verifiedMaybankTime(feed as Feed, urls.maybank, readBlob, provenance.feedSha256)
       : undefined;
   const records: HistoryRecord[] = [];
   const url = (sourceId: string) => {
