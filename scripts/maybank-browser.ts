@@ -123,7 +123,7 @@ export async function inspectMaybankBrowser(
     } while (Date.now() < until);
     if (report.status !== 'validated-candidate') {
       report.validationError = validationError;
-      throw Error('Rendered page did not validate as four complete packages');
+      throw Error('Rendered page did not validate as a complete set of supported packages');
     }
     if (stop) throw Error(stop);
   } catch (error) {

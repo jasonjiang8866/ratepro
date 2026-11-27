@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-26T01:26:19.060Z",
+  "generatedAt": "2026-11-27T04:00:31.285Z",
   "offers": [
     {
       "id": "maybank-fixed-2y",
@@ -39,7 +39,7 @@
       "lockYears": 2,
       "minLoan": 100000,
       "terms": "Published indicative package for completed Singapore residential property; confirm property eligibility with Maybank. Minimum tenure 5 years. SORA stages show the bank spread, not an all-in rate; the applicable fixing depends on drawdown or reset date. Fees, subsidies and approval require confirmation.",
-      "observedAt": "2026-11-14T15:49:22.874Z",
+      "observedAt": "2026-11-27T04:00:31.219Z",
       "method": "collector"
     },
     {
@@ -84,7 +84,7 @@
       "lockYears": 3,
       "minLoan": 100000,
       "terms": "Published indicative package for completed Singapore residential property; confirm property eligibility with Maybank. Minimum tenure 5 years. SORA stages show the bank spread, not an all-in rate; the applicable fixing depends on drawdown or reset date. Fees, subsidies and approval require confirmation.",
-      "observedAt": "2026-11-14T15:49:22.874Z",
+      "observedAt": "2026-11-27T04:00:31.219Z",
       "method": "collector"
     },
     {
@@ -134,7 +134,7 @@
       "lockYears": 2,
       "minLoan": 100000,
       "terms": "Published indicative package for completed Singapore residential property; confirm property eligibility with Maybank. Minimum tenure 5 years. SORA stages show the bank spread, not an all-in rate; the applicable fixing depends on drawdown or reset date. Fees, subsidies and approval require confirmation.",
-      "observedAt": "2026-11-14T15:49:22.874Z",
+      "observedAt": "2026-11-27T04:00:31.219Z",
       "method": "collector"
     },
     {
@@ -174,7 +174,7 @@
       "lockYears": 2,
       "minLoan": 100000,
       "terms": "Published indicative package for completed Singapore residential property; confirm property eligibility with Maybank. Minimum tenure 5 years. SORA stages show the bank spread, not an all-in rate; the applicable fixing depends on drawdown or reset date. Fees, subsidies and approval require confirmation.",
-      "observedAt": "2026-11-14T15:49:22.874Z",
+      "observedAt": "2026-11-27T04:00:31.219Z",
       "method": "collector"
     },
     {
@@ -1075,6 +1075,94 @@
       "documentDate": "2026-09-30",
       "terms": "Limited-tranche two-year fixed schedule, then 1M Compounded SORA plus the published spread. Confirm property type, construction stage, purchase/refinance eligibility and availability with Citi; these are not specified in this table. Tier and loan-band conditions apply. The SORA floor applies to floating stages. Print date is not an effective date. Fees and subsidies are not extracted.",
       "observedAt": "2026-11-26T01:26:19.060Z",
+      "method": "collector"
+    },
+    {
+      "id": "maybank-sora-1m-buc",
+      "sourceId": "maybank",
+      "bank": "Maybank",
+      "name": "1M SORA · building under construction",
+      "property": "Confirm with lender",
+      "purpose": [
+        "Confirm with lender"
+      ],
+      "construction": "Under construction",
+      "kind": "Floating",
+      "stages": [
+        {
+          "label": "Year 1 to Year 4",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.75%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.75
+          }
+        },
+        {
+          "label": "Year 5",
+          "rate": null,
+          "formula": "1M Compounded SORA + 0.80%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 0.8
+          }
+        },
+        {
+          "label": "Thereafter",
+          "rate": null,
+          "formula": "1M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "1M",
+            "spread": 1
+          }
+        }
+      ],
+      "lockYears": 0,
+      "minLoan": null,
+      "terms": "2 times free conversion; once to be exercised from 1st drawdown to TOP and the 2nd time to be exercised from TOP to within 6 months from TOP. TOP means Temporary Occupation Permit. Confirm property type, loan purpose, minimum loan and tenure with Maybank. The page's eligibility footnotes refer to completed properties. Progressive drawdowns apply.",
+      "observedAt": "2026-11-27T04:00:31.219Z",
+      "method": "collector"
+    },
+    {
+      "id": "maybank-sora-3m-buc",
+      "sourceId": "maybank",
+      "bank": "Maybank",
+      "name": "3M SORA · building under construction",
+      "property": "Confirm with lender",
+      "purpose": [
+        "Confirm with lender"
+      ],
+      "construction": "Under construction",
+      "kind": "Floating",
+      "stages": [
+        {
+          "label": "Year 1 to Year 4",
+          "rate": null,
+          "formula": "3M Compounded SORA + 0.70%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 0.7
+          }
+        },
+        {
+          "label": "Thereafter",
+          "rate": null,
+          "formula": "3M Compounded SORA + 1.00%",
+          "benchmark": {
+            "name": "SORA",
+            "tenor": "3M",
+            "spread": 1
+          }
+        }
+      ],
+      "lockYears": 0,
+      "minLoan": null,
+      "terms": "One-time free conversion to be exercised from TOP to within 6 months from TOP. TOP means Temporary Occupation Permit. Confirm property type, loan purpose, minimum loan and tenure with Maybank. The page's eligibility footnotes refer to completed properties. Progressive drawdowns apply.",
+      "observedAt": "2026-11-27T04:00:31.219Z",
       "method": "collector"
     }
   ],

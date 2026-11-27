@@ -96,11 +96,12 @@ export async function ingestFile(
   let snapshotCommit: string | null = null;
   if (mode === 'snapshot') {
     try {
-      const committed = execFileSync('git', ['show', `HEAD:${input}`], {
+      const head = git(repo, 'rev-parse', 'HEAD');
+      const committed = execFileSync('git', ['show', `${head}:${input}`], {
         cwd: repo,
         encoding: 'utf8',
       });
-      if (committed === text) snapshotCommit = git(repo, 'rev-parse', 'HEAD');
+      if (committed === text) snapshotCommit = head;
     } catch {
       /* Uncommitted snapshots have no immutable Git blob evidence. */
     }
@@ -123,7 +124,11 @@ export async function ingestFile(
       raw,
       market,
       provenance,
-      sourceUrls(await readFile(join(repo, schemaPaths[market]), 'utf8')),
+      sourceUrls(
+        snapshotCommit
+          ? git(repo, 'show', `${snapshotCommit}:${schemaPaths[market]}`)
+          : await readFile(join(repo, schemaPaths[market]), 'utf8'),
+      ),
       snapshotCommit ? captureBlobsAt(repo, snapshotCommit) : undefined,
     ),
   );

@@ -74,6 +74,12 @@ export async function prepareMaybankJob(api: Api, capture = requestMaybank) {
     throw Error('Invalid base snapshot');
   const base = Buffer.from(file.content, 'base64');
   const result = await capture('default');
+  if (result.report.outcome !== 'validated') {
+    const { exitCode, timing, parseError } = result.report;
+    throw Error(
+      `Maybank capture failed: curl ${exitCode}, HTTP ${timing?.http_code ?? 'unknown'}, ${parseError ?? timing?.lastMilestone ?? 'no timing recorded'}`,
+    );
+  }
   const prepared = buildMaybankCandidate(base, result);
   if (!Buffer.from(result.body!.toString('utf8'), 'utf8').equals(result.body!))
     throw Error('Official page is not lossless UTF-8; original evidence cannot be submitted');
@@ -133,11 +139,11 @@ export async function submitMaybankJob(api: Api, plan: PreparedJob, beforeWrites
   await api('POST', '/git/refs', { ref: `refs/heads/${plan.branch}`, sha: commitSha });
   const pr = record(
     await api('POST', '/pulls', {
-      title: 'data: refresh four Maybank public observations',
+      title: `data: refresh ${plan.evidence.changes.length} Maybank public observations`,
       head: plan.branch,
       base: 'main',
       draft: true,
-      body: `Fresh ordinary HTTP/1.1 read of the official Maybank package page at ${plan.observedAt}. All four complete schedules were reparsed from the original response. Other products and scheduled collection health are preserved.\n\nOriginal HTML and before/after evidence are included under docs/captures/maybank/. Base commit: ${plan.baseSha}. Body SHA-256: ${plan.evidence.bodySha256}.\n\nThis external capture does not establish GitHub collector recovery. Review the complete evidence and CI before merging. No automatic merge or deployment is requested.`,
+      body: `Fresh ordinary HTTP/1.1 read of the official Maybank package page at ${plan.observedAt}. All ${plan.evidence.changes.length} complete schedules were reparsed from the original response. Other products and scheduled collection health are preserved.\n\nOriginal HTML and before/after evidence are included under docs/captures/maybank/. Base commit: ${plan.baseSha}. Body SHA-256: ${plan.evidence.bodySha256}.\n\nThis external capture does not establish GitHub collector recovery. Review the complete evidence and CI before merging. No automatic merge or deployment is requested.`,
     }),
   );
   if (!Number.isSafeInteger(pr.number) || Number(pr.number) <= 0)

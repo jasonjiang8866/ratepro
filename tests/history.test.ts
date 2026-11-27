@@ -196,11 +196,13 @@ describe('immutable observation ledger', () => {
 });
 
 describe('Git replay and static analytics integration', () => {
-  it('ingests a later standalone Maybank capture only with matching committed evidence', async () => {
+  it.each([
+    ['20261114T154922874Z', 4],
+    ['20261127T040031219Z', 6],
+  ] as const)('ingests only the certified Maybank group from %s', async (stamp, count) => {
     const repo = await temp();
-    const dir = 'docs/captures/maybank/20261114T154922874Z';
-    const raw = await readFile(join(dir, 'evidence.json'), 'utf8');
-    const evidence = JSON.parse(raw);
+    const dir = `docs/captures/maybank/${stamp}`;
+    const evidence = JSON.parse(await readFile(join(dir, 'evidence.json'), 'utf8'));
     const body = await readFile(join(dir, 'official.html'));
     const snapshot = FeedSchema.parse({
       ...feed(evidence.observedAt),
@@ -215,7 +217,9 @@ describe('Git replay and static analytics integration', () => {
     const input = 'public/data/rates.json';
     await writeFile(join(repo, input), JSON.stringify(snapshot));
     await writeFile(join(repo, 'src/lib/schema.ts'), await readFile('src/lib/schema.ts'));
-    await writeFile(join(repo, dir, 'evidence.json'), raw);
+    // This repository has only the Maybank rows. Bind its receipt to these exact fixture bytes.
+    evidence.candidateSha256 = bytesDigest(JSON.stringify(snapshot));
+    await writeFile(join(repo, dir, 'evidence.json'), JSON.stringify(evidence));
     await writeFile(join(repo, dir, 'official.html'), body);
     git(repo, 'add', '.');
     git(repo, 'commit', '-qm', 'verified standalone capture');
@@ -228,19 +232,49 @@ describe('Git replay and static analytics integration', () => {
         .records()
         .filter((r) => r.type === 'observation')
         .map((r) => r.observedAt),
-    ).toEqual(Array(4).fill(evidence.observedAt));
+    ).toEqual(Array(count).fill(evidence.observedAt));
     expect(ledger.records().filter((r) => r.type === 'attempt')).toMatchObject([
       { status: 'error' },
     ]);
+    expect(await ingestFile(repo, ledger, 'SG', input, 'snapshot', importedAt)).toBe(0);
     expect((await backfill(repo, ledger, 'main', importedAt)).added).toBe(0);
     const fromCollection = await Ledger.open(await temp());
     await ingestFile(repo, fromCollection, 'SG', input, 'collection', importedAt);
     expect(fromCollection.records().filter((r) => r.type === 'observation')).toHaveLength(0);
     const normalizeWith = (meta: unknown, html: Buffer, f = snapshot) =>
-      normalize(f, 'SG', provenance(f.generatedAt), sgUrls, (path) =>
-        path.endsWith('/official.html') ? html : Buffer.from(JSON.stringify(meta)),
+      normalize(
+        f,
+        'SG',
+        { ...provenance(f.generatedAt), feedSha256: bytesDigest(JSON.stringify(f)) },
+        sgUrls,
+        (path) => (path.endsWith('/official.html') ? html : Buffer.from(JSON.stringify(meta))),
       ).filter((r) => r.type === 'observation');
+    expect(normalizeWith(evidence, body)).toHaveLength(count);
     expect(normalizeWith(null, body)).toHaveLength(0);
+    expect(normalizeWith({ ...evidence, version: 99 }, body)).toHaveLength(0);
+    expect(normalizeWith({ ...evidence, bytes: evidence.bytes + 1 }, body)).toHaveLength(0);
+    expect(normalizeWith({ ...evidence, changes: evidence.changes.slice(1) }, body)).toHaveLength(
+      0,
+    );
+    const forged = structuredClone(evidence);
+    forged.changes[0].after.terms = 'Changed in receipt only';
+    expect(normalizeWith(forged, body)).toHaveLength(0);
+    if (count === 6) {
+      const falseAddition = structuredClone(evidence);
+      falseAddition.changes[0].before = null;
+      expect(normalizeWith(falseAddition, body)).toHaveLength(0);
+      expect(normalizeWith({ ...evidence, scheduledHealthPreserved: false }, body)).toHaveLength(0);
+      expect(normalizeWith({ ...evidence, candidateSha256: '0'.repeat(64) }, body)).toHaveLength(0);
+      const reduced = { ...snapshot, offers: snapshot.offers.slice(0, 4) };
+      expect(
+        normalizeWith(
+          { ...evidence, candidateSha256: bytesDigest(JSON.stringify(reduced)) },
+          body,
+          reduced,
+        ),
+      ).toHaveLength(0);
+      expect(normalizeWith({ ...evidence, version: 1 }, body, reduced)).toHaveLength(0);
+    }
     expect(normalizeWith({ ...evidence, url: 'https://example.org' }, body)).toHaveLength(0);
     expect(normalizeWith({ ...evidence, observedAt: day1 }, body)).toHaveLength(0);
     expect(normalizeWith({ ...evidence, bodySha256: '0'.repeat(64) }, body)).toHaveLength(0);

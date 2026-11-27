@@ -8,9 +8,9 @@ const at = '2026-11-09T17:00:00Z';
 const bytes = (text: string) => new TextEncoder().encode(text);
 
 describe('Maybank public country-page candidate', () => {
-  it('requires all four schedules and preserves fixed rates, tenor, spreads and eligibility', () => {
+  it('requires all six schedules and preserves fixed rates, tenor, spreads and eligibility', () => {
     const offers = validateMaybankCandidate(bytes(html), 200, at);
-    expect(offers).toHaveLength(4);
+    expect(offers).toHaveLength(6);
     expect(offers[0]).toMatchObject({ kind: 'Fixed', minLoan: 100000, construction: 'Completed' });
     expect(offers[0].stages.at(-1)).toMatchObject({
       rate: null,
@@ -34,6 +34,14 @@ describe('Maybank public country-page candidate', () => {
     html.replace('2-year Fixed Rate', 'Special offer'),
     html.replaceAll('Minimum', 'Unavailable').replaceAll('minimum', 'unavailable'),
     html + html,
+    html.replace('3M Compounded SORA (For Building', 'Missing table (For Building'),
+    html + html.slice(html.lastIndexOf('<table')),
+    html.replace('Year 5', 'Unavailable'),
+    html.replace('1M Compounded SORA + 0.75%', '3M Compounded SORA + 0.75%'),
+    html.replace('No lock in', 'Contact us'),
+    html.replace('from 1st drawdown', 'after approval'),
+    html.replace('One-time free conversion', 'Conversion may apply'),
+    html.replace('6 months from TOP', '12 months from TOP'),
   ])('does not turn HTTP 200 into a complete quote when fields are missing', (page) => {
     expect(() => validateMaybankCandidate(bytes(page), 200, at)).toThrow();
   });

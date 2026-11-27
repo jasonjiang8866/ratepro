@@ -67,7 +67,7 @@ staged for a separate data PR using `npm run review:file`. See
 These tools do not publish data; the existing production snapshot remains unchanged.
 
 For Maybank, `npm run capture:maybank` now performs one fresh official-page read
-and saves a complete four-product candidate with original bytes and before/after
+and saves a complete six-product candidate with original bytes and before/after
 evidence. `npm run capture:maybank -- --apply` can atomically update the local
 checkout after that live validation. It preserves every other product and the
 scheduled collector's failure status; it does not commit, push or deploy.
@@ -103,18 +103,24 @@ The scheduled collector requires GitHub Actions to be enabled and repository rul
 
 ### Current source coverage
 
-| Source             | Supported observations                  | Coverage                                                                                                |
-| ------------------ | --------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| DBS HDB / Green    | CPF-OA and FHR6 stage schedules         | Two public products                                                                                     |
-| HDB                | Concessionary quarter                   | HDB primary, CPF / AskGov, then dated CPF announcement; retain prior observation if all fail            |
-| Maybank            | 2-year / 3-year fixed, 1M / 3M SORA     | Four completed-property schedules; latest local capture retained, GitHub runner times out; BUC excluded |
-| Standard Chartered | Published 3M SORA schedule              | Formula only; source effective date is displayed separately                                             |
-| UOB                | Published completed-property SORA       | New direct-to-bank customers; fixed-rate enquiries remain quote-only                                    |
-| Citi               | Nine variable, fixed and BUC schedules  | Separate Citigold/Citibanking and loan bands; property/purpose eligibility needs confirmation           |
-| SBI Singapore      | Two floating schedules + two-year fixed | Three full published schedules; BUC only for three-year floating lock-in                                |
-| OCBC / HSBC        | Official research links                 | Quote required; no headline-only rate records                                                           |
+| Source             | Supported observations                  | Coverage                                                                                      |
+| ------------------ | --------------------------------------- | --------------------------------------------------------------------------------------------- |
+| DBS HDB / Green    | CPF-OA and FHR6 stage schedules         | Two public products                                                                           |
+| HDB                | Concessionary quarter                   | HDB primary, CPF / AskGov, then dated CPF announcement; retain prior observation if all fail  |
+| Maybank            | 2-year / 3-year fixed, 1M / 3M SORA     | Four completed-property schedules and two BUC SORA formulas with conversion windows           |
+| Standard Chartered | Published 3M SORA schedule              | Formula only; source effective date is displayed separately                                   |
+| UOB                | Published completed-property SORA       | New direct-to-bank customers; fixed-rate enquiries remain quote-only                          |
+| Citi               | Nine variable, fixed and BUC schedules  | Separate Citigold/Citibanking and loan bands; property/purpose eligibility needs confirmation |
+| SBI Singapore      | Two floating schedules + two-year fixed | Three full published schedules; BUC only for three-year floating lock-in                      |
+| OCBC / HSBC        | Official research links                 | Quote required; no headline-only rate records                                                 |
 
-The November 14 expansion supports **21 SG products across eight official source URLs**:
+RatePro supports **23 SG products across eight official source URLs**. Both Maybank
+BUC tables were already present in the November 14 archive. Their first included
+observations are from the [November 27 independent capture](docs/captures/maybank/20261127T040031219Z/evidence.json).
+The tables publish no lock-in and different free conversion windows. BUC property
+type, loan purpose, minimum loan and tenure need lender confirmation.
+
+The November 14 expansion covered 21 SG products.
 Citi now includes four fixed packages and one Citigold BUC package in addition to
 its four completed-variable schedules; SBI adds three packages. Citi fixed
 construction eligibility is explicitly unconfirmed and does not produce an
@@ -317,7 +323,6 @@ a rate fixed for the entire loan. Journal/Flat35 research dates are separate.
 Fixtures under `tests/fixtures/japan/` derive from the two official pages retrieved
 on 3 November 2026; the SMBC fixture preserves its original Shift-JIS bytes as base64.
 The initial snapshot was generated by the actual collector, not search snippets.
-
 
 ### Historical editorial loading
 

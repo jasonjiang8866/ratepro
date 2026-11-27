@@ -132,10 +132,10 @@ it('keeps independent CPF Board provenance without relabelling it as AskGov', as
   expect(candidate.sourceUrl).toBe(CPF_BOARD.url);
 });
 
-it('extracts all four Maybank products atomically as reviewed, without inventing a SORA fixing', async () => {
+it('extracts all six Maybank products atomically as reviewed, without inventing a SORA fixing', async () => {
   const document = readFileSync(new URL('fixtures/maybank.html', import.meta.url));
   const candidate = await prepareReview({ ...input, source: 'maybank', document });
-  expect(candidate.offers).toHaveLength(4);
+  expect(candidate.offers).toHaveLength(6);
   expect(
     candidate.offers.every((o) => o.method === 'reviewed' && o.observedAt === observedAt),
   ).toBe(true);
@@ -203,7 +203,7 @@ it('runs the real CLI prepare/stage path in isolation and refuses production out
     ]);
     expect(await readFile(join(cwd, 'public/data/rates.json'), 'utf8')).toBe(empty);
     const staged = JSON.parse(await readFile(join(cwd, 'review-output/staged/rates.json'), 'utf8'));
-    expect(staged.offers).toHaveLength(4);
+    expect(staged.offers).toHaveLength(6);
     expect(staged.sources).toEqual([]);
   } finally {
     await rm(cwd, { recursive: true, force: true });

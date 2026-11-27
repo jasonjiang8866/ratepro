@@ -1,12 +1,26 @@
 import { appendFile } from 'node:fs/promises';
 import { SOURCES, isStale, type Feed, type SourceStatus } from '../src/lib/schema';
 
+const completedMaybankIds = [
+  'maybank-fixed-2y',
+  'maybank-fixed-3y',
+  'maybank-sora-1m',
+  'maybank-sora-3m',
+];
+const maybankIds = [...completedMaybankIds, 'maybank-sora-1m-buc', 'maybank-sora-3m-buc'];
+
+export function matchesMaybankGroup(offers: Feed['offers'], version: 1 | 2) {
+  const expected = version === 1 ? completedMaybankIds : maybankIds;
+  const ids = new Set(offers.map((offer) => offer.id));
+  return offers.length === expected.length && expected.every((id) => ids.has(id));
+}
+
 // Supported product groups, not a claim of complete market coverage.
 export const expectedProducts = {
   'dbs-hdb': 1,
   'dbs-green': 1,
   hdb: 1,
-  maybank: 4,
+  maybank: maybankIds.length,
   'sc-sora': 1,
   'uob-sora': 1,
   citi: 9,
@@ -64,6 +78,7 @@ export function validateCollectedGroup(
 ) {
   if (
     feed.length !== expectedProducts[sourceId] ||
+    (sourceId === 'maybank' && !matchesMaybankGroup(feed, 2)) ||
     feed.some((offer) => offer.sourceId !== sourceId) ||
     new Set(feed.map((offer) => offer.id)).size !== feed.length
   )
