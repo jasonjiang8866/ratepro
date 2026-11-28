@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-fukushima-snow-loan-relief-request",
+  "category": "market",
+  "title": "Fukushima snow disruption: authorities request flexible loan support",
+  "summary": "A 24 November notice asks lenders to consider repayment deferrals and other changes for affected customers. Individual approval remains to verify.",
+  "reportDate": "2026-11-25",
+  "edition": "update",
+  "eventKey": "jp-fukushima-snow-financial-measures-2026-11-24",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "The notice requests support; it does not automatically amend mortgage contracts.",
+      "sourceIds": ["boj-fukushima"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Scope of the request",
+      "kind": "fact",
+      "text": "The Fukushima Finance Office and BOJ Fukushima branch address people affected in Fukushima's Disaster Relief Act areas by snow-related disasters beginning 20 November. They ask lenders to simplify procedures, expedite lending and consider changes to existing loans, including repayment deferrals.",
+      "sourceIds": ["boj-fukushima"]
+    },
+    {
+      "heading": "For affected mortgage borrowers",
+      "kind": "analysis",
+      "text": "Our interpretation: contact your lender about applicable assistance before changing payments. Confirm eligibility, evidence, revised dates, interest accrual and fees. Approval, duration, JPY limits and mortgage-specific terms remain unknown here. This is neither a nationwide rate change nor a confirmed promotion.",
+      "sourceIds": ["boj-fukushima"]
+    },
+    {
+      "heading": "Dates",
+      "kind": "fact",
+      "text": "The disaster reference begins 20 November; the notice is dated 24 November. Written on 25 November in Asia/Tokyo, with the actual UTC check below. No application deadline or separate webpage-update date is stated.",
+      "sourceIds": ["boj-fukushima"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "boj-fukushima",
+      "publisher": "Fukushima Finance Office / Bank of Japan, Fukushima Branch",
+      "title": "令和8年11月20日からの大雪に係る災害等に対する金融上の措置について（福島県）",
+      "url": "https://www.boj.or.jp/about/bcp/fso/fso261124a.pdf",
+      "checkedAt": "2026-11-25T02:01:34Z",
+      "documentDate": "2026-11-24"
+    }
+  ],
+  "package": null
+}

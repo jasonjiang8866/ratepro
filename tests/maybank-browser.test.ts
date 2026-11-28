@@ -22,9 +22,9 @@ describe('Maybank browser research validation', () => {
     ).toBe('net::ERR_HTTP2_PROTOCOL_ERROR');
     expect(browserNetworkError('Timeout 30000ms exceeded.')).toBeUndefined();
   });
-  it('retains four complete schedules with browser provenance and no invented dates', () => {
+  it('retains six complete schedules with browser provenance and no invented dates', () => {
     const offers = parseMaybankBrowser(nodePage(fixture), MAYBANK_URL, 200, at);
-    expect(offers).toHaveLength(4);
+    expect(offers).toHaveLength(6);
     expect(offers.every((o) => o.method === 'browser' && o.observedAt === at)).toBe(true);
     expect(offers.every((o) => !o.documentDate && !o.effectiveFrom && !o.effectiveUntil)).toBe(
       true,
@@ -83,8 +83,8 @@ describe.skipIf(process.env.RUN_BROWSER_TESTS !== '1')(
           );
         }, http1);
         expect(result.report.status).toBe('validated-candidate');
-        expect(result.report.offers).toHaveLength(4);
-        expect(result.evidence?.tables).toHaveLength(4);
+        expect(result.report.offers).toHaveLength(6);
+        expect(result.evidence?.tables).toHaveLength(6);
       },
     );
     it.each([

@@ -17,7 +17,7 @@ const original = FeedSchema.parse(
 );
 const baseline = JSON.stringify({
   ...original,
-  offers: [...original.offers, ...validateMaybankCandidate(body, 200, '2026-11-01T00:00:00Z')],
+  offers: [...original.offers, ...validateMaybankCandidate(body, 200, '2026-11-01T00:00:00Z', 1)],
 });
 const script = fileURLToPath(new URL('../scripts/capture-maybank.ts', import.meta.url));
 
@@ -71,7 +71,7 @@ globalThis.fetch = async (input, init) => {
         );
         expect(
           next.offers.filter((o: { sourceId: string }) => o.sourceId === 'maybank'),
-        ).toHaveLength(4);
+        ).toHaveLength(6);
         const bundles = await readdir(join(dir, 'research-output'));
         expect(bundles).toHaveLength(1);
         expect(await readFile(join(dir, 'research-output', bundles[0], 'rates.json'), 'utf8')).toBe(

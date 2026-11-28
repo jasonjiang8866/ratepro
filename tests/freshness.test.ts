@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { validateMaybankCandidate } from '../scripts/maybank-diagnostics';
 import seed from './fixtures/feed.json';
 import {
   FeedSchema,
@@ -139,10 +141,21 @@ describe('freshness and independent check channels', () => {
   });
   it('isolates experimental retrieval while retaining every previous observation on failure', async () => {
     const fetcher = vi.fn().mockRejectedValue(Error('timeout'));
-    const result = await collect(feed, fetcher, now, ['maybank'], async () => {});
+    const offers = validateMaybankCandidate(
+      readFileSync(new URL('fixtures/maybank.html', import.meta.url)),
+      200,
+      observedAt,
+    );
+    const previous = { ...feed, offers: [...feed.offers, ...offers] };
+    const result = await collect(previous, fetcher, now, ['maybank'], async () => {});
     expect(fetcher).toHaveBeenCalledTimes(2);
     expect(fetcher.mock.calls[0][0]).toContain('maybank2u.com.sg');
-    expect(result.offers).toEqual(feed.offers);
+    expect(result.offers).toEqual(previous.offers);
+    expect(
+      offers
+        .filter((o) => o.construction === 'Under construction')
+        .every((o) => isStale(o, Date.parse(observedAt) + 8 * 86400000)),
+    ).toBe(true);
     expect(result.sources).toHaveLength(1);
     expect(result.sources[0].status).toBe('error');
   });

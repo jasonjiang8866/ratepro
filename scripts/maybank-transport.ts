@@ -4,6 +4,7 @@ import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
+import { matchesMaybankGroup } from './source-health';
 import { sourceFor } from '../src/lib/schema';
 import { MAX_BYTES } from '../src/lib/data';
 import { validateMaybankCandidate, timingEvidence } from './maybank-diagnostics';
@@ -206,11 +207,12 @@ export async function requestMaybank(mode: string, baseFetch: typeof fetch = fet
       timing,
       bytes,
       sha256,
-      outcome: offers?.length === 4 ? ('validated' as const) : ('failed' as const),
+      outcome:
+        offers && matchesMaybankGroup(offers, 2) ? ('validated' as const) : ('failed' as const),
       offers,
       parseError,
       policy:
-        'One public GET; identified mode declares RatePro truthfully. No credentials, browser impersonation, proxy override, redirect following or certificate bypass. Full four-product parsing required.',
+        'One public GET; identified mode declares RatePro truthfully. No credentials, browser impersonation, proxy override, redirect following or certificate bypass. Full supported product group required.',
     };
   } finally {
     await rm(path, { recursive: true, force: true });

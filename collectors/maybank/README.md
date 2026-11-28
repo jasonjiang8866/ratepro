@@ -15,7 +15,7 @@ npm run job:maybank
 ```
 
 The default is read-only against GitHub. It reads the latest main commit and its
-snapshot, makes one bounded ordinary Maybank request, validates all four complete
+snapshot, makes one bounded ordinary Maybank request, validates all six complete
 schedules, checks main again, and saves a candidate under
 `research-output/maybank-job/capture-*`. `plan.json` includes the exact source
 files that would be committed. This is an actual live capture, not a saved-file

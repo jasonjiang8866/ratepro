@@ -9,16 +9,20 @@ bank may offer. No customer quote, account login or broker rate was used.
 
 | Bank               | Official source                                                                              | Finding and decision                                                                                                                                                                                                                                                         |
 | ------------------ | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Maybank            | https://www.maybank2u.com.sg/en/rates/rates-sora.page                                        | HTML tables publish fixed periods and 1M/3M SORA spreads, minimum amount and lock-in. Integrate the four completed-property packages. BUC packages remain out of scope.                                                                                                      |
+| Maybank            | https://www.maybank2u.com.sg/en/rates/rates-sora.page                                        | Four completed packages plus 1M and 3M BUC SORA schedules. BUC tables specify spreads, reset periods, no lock-in and conversion windows.                                                                                                                                     |
 | Standard Chartered | https://www.sc.com/sg/borrow/mortgages/sora/                                                 | HTML table publishes a 3M SORA spread schedule, minimum amount and lock-in. The page says the schedule is valid from 27 February 2021. Retain that date and ask users to confirm availability.                                                                               |
 | OCBC               | https://www.ocbc.com/personal-banking/ls_personal/loans/new-purchase-of-hdb-private-property | Describes fixed and 3M SORA packages but the reviewed package section has no complete numerical schedule. Research link labelled quote required.                                                                                                                             |
 | UOB                | https://www.uob.com.sg/personal/borrow/property-loans/private-home-loan.page                 | Refers fixed/combination package enquiries to a specialist. Research link labelled quote required; no numerical package inferred.                                                                                                                                            |
 | Citi               | https://www.citibank.com.sg/global_docs/pdf/Pricing-Packages.pdf                             | A dated, two-page PDF separates Citigold and Citibanking tiers, loan-size bands and conditions. The version directly read during research was printed 30 September 2026; search snippets differed. Link only until PDF layout/version and eligibility extraction are tested. |
 
-Maybank's residential-property scope is also supported by its official
+The scope of Maybank’s completed-property products is also supported by its official
 [HDB home-loan FAQ](https://www.maybank2u.com.sg/iwov-resources/sg/pdf/faq/personal/loans/hdb-loan-faqs.pdf).
 Exact approval, fees, subsidies and borrower eligibility must still be confirmed
-with the lender. Public indicative schedules can differ from personalised quotes.
+with the lender. The BUC headings differ from the adjacent completed-property footnotes.
+Both BUC products leave property type and purpose at `Confirm with lender`,
+minimum loan null and effective date unset. The 1M package allows a conversion
+between first drawdown and TOP and another within six months after TOP. The 3M
+package allows one within the latter window. Public indicative schedules can differ from personalised quotes.
 
 ## Representation and failure behavior
 
@@ -45,6 +49,15 @@ with the lender. Public indicative schedules can differ from personalised quotes
 
 `tests/fixtures/maybank.html` and `sc.html` contain minimal table and eligibility
 excerpts from successful direct downloads of the above URLs on 31 October 2026.
+The two additional Maybank BUC table excerpts are from the
+[14 November archive](captures/maybank/20261114T154922874Z/official.html).
+The [27 November capture](captures/maybank/20261127T040031219Z/evidence.json)
+records the first BUC observations. In a v2 receipt `before: null` identifies each added product.
+During Git replay, v1 receipts certify exactly the four completed IDs. V2 requires
+all six IDs and the exact candidate snapshot hash. Both versions require matching
+receipt and snapshot offers, observation times, source URL, and original HTML byte count
+and SHA-256 in the snapshot revision. Scheduled failures remain in the attempt ledger.
+
 Navigation, scripts, styling and unrelated content are omitted. Table values
 are not reconstructed from search snippets. Raw pages were also inspected to
 confirm the table structure before writing the parsers.

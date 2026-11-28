@@ -1,0 +1,26 @@
+{
+  "url": "https://www.maybank2u.com.sg/en/rates/rates-sora.page",
+  "mode": "default",
+  "arguments": [
+    "--http1.1"
+  ],
+  "startedAt": "2026-11-27T04:00:23.448Z",
+  "finishedAt": "2026-11-27T04:00:31.219Z",
+  "platform": "linux",
+  "architecture": "x64",
+  "exitCode": 0,
+  "timing": {
+    "time_namelookup": 0.000154,
+    "time_connect": 0.000642,
+    "time_appconnect": 5.112862,
+    "time_starttransfer": 7.57252,
+    "time_total": 7.73434,
+    "size_download": 42317,
+    "http_code": 200,
+    "lastMilestone": "first response byte received"
+  },
+  "bytes": 42317,
+  "sha256": "686e7b5281eeabf582064697dfedfec69001e7c308c15f9811463c5f0f4ff70b",
+  "outcome": "validated",
+  "policy": "One public GET; identified mode declares RatePro truthfully. No credentials, browser impersonation, proxy override, redirect following or certificate bypass. Full supported product group required."
+}
