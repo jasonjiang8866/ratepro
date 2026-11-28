@@ -132,11 +132,12 @@ async function requestMaybankNodeFetch(baseFetch: typeof fetch = fetch) {
     timing,
     bytes,
     sha256,
-    outcome: offers?.length === 4 ? ('validated' as const) : ('failed' as const),
+    outcome:
+      offers && matchesMaybankGroup(offers, 2) ? ('validated' as const) : ('failed' as const),
     offers,
     parseError,
     policy:
-      'One ordinary Node fetch GET with Accept-Language: en-SG,en;q=0.9. No credentials, browser impersonation, proxy override, redirect following or certificate bypass. Full four-product parsing required.',
+      'One ordinary Node fetch GET with Accept-Language: en-SG,en;q=0.9. No credentials, browser impersonation, proxy override, redirect following or certificate bypass. Full supported product group required.',
   };
   return { report, body: validatedBody };
 }

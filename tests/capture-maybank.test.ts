@@ -150,7 +150,7 @@ describe('live Maybank candidate', () => {
 });
 
 describe('Maybank Node fetch transport', () => {
-  it('sends Accept-Language: en-SG,en;q=0.9 with strict fetch options and validates 4 offers', async () => {
+  it('sends Accept-Language: en-SG,en;q=0.9 with strict fetch options and validates 6 offers', async () => {
     const fetcher = vi.fn<typeof fetch>().mockResolvedValue(new Response(body, { status: 200 }));
     const result = await requestMaybank('default', fetcher);
     expect(fetcher).toHaveBeenCalledTimes(1);
@@ -164,7 +164,7 @@ describe('Maybank Node fetch transport', () => {
     expect(result.report.timing?.http_code).toBe(200);
     expect(result.report.bytes).toBe(body.length);
     expect(result.report.sha256).toBe(digest(body));
-    expect(result.report.offers).toHaveLength(4);
+    expect(result.report.offers).toHaveLength(6);
     expect(result.body?.equals(body)).toBe(true);
   });
 
