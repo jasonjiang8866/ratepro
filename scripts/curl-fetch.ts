@@ -2,8 +2,8 @@ import { execFile } from 'node:child_process';
 import { MAX_BYTES } from '../src/lib/data';
 import { RetrievalError } from '../src/lib/sync';
 
-// UOB succeeds with curl where Node returned HTTP 500. Maybank's local curl
-// success does not establish GitHub availability: HTTP/1.1 still timed out there.
+// UOB succeeds with curl where Node's default Accept-Language returned HTTP 500.
+// Maybank now uses Node fetch with Accept-Language: en-SG,en;q=0.9 in maybank-transport.ts.
 // No proxy, cookie, custom UA or TLS override.
 export const curlFetch: typeof fetch = async (input, init) => {
   const url = String(input);

@@ -66,7 +66,8 @@ export function buildMaybankCandidate(base: Buffer, capture: Capture, now = Date
       bytes: body.length,
       platform: report.platform,
       architecture: report.architecture,
-      transport: 'Ordinary curl HTTP/1.1; one public GET; no custom identity or proxy override',
+      transport:
+        'Ordinary Node fetch GET with Accept-Language: en-SG,en;q=0.9; no custom User-Agent, credentials, redirect or proxy override',
       scheduledHealthPreserved: true,
       changes: old.map((before) => ({
         before,

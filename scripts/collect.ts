@@ -16,6 +16,7 @@ import { RetrievalError } from '../src/lib/sync';
 import { retrieve } from './retrieval';
 import { parseCiti, pdfText } from './citi';
 import { curlFetch } from './curl-fetch';
+import { maybankFetch } from './maybank-transport';
 import { parseHdbAskGov } from './hdb-askgov';
 import { cpfReleaseCurrent, parseCpfRelease } from './cpf-release';
 import { reportHealth, validateCollectedGroup } from './source-health';
@@ -69,7 +70,11 @@ export async function collect(
       try {
         const bytes = await retrieve(
           source.url,
-          ['maybank', 'uob-sora'].includes(source.id) && fetcher === fetch ? curlFetch : fetcher,
+          source.id === 'maybank' && fetcher === fetch
+            ? maybankFetch(fetch)
+            : source.id === 'uob-sora' && fetcher === fetch
+              ? curlFetch
+              : fetcher,
           'collectionTimeoutMs' in source ? source.collectionTimeoutMs : 12000,
           (n) => {
             attempts = n;
