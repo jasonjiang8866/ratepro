@@ -119,7 +119,7 @@ describe('publication and coverage evidence', () => {
   it('shows missing, stale and fallback observations separately', () => {
     const feed = FeedSchema.parse({ ...baseline, generatedAt: at });
     const report = healthMarkdown(feed);
-    expect(report).toContain('21 supported products');
+    expect(report).toContain('23 supported products');
     expect(report).toContain('| sbi | not checked | 0 / 3 |');
     expect(report).toContain('Retained records keep their original observation times');
   });

@@ -14,6 +14,7 @@ import {
   stageDisplay,
   offerPayment,
   matchesProperty,
+  matchesConstruction,
   mergeFeed,
 } from '../src/lib/data';
 import { emptyCache } from '../src/lib/schema';
@@ -82,8 +83,13 @@ describe('expanded official schedules', () => {
   const maybank = () => parseMaybank(nodePage(html('maybank')), observed, 'collector');
   const sc = () => parseScSora(nodePage(html('sc')), observed, 'collector');
   it('extracts four completed-property packages and fixed-to-SORA transitions', () => {
-    const offers = maybank();
-    expect(offers).toHaveLength(4);
+    const offers = maybank().filter((o) => o.construction === 'Completed');
+    expect(offers.map((o) => o.id)).toEqual([
+      'maybank-fixed-2y',
+      'maybank-fixed-3y',
+      'maybank-sora-1m',
+      'maybank-sora-3m',
+    ]);
     expect(offers.map((o) => o.stages[0].rate)).toEqual([3.3, 3.75, null, null]);
     expect(offers.map((o) => o.lockYears)).toEqual([2, 3, 2, 2]);
     expect(offers.every((o) => o.minLoan === 100000 && o.construction === 'Completed')).toBe(true);
@@ -94,6 +100,38 @@ describe('expanded official schedules', () => {
     expect(offers[2].stages[0].benchmark?.spread).toBe(0.8);
     expect(offers[3].stages[0].benchmark?.tenor).toBe('3M');
     expect(offers[3].stages[0].benchmark?.spread).toBe(0.7);
+  });
+  it('keeps both BUC schedules, conditions and eligibility separate from completed homes', () => {
+    const offers = maybank().filter((o) => matchesConstruction(o, 'Under construction'));
+    expect(offers.map((o) => o.id)).toEqual(['maybank-sora-1m-buc', 'maybank-sora-3m-buc']);
+    expect(
+      offers.map((o) => o.stages.map((s) => [s.label, s.benchmark?.tenor, s.benchmark?.spread])),
+    ).toEqual([
+      [
+        ['Year 1 to Year 4', '1M', 0.75],
+        ['Year 5', '1M', 0.8],
+        ['Thereafter', '1M', 1],
+      ],
+      [
+        ['Year 1 to Year 4', '3M', 0.7],
+        ['Thereafter', '3M', 1],
+      ],
+    ]);
+    for (const o of offers) {
+      expect(o).toMatchObject({
+        lockYears: 0,
+        minLoan: null,
+        purpose: ['Confirm with lender'],
+        property: 'Confirm with lender',
+      });
+      expect(o.effectiveFrom).toBeUndefined();
+      expect(o.stages.every((s) => s.rate === null && s.benchmark?.name === 'SORA')).toBe(true);
+      expect(offerPayment(o, 500000, 25)).toBeNull();
+    }
+    expect(offers[0].terms).toMatch(
+      /2 times.*1st drawdown to TOP.*2nd time.*TOP to within 6 months from TOP/,
+    );
+    expect(offers[1].terms).toMatch(/One-time.*TOP to within 6 months from TOP/);
   });
   it('preserves the source effective date separately from a fresh SC observation', () => {
     const [o] = sc();
@@ -141,10 +179,10 @@ describe('expanded official schedules', () => {
     const offers = [...sc(), ...maybank()];
     expect(
       [...offers].sort((a, b) => compareInitialRates(a, b)).map((o) => o.stages[0].rate),
-    ).toEqual([3.3, 3.75, null, null, null]);
+    ).toEqual([3.3, 3.75, null, null, null, null, null]);
     expect(
       [...offers].sort((a, b) => compareInitialRates(a, b, true)).map((o) => o.stages[0].rate),
-    ).toEqual([3.75, 3.3, null, null, null]);
+    ).toEqual([3.75, 3.3, null, null, null, null, null]);
     expect(matchesProperty(sc()[0], 'HDB')).toBe(true);
     expect(matchesProperty(sc()[0], 'Private')).toBe(true);
   });

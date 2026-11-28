@@ -14,7 +14,7 @@ const observedAt = '2026-11-14T12:00:20.000Z';
 const now = Date.parse('2026-11-14T12:01:00.000Z');
 const previous = FeedSchema.parse({
   ...fixture,
-  offers: [...fixture.offers, ...validateMaybankCandidate(body, 200, previousAt)],
+  offers: [...fixture.offers, ...validateMaybankCandidate(body, 200, previousAt, 1)],
   sources: [
     ...fixture.sources,
     {
@@ -60,7 +60,7 @@ function capture(): Awaited<ReturnType<typeof requestMaybank>> {
   };
 }
 describe('live Maybank candidate', () => {
-  it('updates exactly four observations and preserves other offers and all scheduled health', () => {
+  it('updates four observations, adds two BUC offers and preserves other offers and all scheduled health', () => {
     const { candidate, evidence } = buildMaybankCandidate(base, capture(), now);
     const next = JSON.parse(candidate);
     expect(next.offers.filter((o: { sourceId: string }) => o.sourceId !== 'maybank')).toEqual(
@@ -76,7 +76,35 @@ describe('live Maybank candidate', () => {
       candidateSha256: digest(candidate),
       scheduledHealthPreserved: true,
     });
-    expect(evidence.changes).toHaveLength(4);
+    expect(evidence.version).toBe(2);
+    expect(evidence.changes.map(({ before }) => before)).toEqual([
+      ...previous.offers.filter((o) => o.sourceId === 'maybank'),
+      null,
+      null,
+    ]);
+    expect(evidence.changes.map(({ after }) => after)).toEqual(
+      validateMaybankCandidate(body, 200, observedAt),
+    );
+  });
+  it('refreshes an exact six-product baseline and rejects a partial or unexpected baseline', () => {
+    const six = validateMaybankCandidate(body, 200, previousAt);
+    const onBase = (offers: typeof six) =>
+      buildMaybankCandidate(
+        Buffer.from(
+          JSON.stringify({
+            ...previous,
+            offers: [...fixture.offers, ...offers],
+          }),
+        ),
+        capture(),
+        now,
+      );
+    expect(onBase(six).evidence.changes.map((c) => c.before)).toEqual(six);
+    expect(() => onBase(six.slice(0, 5))).toThrow('IDs changed');
+    expect(() => onBase([six[4], ...six.slice(1, 4)])).toThrow('IDs changed');
+    expect(() => onBase([...six.slice(0, 5), { ...six[5], id: 'maybank-unknown' }])).toThrow(
+      'IDs changed',
+    );
   });
   it.each(['denial', 'timeout', 'tamper', 'wrong-url', 'experimental'])(
     'rejects %s before creating a candidate',

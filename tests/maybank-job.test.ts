@@ -20,7 +20,7 @@ const fixture = JSON.parse(readFileSync(new URL('fixtures/feed.json', import.met
 const base = Buffer.from(
   JSON.stringify({
     ...fixture,
-    offers: [...fixture.offers, ...validateMaybankCandidate(body, 200, '2026-11-01T00:00:00Z')],
+    offers: [...fixture.offers, ...validateMaybankCandidate(body, 200, '2026-11-01T00:00:00Z', 1)],
   }),
 );
 function capture(): Awaited<ReturnType<typeof requestMaybank>> {
@@ -81,6 +81,10 @@ it('prepares from immutable main, saves original bytes, and performs no writes i
   expect(result.files).toHaveLength(3);
   expect(result.files[2].content).toBe(body.toString('utf8'));
   expect(JSON.parse(result.files[0].content).sources).toEqual(fixture.sources);
+  expect(result.evidence.changes.filter((c) => c.before === null).map((c) => c.after.id)).toEqual([
+    'maybank-sora-1m-buc',
+    'maybank-sora-3m-buc',
+  ]);
   expect(result.evidence.baseCommit).toBe(HEAD);
 });
 it('skips a pending same-repository data PR before contacting Maybank', async () => {
@@ -105,9 +109,12 @@ it('fails without writes when collection fails or main changes during capture', 
   const failed = capture();
   failed.report.exitCode = 28;
   failed.report.outcome = 'failed';
+  failed.report.timing = undefined;
   failed.body = undefined;
   read.mockResolvedValueOnce(failed);
-  await expect(prepareMaybankJob(api, read)).rejects.toThrow('No validated');
+  await expect(prepareMaybankJob(api, read)).rejects.toThrow(
+    'Maybank capture failed: curl 28, HTTP unknown',
+  );
   expect(api.mock.calls.every(([method]) => method === 'GET')).toBe(true);
   read.mockImplementationOnce(async () => {
     api.mockResolvedValueOnce({ object: { sha: COMMIT } });
