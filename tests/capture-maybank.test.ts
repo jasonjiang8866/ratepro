@@ -1,9 +1,10 @@
 import { readFileSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { buildMaybankCandidate, digest } from '../scripts/capture-maybank';
 import { validateMaybankCandidate } from '../scripts/maybank-diagnostics';
 import { FeedSchema, sourceFor } from '../src/lib/schema';
-import type { requestMaybank } from '../scripts/maybank-transport';
+import { MAYBANK_ACCEPT_LANGUAGE, requestMaybank } from '../scripts/maybank-transport';
+import { MAX_BYTES } from '../src/lib/data';
 
 const body = readFileSync(new URL('fixtures/maybank.html', import.meta.url));
 const fixture = FeedSchema.parse(
@@ -145,5 +146,53 @@ describe('live Maybank candidate', () => {
     expect(() =>
       buildMaybankCandidate(Buffer.from(JSON.stringify(missing)), capture(), now),
     ).toThrow('IDs changed');
+  });
+});
+
+describe('Maybank Node fetch transport', () => {
+  it('sends Accept-Language: en-SG,en;q=0.9 with strict fetch options and validates 6 offers', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(new Response(body, { status: 200 }));
+    const result = await requestMaybank('default', fetcher);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    const [url, init] = fetcher.mock.calls[0];
+    expect(url).toBe(sourceFor('maybank').url);
+    expect(new Headers(init?.headers).get('accept-language')).toBe(MAYBANK_ACCEPT_LANGUAGE);
+    expect(new Headers(init?.headers).has('user-agent')).toBe(false);
+    expect(init).toMatchObject({ credentials: 'omit', cache: 'no-cache', redirect: 'error' });
+    expect(result.report.outcome).toBe('validated');
+    expect(result.report.exitCode).toBe(0);
+    expect(result.report.timing?.http_code).toBe(200);
+    expect(result.report.bytes).toBe(body.length);
+    expect(result.report.sha256).toBe(digest(body));
+    expect(result.report.offers).toHaveLength(6);
+    expect(result.body?.equals(body)).toBe(true);
+  });
+
+  it('rejects HTTP errors, timeouts, and oversized bodies without returning a body', async () => {
+    const denied = await requestMaybank(
+      'default',
+      vi.fn<typeof fetch>().mockResolvedValue(new Response('error', { status: 500 })),
+    );
+    expect(denied.report.outcome).toBe('failed');
+    expect(denied.report.timing?.http_code).toBe(500);
+    expect(denied.body).toBeUndefined();
+
+    const timedOut = await requestMaybank(
+      'default',
+      vi.fn<typeof fetch>().mockRejectedValue(new DOMException('slow', 'TimeoutError')),
+    );
+    expect(timedOut.report.outcome).toBe('failed');
+    expect(timedOut.report.exitCode).toBe(28);
+    expect(timedOut.body).toBeUndefined();
+
+    const oversized = await requestMaybank(
+      'default',
+      vi
+        .fn<typeof fetch>()
+        .mockResolvedValue(new Response(new Uint8Array(MAX_BYTES + 1), { status: 200 })),
+    );
+    expect(oversized.report.outcome).toBe('failed');
+    expect(oversized.report.parseError).toContain('too large');
+    expect(oversized.body).toBeUndefined();
   });
 });

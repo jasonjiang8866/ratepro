@@ -27,25 +27,38 @@ it.each(['success', 'timeout', 'race'])(
     const dir = await mkdtemp(join(tmpdir(), 'maybank-cli-'));
     try {
       await mkdir(join(dir, 'public/data'), { recursive: true });
-      await mkdir(join(dir, 'bin'));
       const snapshot = join(dir, 'public/data/rates.json');
       await writeFile(snapshot, baseline);
       // Controlled transport double: this test never requests a bank URL.
-      const stub = `#!${process.execPath}\nconst fs = require('node:fs');
-const args = process.argv.slice(2);
-if (args.at(-1) !== 'https://www.maybank2u.com.sg/en/rates/rates-sora.page') process.exit(99);
-fs.writeFileSync(args[args.indexOf('--output') + 1], Buffer.from('${body.toString('base64')}', 'base64'));
-if ('${mode}' === 'race') fs.appendFileSync('public/data/rates.json', '\\n');
-process.stdout.write(JSON.stringify({time_namelookup:0.01,time_connect:0.02,time_appconnect:0.03,time_starttransfer:0.04,time_total:0.05,size_download:${body.length},http_code:200}));
-if ('${mode}' === 'timeout') process.exitCode = 28;
+      const stub = `import fs from 'node:fs';
+globalThis.fetch = async (input, init) => {
+  if (String(input) !== 'https://www.maybank2u.com.sg/en/rates/rates-sora.page')
+    throw Error('Unexpected URL');
+  const headers = new Headers(init?.headers);
+  if (headers.get('accept-language') !== 'en-SG,en;q=0.9')
+    throw Error('Missing Accept-Language');
+  if (init?.redirect !== 'error' || init?.credentials !== 'omit')
+    throw Error('Unexpected fetch policy');
+  if ('${mode}' === 'timeout') throw new DOMException('timed out', 'TimeoutError');
+  if ('${mode}' === 'race') fs.appendFileSync('public/data/rates.json', '\\n');
+  return new Response(Buffer.from('${body.toString('base64')}', 'base64'), { status: 200 });
+};
 `;
-      await writeFile(join(dir, 'bin/curl'), stub, { mode: 0o755 });
+      const preload = join(dir, 'fetch-stub.mjs');
+      await writeFile(preload, stub);
       const invocation = run(
         process.execPath,
-        ['--import', createRequire(import.meta.url).resolve('tsx'), script, '--apply'],
+        [
+          '--import',
+          preload,
+          '--import',
+          createRequire(import.meta.url).resolve('tsx'),
+          script,
+          '--apply',
+        ],
         {
           cwd: dir,
-          env: { ...process.env, PATH: `${join(dir, 'bin')}:${process.env.PATH}` },
+          env: process.env,
           timeout: 15000,
         },
       );
