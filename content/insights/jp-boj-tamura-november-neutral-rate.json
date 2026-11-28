@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "market": "JP",
+  "slug": "jp-boj-tamura-november-neutral-rate",
+  "category": "market",
+  "title": "Tamura urges a faster move toward neutral policy",
+  "summary": "A 26 November speech argues for prompt adjustment toward neutral. This is a BOJ member's assessment, not a new policy decision or mortgage quote.",
+  "reportDate": "2026-11-26",
+  "edition": "update",
+  "eventKey": "jp-boj-tamura-yamanashi-2026-11-26",
+  "supersedes": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "takeaways": [
+    {
+      "text": "A member's preferred policy pace does not determine your mortgage reset date.",
+      "sourceIds": ["speech"]
+    }
+  ],
+  "sections": [
+    {
+      "heading": "The new statement",
+      "kind": "fact",
+      "text": "In Yamanashi on 26 November, Naoki Tamura argues that financial conditions remain accommodative and policy should reach neutral promptly. He says a few months after a hike can provide enough evidence to assess conditions; upside inflation risks could require faster tightening. These are his views, not a new Board decision.",
+      "sourceIds": ["speech"]
+    },
+    {
+      "heading": "Borrower interpretation",
+      "kind": "analysis",
+      "text": "Our interpretation: review repayment sensitivity without assuming a specific rate path. For JPY variable loans, confirm contractual rate and payment reviews; for initial fixed periods, obtain subsequent pricing; for full-term fixed loans, confirm funding-month terms. This speech establishes no bank offer, eligibility, fees or promotion.",
+      "sourceIds": ["speech"]
+    },
+    {
+      "heading": "Dates and limits",
+      "kind": "fact",
+      "text": "Speech, publication and report date: 26 November 2026, Asia/Tokyo. The UTC check is separate below. No offer-validity period applies; a separate webpage-update date is unknown.",
+      "sourceIds": ["speech"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "speech",
+      "publisher": "Bank of Japan",
+      "title": "田村直樹：わが国の経済・物価情勢と金融政策（山梨県金融経済懇談会、2026年11月26日）",
+      "url": "https://www.boj.or.jp/about/press/koen_2026/data/ko261126a1.pdf",
+      "checkedAt": "2026-11-26T02:02:26Z",
+      "documentDate": "2026-11-26"
+    }
+  ],
+  "package": null
+}
